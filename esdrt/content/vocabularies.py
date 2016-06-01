@@ -147,18 +147,18 @@ grok.global_utility(StatusFlag,
     name=u"esdrt.content.status_flag")
 
 
+from .crf_code_matching import crf_codes
+
 class CRFCode(object):
     grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
-        pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('crf_code')
         terms = []
-        if voc is not None:
-            for key, value in voc.getVocabularyLines():
-                # create a term - the arguments are the value, the token, and
-                # the title (optional)
-                terms.append(SimpleVocabulary.createTerm(key, key, value))
+        crfcodes = crf_codes()
+        for key, value in crfcodes.items():
+            # create a term - the arguments are the value, the token, and
+            # the title (optional)
+            terms.append(SimpleVocabulary.createTerm(key, key, value['title']))
         return SimpleVocabulary(terms)
 
 grok.global_utility(CRFCode,

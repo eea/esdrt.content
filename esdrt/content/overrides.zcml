@@ -6,10 +6,18 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
     i18n_domain="esdrt.content">
 
   <adapter
       factory=".converter.ESDRTIntegerDataConverter"
+      />
+
+  <z3c:widgetTemplate
+      mode="input"
+      widget="z3c.form.interfaces.IMultiWidget"
+      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
+      template="browser/templates/multi_input.pt"
       />
 
 </configure>

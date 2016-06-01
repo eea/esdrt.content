@@ -349,4 +349,23 @@
          destination="46"
          handler=".45_46.upgrade"
          profile="esdrt.content:default" />
+
+    <genericsetup:upgradeSteps
+        source="46"
+        destination="47"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+          title="Import plone.app.registry"
+          description="Import the new registry based crf_code vocabulary."
+          import_steps="plone.app.registry"
+          />
+
+      <genericsetup:upgradeStep
+          title="Delete portal_vocabularies.crf_code vocabulary"
+          description="Compares with new vocabulary before deleting."
+          handler=".46_47.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
 </configure>

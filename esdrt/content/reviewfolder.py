@@ -151,14 +151,10 @@ class ReviewFolderMixin(grok.View):
         return inventory_years
 
     def get_crf_categories(self):
-        vtool = getToolByName(self, 'portal_vocabularies')
-        voc = vtool.getVocabularyByName('crf_code')
-        categories = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            categories.append((term[0], term[1]))
-
-        return categories
+        vocab_factory = getUtility(
+            IVocabularyFactory, name='esdrt.content.crf_code')
+        vocabulary = vocab_factory(self.context)
+        return [(x.value, x.title) for x in vocabulary]
 
     def get_finalisation_reasons(self):
         vtool = getToolByName(self, 'portal_vocabularies')
