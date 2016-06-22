@@ -1185,6 +1185,13 @@ class ObservationMixin(grok.View):
 
             return True
 
+    def show_internal_notes(self):
+        user = api.user.get_current()
+        userroles = api.user.get_roles(user=user, obj=self.context)
+        if 'MSAuthority' in userroles or 'MSExpert' in userroles:
+            return False
+        return True
+
     def add_question_form(self):
         from plone.z3cform.interfaces import IWrappedForm
         form_instance = AddQuestionForm(self.context, self.request)

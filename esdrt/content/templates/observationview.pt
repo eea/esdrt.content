@@ -158,7 +158,7 @@
 
 <metal:main fill-slot="content-core">
   <metal:content-core define-macro="content-core"
-      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
+      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; show_internal_notes view/show_internal_notes">
 
   <metal:observation define-macro="observation-info"
     tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
@@ -445,6 +445,7 @@
           <dl>
             <dt>Final status of observation:</dt>
             <dd><span tal:replace="conclusion/reason_value" /></dd>
+            <tal:block condition="show_internal_notes">
             <dt>Recommendation/internal note:</dt>
             <dd><span tal:replace="structure conclusion/text/output|conclusion/text|nothing" /></dd>
             <tal:comment replace="nothing">
@@ -495,6 +496,7 @@
                 </table>
               </dd>
             </tal:comment>
+            </tal:block>
           </dl>
 
         </div>
@@ -503,8 +505,10 @@
           <dl>
             <dt>Observation Finishing denied</dt>
             <dd></dd>
+            <tal:block condition="show_internal_notes">
             <dt>LR comments on finish observation request:</dt>
             <dd><span tal:replace="structure context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing" /></dd>
+            </tal:block>
           </dl>
         </div>
 
@@ -631,7 +635,7 @@
           </div>
         </div>
 
-            <div>
+            <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-1">
                 <div class="cell position-0 width-16">
                   Internal comments on conclusion between experts/reviewers/QE/LR
@@ -674,8 +678,10 @@
           <dl>
             <dt>Reason:</dt>
             <dd><span tal:replace="conclusion/reason_value" /></dd>
+            <tal:block condition="show_internal_notes">
             <dt>SE comments on conclusion:</dt>
             <dd><span tal:replace="structure conclusion/text/output|conclusion/text|nothing" /></dd>
+            </tal:block>
           </dl>
 
         </div>
@@ -812,7 +818,7 @@
           </div>
         </div>
 
-            <div>
+            <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-2">
                 <div class="cell position-0 width-16">
                   Conclusion comments
