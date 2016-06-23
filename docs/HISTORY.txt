@@ -1,10 +1,15 @@
 Changelog
 =========
-
-1.59.30 (unreleased)
+1.59.31 (unreleased)
 -----------------
 
 - Nothing changed yet.
+
+1.59.30 (2016-06-23)
+-----------------
+
+- Task #73129 Don't show internal discussions to MS users. 
+- Task #72922 Implemented automatization using plone registry
 
 
 1.59.29 (2016-05-31)
