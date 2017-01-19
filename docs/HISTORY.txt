@@ -1,7 +1,7 @@
 Changelog
 =========
-1.59.31 (unreleased)
------------------
+1.59.31 (2017-01-19)
+--------------------
 
 - Task #80869 Convert ReferenceNumberCreator return value to
   str. OFS.ObjectManager.checkValidId fails otherwise
