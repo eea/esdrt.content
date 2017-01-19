@@ -3,7 +3,9 @@ Changelog
 1.59.31 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Task #80869 Convert ReferenceNumberCreator return value to
+  str. OFS.ObjectManager.checkValidId fails otherwise
+  [batradav]
 
 1.59.30 (2016-06-23)
 -----------------

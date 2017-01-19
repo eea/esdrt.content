@@ -49,4 +49,5 @@ class ReferenceNumberCreator(NormalizingNameChooser):
         last_part = '%04d' % number
         name = prename + '-' + last_part
 
-        return name
+        # OFS.ObjectManager.checkValidId fails unless the id is str
+        return str(name)
