@@ -19,13 +19,16 @@ from esdrt.content.timeit import timeit
 from eea.cache import cache
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.interfaces import IContextSourceBinder
 from zc.dict import OrderedDict
 from z3c.form import button
 from z3c.form import field
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema import List, Choice, TextLine
 from zope.interface import Interface
+from zope.interface import provider
 from z3c.form.interfaces import HIDDEN_MODE
+from esdrt.content.utilities.ms_user import IUserIsMS
 
 grok.templatedir('templates')
 
@@ -283,13 +286,20 @@ EXPORT_FIELDS = OrderedDict([
     ('get_author_name', 'Author')
 ])
 
+# Don't show conclusion notes to MS users.
+EXCLUDE_FIELDS_FOR_MS = (
+    'observation_finalisation_text_step1',
+    'observation_finalisation_text_step2',
+)
 
-def _createFieldsVocabulary():
-    """ Create zope.schema vocabulary from EXPORT_FIELDS.
-        @return: list of SimpleTerm objects
-    """
+
+@provider(IContextSourceBinder)
+def fields_vocabulary_factory(context):
     terms = []
+    user_is_ms = getUtility(IUserIsMS)(context)
     for key, value in EXPORT_FIELDS.items():
+        if user_is_ms and key in EXCLUDE_FIELDS_FOR_MS:
+            continue
         terms.append(SimpleVocabulary.createTerm(key, key, value))
     return SimpleVocabulary(terms)
 
@@ -299,9 +309,7 @@ class IExportForm(Interface):
         title=u"Fields to export",
         description=u"Select which fields you want to add into XLS",
         required=False,
-        value_type=Choice(
-            source=SimpleVocabulary(_createFieldsVocabulary())
-        )
+        value_type=Choice(source=fields_vocabulary_factory)
     )
 
     come_from = TextLine(title=u"Come from")
@@ -381,12 +389,17 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         """
         observations = self.get_questions()
 
-        fields_toexport = data.get('exportFields', [])
+        user_is_ms = getUtility(IUserIsMS)(self.context)
+
+        fields_to_export = [
+            name for name in data.get('exportFields', []) if
+            not user_is_ms or name not in EXCLUDE_FIELDS_FOR_MS
+        ]
         data = tablib.Dataset()
         data.title = "Observations"
         for observation in observations:
             row = [observation.getId]
-            for key in fields_toexport:
+            for key in fields_to_export:
                 if key in [
                     'observation_is_potential_significant_issue',
                     'observation_is_potential_technical_correction',
@@ -412,7 +425,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             data.append(row)
 
         headers = ['Observation']
-        headers.extend([EXPORT_FIELDS[k] for k in fields_toexport])
+        headers.extend([EXPORT_FIELDS[k] for k in fields_to_export])
         data.headers = headers
         return data
 

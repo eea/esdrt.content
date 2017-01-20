@@ -57,6 +57,7 @@
     <permission name="esdrt.content: Export Observations" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />
+      <role name="Authenticated" />
     </permission>
     <permission name="esdrt.content: Export an Observation" acquire="False">
       <role name="Manager" />

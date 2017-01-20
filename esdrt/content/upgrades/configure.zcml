@@ -368,4 +368,17 @@
           />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="47"
+        destination="48"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+          title="Import rolemap."
+          description="[#80797] Grant 'esdrt.content: Export Observations' permission to Authenticated users."
+          import_steps="rolemap"
+          />
+
+    </genericsetup:upgradeSteps>
 </configure>

@@ -50,6 +50,7 @@ from .conclusion import IConclusion
 from .crf_code_matching import get_category_ldap_from_crf_code
 from .crf_code_matching import get_category_value_from_crf_code
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
+from esdrt.content.utilities.ms_user import IUserIsMS
 import datetime
 
 HIDDEN_ACTIONS = [
@@ -1177,20 +1178,10 @@ class ObservationMixin(grok.View):
             question = questions[-1]
             return sm.checkPermission('View', question.getObject())
         else:
-            user = api.user.get_current()
-            userroles = api.user.get_roles(username=user.getId(),
-                obj=self.context)
-            if 'MSAuthority' in userroles or 'MSExpert' in userroles:
-                return False
-
-            return True
+            return not getUtility(IUserIsMS)(self.context)
 
     def show_internal_notes(self):
-        user = api.user.get_current()
-        userroles = api.user.get_roles(user=user, obj=self.context)
-        if 'MSAuthority' in userroles or 'MSExpert' in userroles:
-            return False
-        return True
+        return not getUtility(IUserIsMS)(self.context)
 
     def add_question_form(self):
         from plone.z3cform.interfaces import IWrappedForm
