@@ -1,9 +1,14 @@
 Changelog
 =========
-1.59.32 (unreleased)
+1.59.32 (2017-01-24)
 --------------------
 
-- Nothing changed yet.
+- Task #81047 Fix delete error for observations and
+  duplicate indexer/properties.
+  [batradav]
+
+- Task #80797 Allow XLS export for all users
+  [batradav]
 
 1.59.31 (2017-01-19)
 --------------------
@@ -15,7 +20,7 @@ Changelog
 1.59.30 (2016-06-23)
 -----------------
 
-- Task #73129 Don't show internal discussions to MS users. 
+- Task #73129 Don't show internal discussions to MS users.
 - Task #72922 Implemented automatization using plone registry
 
 
