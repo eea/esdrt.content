@@ -329,10 +329,11 @@ class Observation(dexterity.Container):
 
     def get_values_cat(self, portal_type=None):
         if portal_type is not None:
-            return self.getFolderContents({'portal_type': portal_type},
-                full_objects=True)
+            return self.listFolderContents(
+                contentFilter={'portal_type': portal_type}
+            )
         else:
-            return self.getFolderContents(full_objects=True)
+            return self.listFolderContents()
 
 
     def get_crf_code(self):
@@ -563,9 +564,10 @@ class Observation(dexterity.Container):
             return 'answered'
         elif status in ['phase1-conclusions', 'phase2-conclusions',
                         'phase1-conclusion-discussion',
-                        'phase2-conclusion-discussion',
-                        'phase1-close-requested', 'phase2-close-requested']:
+                        'phase2-conclusion-discussion']:
             return 'conclusions'
+        elif status in ['phase1-close-requested', 'phase2-close-requested']:
+            return 'close-requested'
         elif status in ['phase1-closed', 'phase2-closed']:
             if status == 'phase1-closed':
                 conclusion = self.get_conclusion()
@@ -927,15 +929,6 @@ class Observation(dexterity.Container):
                 return con_phase2.closing_reason == "technical-correction"
         return False
 
-    #def observation_finalisation_reason(self):
-    #    status = self.get_status()
-    #    if status == 'phase1-closed':
-    #        conclusion = self.get_conclusion()
-    #        return conclusion and conclusion.closing_reason or ' '
-    #    elif status == 'phase2-closed':
-    #        conclusion = self.get_conclusion_phase2()
-    #        return conclusion and conclusion.closing_reason or ' '
-
     def get_conclusion(self):
         conclusions = self.get_values_cat('Conclusion')
         mtool = api.portal.get_tool('portal_membership')
@@ -1002,28 +995,6 @@ class Observation(dexterity.Container):
                         return True
 
         return False
-
-    # def observation_sent_to_msc(self):
-    #     questions = self.get_values_cat('Question')
-    #     if questions:
-    #         question = questions[0]
-    #         winfo = question.workflow_history
-    #         state = self.get_status()
-    #         for witem in winfo.get('esd-question-review-workflow', []):
-    #             if witem.get('review_state', '').endswith('-pending'):
-    #                 return True
-    #     return False
-    #
-    # def observation_sent_to_mse(self):
-    #     questions = self.get_values_cat('Question')
-    #     if questions:
-    #         question = questions[0]
-    #         winfo = question.workflow_history
-    #         state = self.get_status()
-    #         for witem in winfo.get('esd-question-review-workflow', []):
-    #             if witem.get('review_state', '').endswith('-expert-comments'):
-    #                 return True
-    #     return False
 
     def observation_phase(self):
         status = api.content.get_state(self)

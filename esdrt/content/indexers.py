@@ -3,7 +3,7 @@ from esdrt.content.comment import IComment
 from conclusion import IConclusion
 from conclusionsphase2 import IConclusionsPhase2
 from .observation import IObservation
-from plone import api
+import plone.api as api
 from plone.app.discussion.interfaces import IConversation
 from plone.app.textfield.interfaces import IRichTextValue
 from plone.indexer import indexer
@@ -54,30 +54,12 @@ def observation_review_year(context):
 
 @indexer(IObservation)
 def last_question_reply_number(context):
-    questions = context.values(['Question'])
-    replynum = 0
-    if questions:
-        comments = questions[0].values(['Comment'])
-        if comments:
-            last = comments[-1]
-            disc = IConversation(last)
-            return disc.total_comments
-
-    return replynum
+    return context.last_question_reply_number()
 
 
 @indexer(IObservation)
 def last_answer_reply_number(context):
-    questions = context.values(['Question'])
-    replynum = 0
-    if questions:
-        comments = questions[0].values(['CommentAnswer'])
-        if comments:
-            last = comments[-1]
-            disc = IConversation(last)
-            return disc.total_comments
-
-    return replynum
+    return context.last_answer_reply_number()
 
 
 @indexer(IObservation)
@@ -215,56 +197,20 @@ def question_status(context):
             else:
                 return "observation-phase2-draft"
 
+
 @indexer(IObservation)
 def observation_question_status(context):
-    #return context.observation_question_status()
     return question_status(context)
+
 
 @indexer(IObservation)
 def observation_status(context):
-    #return context.observation_status()
-    status = question_status(context)
-    if status in ['phase1-draft', 'phase2-draft',
-                  'phase1-counterpart-comments', 'phase2-counterpart-comments',
-                  'observation-phase1-draft', 'observation-phase2-draft']:
-        return 'SRRE'
-    elif status in ['phase1-drafted', 'phase2-drafted',
-                    'phase1-recalled-lr', 'phase2-recalled-lr']:
-        return 'LRQE'
-    elif status in ['phase1-pending', 'phase2-pending',
-                    'phase1-pending-answer-drafting', 'phase2-pending-answer-drafting',
-                    'phase1-expert-comments', 'phase2-expert-comments',
-                    'phase1-recalled-msa', 'phase1-recalled-msa']:
-        return 'MSC'
-    elif status in ['phase1-answered', 'phase2-answered']:
-        return 'answered'
-    elif status in ['phase1-conclusions', 'phase2-conclusions',
-                    'phase1-conclusion-discussion', 'phase2-conclusion-discussion']:
-        return 'conclusions'
-    elif status in ['phase1-close-requested', 'phase2-close-requested']:
-        return 'close-requested'
-    elif status in ['phase1-closed', 'phase2-closed']:
-        if status == 'phase1-closed':
-            conclusion = context.get_conclusion()
-            conclusion_reason = conclusion and conclusion.closing_reason or ' '
-            if (conclusion_reason == 'no-conclusion-yet'):
-                return "SRRE"
-            else:
-                return "finalised"
-        elif status == 'phase2-closed':
-            conclusion = context.get_conclusion_phase2()
-            conclusion_reason =  conclusion and conclusion.closing_reason or ' '
-            if (conclusion_reason == 'no-conclusion-yet'):
-                return "SRRE"
-            else:
-                return "finalised"
-    else:
-        return status
+    return context.observation_status()
+
 
 @indexer(IObservation)
 def observation_step(context):
     try:
-        #return context.observation_step()
         status = context.get_status()
         if status.startswith("phase1"):
             return "step1"
@@ -274,6 +220,7 @@ def observation_step(context):
             return status
     except:
         return None
+
 
 @indexer(IObservation)
 def last_answer_has_replies(context):
@@ -302,7 +249,6 @@ def reply_comments_by_mse(context):
 @indexer(IObservation)
 def observation_sent_to_msc(context):
     try:
-        #return context.observation_sent_to_msc()
         questions = context.get_values_cat(['Question'])
         if questions:
             question = questions[0]
@@ -314,10 +260,10 @@ def observation_sent_to_msc(context):
     except:
         return False
 
+
 @indexer(IObservation)
 def observation_sent_to_mse(context):
     try:
-        #return context.observation_sent_to_mse()
         questions = context.get_values_cat(['Question'])
         if questions:
             question = questions[0]
@@ -328,6 +274,7 @@ def observation_sent_to_mse(context):
         return False
     except:
         return False
+
 
 @indexer(IObservation)
 def observation_finalisation_reason(context):
