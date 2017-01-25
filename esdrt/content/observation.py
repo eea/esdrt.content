@@ -1561,7 +1561,7 @@ class ExportAsDocView(ObservationMixin):
 
         conclusion = self.get_conclusion()
         if conclusion:
-            if not conclusion_2():
+            if conclusion_2 is not None and not conclusion_2():
                 document.add_page_break()
             document.add_heading('Conclusions Step 1', level=2)
 

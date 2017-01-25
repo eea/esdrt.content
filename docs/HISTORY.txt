@@ -3,7 +3,8 @@ Changelog
 1.59.33 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Task #77946 Fix DOCX export error.
+  [batradav]
 
 
 1.59.32 (2017-01-24)
