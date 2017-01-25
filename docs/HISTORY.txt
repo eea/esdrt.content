@@ -1,6 +1,6 @@
 Changelog
 =========
-1.59.33 (unreleased)
+1.59.33 (2017-01-25)
 --------------------
 
 - Task #77946 Fix DOCX export error.
