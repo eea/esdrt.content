@@ -188,6 +188,11 @@ class AddForm(dexterity.AddForm):
         highlights = self.request.form.get('form.widgets.highlight')
         container.highlights = highlights
 
+        # Update Observation state
+        api.content.transition(
+            obj=self.context,
+            transition='phase1-draft-conclusions'
+        )
 
         return aq_base(content)
 

@@ -457,10 +457,6 @@ class AddConclusions(grok.View):
         if api.content.get_state(parent).startswith('phase1-'):
             conclusion = parent.get_conclusion()
             if not conclusion:
-                api.content.transition(
-                    obj=parent,
-                    transition='phase1-draft-conclusions'
-                )
                 url = '%s/++add++Conclusion' % parent.absolute_url()
             else:
                 url = '%s/edit' % conclusion.absolute_url()
