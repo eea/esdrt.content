@@ -1,10 +1,11 @@
 Changelog
 =========
 
-1.59.34 (unreleased)
+1.59.34 (2017-01-30)
 --------------------
 
-- Nothing changed yet.
+- Fix: #81027 dead end in the workflow.
+  [batradav]
 
 
 1.59.33 (2017-01-25)
