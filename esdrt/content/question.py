@@ -111,22 +111,9 @@ class Question(dexterity.Container):
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
-        if (len(questions) > len(answers)):
-            # We need to check that the previous action was to close comments
-            # and the previous one to request comments
-            question_history = self.workflow_history['esd-question-review-workflow']
+        if len(questions) > len(answers):
             current_status = api.content.get_state(self)
-            if len(question_history) > 2:
-                previous_action = question_history[-1]
-                previous_previous_action = question_history[-2]
-                if current_status == 'phase1-draft':
-                    if previous_action['action'] == 'phase1-send-comments' and \
-                            previous_previous_action['action'] == 'phase1-request-for-counterpart-comments':
-                        return True
-                if current_status == 'phase2-draft':
-                    if previous_action['action'] == 'phase2-send-comments' and \
-                            previous_previous_action['action'] == 'phase2-request-for-counterpart-comments':
-                        return True
+            return current_status in ('phase1-draft', 'phase2-draft')
 
         return False
 

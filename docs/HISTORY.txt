@@ -7,6 +7,9 @@ Changelog
 - Fix: #82222 Hard-coded years in the application workflow
   [batradav]
 
+- Fix: #81755 Button disappeared
+  [batradav]
+
 
 1.59.34 (2017-01-30)
 --------------------
