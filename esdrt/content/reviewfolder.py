@@ -160,32 +160,49 @@ class ReviewFolderMixin(grok.View):
         return [(x.value, x.title) for x in vocabulary]
 
     def get_finalisation_reasons(self):
+        """ Vocabularies are used to fetch available reasons.
+            This used to have hardcoded values for 2015 and 2016.
+            Currently it works like this:
+
+                - try to get vocabulary values that end
+                  in the current folder title (e.g. "resolved2016")
+
+                - if no values match, get the values which don't
+                  end in an year (e.g. "resolved")
+
+            This covers the previous functionality while also supporting
+            any number of upcoming years, as well as "Test"-type
+            review folders.
+        """
         vtool = getToolByName(self, 'portal_vocabularies')
         reasons = [('open', 'open')]
-        if self.context.Title() == '2015':
-            voc = vtool.getVocabularyByName('conclusion_reasons')
+
+        context_title = self.context.Title().strip()
+
+        vocab_ids = ('conclusion_reasons', 'conclusion_phase2_reasons')
+
+        to_add = []
+        all_terms = []
+
+        for vocab_id in vocab_ids:
+            voc = vtool.getVocabularyByName(vocab_id)
             voc_terms = voc.getDisplayList(self).items()
-            for term in voc_terms:
-                if "2016" not in term[0]:
-                    reasons.append((term[0], term[1]))
-            voc = vtool.getVocabularyByName('conclusion_phase2_reasons')
-            voc_terms = voc.getDisplayList(self).items()
-            for term in voc_terms:
-                if "2016" not in term[0]:
-                    reasons.append((term[0], term[1]))
-            return reasons
-        else:
-            voc = vtool.getVocabularyByName('conclusion_reasons')
-            voc_terms = voc.getDisplayList(self).items()
-            for term in voc_terms:
-                if "2016" in term[0]:
-                    reasons.append((term[0], term[1]))
-            voc = vtool.getVocabularyByName('conclusion_phase2_reasons')
-            voc_terms = voc.getDisplayList(self).items()
-            for term in voc_terms:
-                if "2016" in term[0]:
-                    reasons.append((term[0], term[1]))
-            return reasons
+            all_terms.extend(voc_terms)
+
+        # if term ends in the review folder title (e.g. 2016)
+        for term_key, term_title in all_terms:
+            if term_key.endswith(context_title):
+                to_add.append((term_key, term_title))
+
+        # if no matching term keys were found,
+        # use those that don't end in a year
+        if not to_add:
+            for term_key, term_title in all_terms:
+                if not term_key[-4:].isdigit():
+                    to_add.append((term_key, term_title))
+
+        reasons.extend(to_add)
+        return reasons
 
     def is_member_state_coordinator(self):
         if api.user.is_anonymous():
