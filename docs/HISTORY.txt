@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.59.35 (unreleased)
+1.59.35 (2017-02-13)
 --------------------
 
 - Fix: #82222 Hard-coded years in the application workflow
