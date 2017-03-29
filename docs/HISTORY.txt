@@ -1,10 +1,12 @@
 Changelog
 =========
 
-1.59.36 (unreleased)
+1.59.36 (2017-03-29)
 --------------------
 
-- Nothing changed yet.
+- Fix: #83264 #83685 - removing "structure" when
+  displaying plain text user input.
+  [batradav]
 
 
 1.59.35 (2017-02-13)
