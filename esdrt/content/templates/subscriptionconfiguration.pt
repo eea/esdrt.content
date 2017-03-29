@@ -109,7 +109,7 @@
       <div class="row observation-details" style="display:none" tal:condition="view/show_description">
         <div class="cell position-0 width-16">
           <span
-            tal:replace="structure context/text/output|context/text">
+            tal:replace="context/text/output|context/text">
               Here goes the description
           </span>
         </div>

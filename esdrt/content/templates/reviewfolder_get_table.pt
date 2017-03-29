@@ -80,10 +80,7 @@
             2014
           </td>
           <td>
-            <span
-              tal:replace="structure observation/overview_status">
-                Open
-            </span>
+            <span tal:replace="observation/overview_status">Open</span>
           </td>
           <td>
             <div tal:attributes="class observation/observation_phase">&nbsp;</div>

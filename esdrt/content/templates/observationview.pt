@@ -289,10 +289,7 @@
       </div>
       <div class="row observation-details" style="display:none" tal:condition="view/show_description">
         <div class="cell position-0 width-16">
-          <span
-            tal:replace="structure context/text/output|context/text">
-              Here goes the description
-          </span>
+          <span tal:replace="context/text/output|context/text">Here goes the description</span>
         </div>
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-workflow" style="margin-top:15px">
@@ -362,7 +359,7 @@
           <dt>Observation Finish Requested</dt>
           <dd></dd>
           <dt>SE comments on finish observation request:</dt>
-          <dd><span tal:replace="structure context/closing_comments/output|context/closing_comments|nothing" /></dd>
+          <dd><span tal:replace="context/closing_comments/output|context/closing_comments|nothing" /></dd>
         </dl>
 
         <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'phase1-close-requested'" >
@@ -371,7 +368,7 @@
             <dd></dd>
             <dt>QE comments on finish observation request:</dt>
             <dd>
-              <div tal:replace="structure context/closing_deny_comments/output|context/closing_deny_comments|nothing">
+              <div tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing">
               Content
               </div>
             </dd>
@@ -409,7 +406,7 @@
           <dt>Observation Finish Requested</dt>
           <dd></dd>
           <dt>RE comments on finish observation request:</dt>
-          <dd><span tal:replace="structure context/closing_comments_phase2/output|context/closing_comments_phase2|nothing" /></dd>
+          <dd><span tal:replace="context/closing_comments_phase2/output|context/closing_comments_phase2|nothing" /></dd>
         </dl>
 
         <div class="finish-denied" tal:condition="python:context.closing_deny_comments_phase2 and context.get_status() == 'phase2-close-requested'" >
@@ -418,7 +415,7 @@
             <dd></dd>
             <dt>LR comments on finish observation request:</dt>
             <dd>
-              <div tal:replace="structure context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing">
+              <div tal:replace="context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing">
               Content
               </div>
             </dd>
@@ -447,7 +444,7 @@
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
             <dt>Recommendation/internal note:</dt>
-            <dd><span tal:replace="structure conclusion/text/output|conclusion/text|nothing" /></dd>
+            <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
             <tal:comment replace="nothing">
               hide the table https://taskman.eionet.europa.eu/issues/71375
               <dt>GHG estimates:</dt>
@@ -507,7 +504,7 @@
             <dd></dd>
             <tal:block condition="show_internal_notes">
             <dt>LR comments on finish observation request:</dt>
-            <dd><span tal:replace="structure context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing" /></dd>
+            <dd><span tal:replace="context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing" /></dd>
             </tal:block>
           </dl>
         </div>
@@ -680,7 +677,7 @@
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
             <dt>SE comments on conclusion:</dt>
-            <dd><span tal:replace="structure conclusion/text/output|conclusion/text|nothing" /></dd>
+            <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
             </tal:block>
           </dl>
 
@@ -691,7 +688,7 @@
             <dt>Observation Finishing denied</dt>
             <dd></dd>
             <dt>QE comments on conclusion:</dt>
-            <dd><span tal:replace="structure context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
+            <dd><span tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
           </dl>
         </div>
 
