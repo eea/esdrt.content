@@ -546,6 +546,7 @@ class Observation(dexterity.Container):
 
     def observation_status(self):
         status = self.observation_question_status()
+        my_status = self.get_status()
         if status in ['phase1-draft', 'phase2-draft',
                       'phase1-counterpart-comments',
                       'phase2-counterpart-comments',
@@ -574,6 +575,8 @@ class Observation(dexterity.Container):
                 conclusion_reason = conclusion and conclusion.closing_reason or ' '
                 if (conclusion_reason == 'no-conclusion-yet'):
                     return "SRRE"
+                elif not my_status.endswith('-closed'):
+                    return "answered"
                 else:
                     return "finalised"
             elif status == 'phase2-closed':
@@ -581,6 +584,8 @@ class Observation(dexterity.Container):
                 conclusion_reason =  conclusion and conclusion.closing_reason or ' '
                 if (conclusion_reason == 'no-conclusion-yet'):
                     return "SRRE"
+                elif not my_status.endswith('-closed'):
+                    return "answered"
                 else:
                     return "finalised"
         else:
@@ -589,18 +594,17 @@ class Observation(dexterity.Container):
 
     def overview_status(self):
         status = self.get_status()
+        closed_val = 'closed ({reason})'
         if status == 'phase1-closed':
             conclusion = self.get_conclusion()
             if conclusion:
-                return ' <br/> '.join(
-                    ['closed', '(' + conclusion.reason_value() + ')']
-                )
+                return closed_val.format(reason=conclusion.reason_value())
+
         elif status == 'phase2-closed':
             conclusion = self.get_conclusion_phase2()
             if conclusion:
-                return ' <br/> '.join(
-                    ['closed', '(' + conclusion.reason_value() + ')']
-                )
+                return closed_val.format(reason=conclusion.reason_value())
+
         else:
             return 'open'
 
