@@ -1,3 +1,4 @@
+import itertools
 import time
 import tablib
 from datetime import datetime
@@ -24,7 +25,7 @@ from zc.dict import OrderedDict
 from z3c.form import button
 from z3c.form import field
 from zope.schema.vocabulary import SimpleVocabulary
-from zope.schema import List, Choice, TextLine
+from zope.schema import List, Choice, TextLine, Bool
 from zope.interface import Interface
 from zope.interface import provider
 from z3c.form.interfaces import HIDDEN_MODE
@@ -329,6 +330,11 @@ class IExportForm(Interface):
         value_type=Choice(source=fields_vocabulary_factory)
     )
 
+    include_qa = Bool(
+        title=u'Include Q&A threads.',
+        required=False
+    )
+
     come_from = TextLine(title=u"Come from")
 
 
@@ -350,6 +356,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         self.widgets['come_from'].value = '%s?%s' % (
             self.context.absolute_url(), self.request['QUERY_STRING']
         )
+        if not self.is_secretariat():
+            self.widgets['include_qa'].mode = HIDDEN_MODE
 
     def action(self):
         return '%s/export_as_xls?%s' % (
@@ -401,7 +409,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         except LookupError:
             return term
 
-    def extract_data(self, data):
+    def extract_data(self, form_data):
         """ Create xls file
         """
         observations = self.get_questions()
@@ -409,11 +417,18 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         user_is_ms = getUtility(IUserIsMS)(self.context)
 
         fields_to_export = [
-            name for name in data.get('exportFields', []) if
+            name for name in form_data.get('exportFields', []) if
             not user_is_ms or name not in EXCLUDE_FIELDS_FOR_MS
         ]
-        data = tablib.Dataset()
-        data.title = "Observations"
+        dataset = tablib.Dataset()
+        dataset.title = "Observations"
+
+        catalog = api.portal.get_tool('portal_catalog')
+        qa_len = 0
+        base_len = 0
+
+        rows = []
+
         for observation in observations:
             row = [observation.getId]
             for key in fields_to_export:
@@ -431,20 +446,57 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                             self.translate_highlights(observation[key] or [])
                         ))
                     )
-                elif key=='overview_status':
-                    row.append(
-                        safe_unicode(
-                            observation[key].replace('<br>', '').replace('<br/>', '')
-                        ),
-                    )
                 else:
                     row.append(safe_unicode(observation[key]))
-            data.append(row)
+
+            if base_len == 0:
+                base_len = len(row)
+
+            if form_data.get('include_qa') and self.is_secretariat():
+                # Include Q&A threads if user is Manager
+                extracted_qa = self.extract_qa(catalog, observation)
+                extracted_qa_len = len(extracted_qa)
+                qa_len = extracted_qa_len if extracted_qa_len > qa_len else qa_len
+                row.extend(extracted_qa)
+
+            rows.append(row)
+
+        for row in rows:
+            # Fill columns that are too short with emtpy values
+            # as some observations have shorter QA threads.
+            # Need to do this because row lengths are validated.
+            row_len = len(row)
+            row_qa = row_len - base_len
+            row.extend([''] * (qa_len - row_qa))
+            dataset.append(row)
 
         headers = ['Observation']
         headers.extend([EXPORT_FIELDS[k] for k in fields_to_export])
-        data.headers = headers
-        return data
+        headers.extend(['Q&A'] * qa_len)
+        dataset.headers = headers
+        return dataset
+
+    def extract_qa(self, catalog, observation):
+        question_brains = catalog(
+            portal_type='Question',
+            path=observation.getPath()
+        )
+
+        questions = tuple([brain.getObject() for brain in question_brains])
+
+        comments = tuple(
+            itertools.chain(*[
+                question.get_questions() for question in questions
+            ])
+        )
+
+        mapping = dict(Comment='Question', CommentAnswer='Answer')
+        return tuple([
+            u'{}: {}'.format(
+                mapping[comment.portal_type],
+                safe_unicode(comment.text)
+            ) for comment in comments
+        ])
 
     def build_file(self, data):
         """ Export filtered observations in xls
@@ -524,7 +576,6 @@ class Inbox2ReviewFolderView(grok.View):
         }
         if freeText != "":
             query['SearchableText'] = freeText
-        import pdb; pdb.set_trace()
         return map(decorate, [b.getObject() for b in catalog.searchResults(query)])
 
     """
