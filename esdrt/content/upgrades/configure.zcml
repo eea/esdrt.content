@@ -381,4 +381,17 @@
           />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="48"
+        destination="49"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+          title="Reindex observations"
+          description="Reindex observation_status index and overview_status column."
+          handler=".48_49.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
 </configure>
