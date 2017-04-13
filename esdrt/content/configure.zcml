@@ -54,6 +54,7 @@
   <adapter name="SearchableText" factory=".indexers.SearchableText" />
 
   <adapter name="observation_question_status" factory=".indexers.observation_question_status" />
+  <adapter name="observation_questions_workflow" factory=".indexers.observation_questions_workflow" />
   <adapter name="last_answer_has_replies" factory=".indexers.last_answer_has_replies" />
   <adapter name="observation_already_replied" factory=".indexers.observation_already_replied" />
   <adapter name="reply_comments_by_mse" factory=".indexers.reply_comments_by_mse" />

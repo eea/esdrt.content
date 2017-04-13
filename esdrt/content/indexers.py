@@ -209,6 +209,11 @@ def observation_status(context):
 
 
 @indexer(IObservation)
+def observation_questions_workflow(context):
+    return context.observation_questions_workflow()
+
+
+@indexer(IObservation)
 def observation_step(context):
     try:
         status = context.get_status()

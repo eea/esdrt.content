@@ -34,6 +34,17 @@ from esdrt.content.utilities.ms_user import IUserIsMS
 grok.templatedir('templates')
 
 
+QUESTION_WORKFLOW_MAP = {
+    'SRRE': 'Sector Reviewer / Review Expert',
+    'LRQE': 'Lead Reviewer / Quality Expert',
+    'MSC': 'MS Coordinator',
+    'answered': 'Answered',
+    'conclusions': 'Conclusions',
+    'close-requested': 'Close requested',
+    'finalised': 'Finalised',
+}
+
+
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
@@ -260,7 +271,7 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
 
         table.render = ViewPageTemplateFile("templates/reviewfolder_get_table.pt")
         table.is_secretariat = self.is_secretariat
-
+        table.question_workflow_map = QUESTION_WORKFLOW_MAP
         return table
 
     def update_table(self, pagenumber='1', sort_on='modified',
@@ -300,7 +311,7 @@ EXPORT_FIELDS = OrderedDict([
     ('observation_finalisation_text_step1', 'Conclusion step 1 note'),
     ('observation_finalisation_reason_step2', 'Conclusion step 2'),
     ('observation_finalisation_text_step2', 'Conclusion step 2 note'),
-    ('observation_status', 'Workflow'),
+    ('observation_questions_workflow', 'Question workflow'),
     ('get_author_name', 'Author')
 ])
 
@@ -438,13 +449,28 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     'observation_is_technical_correction'
                 ]:
                     row.append(observation[key] and 'Yes' or 'No')
-                elif key=='getURL':
+                elif key == 'getURL':
                     row.append(observation.getURL())
-                elif key=='get_highlight':
+                elif key == 'get_highlight':
                     row.append(
                         safe_unicode(', '.join(
                             self.translate_highlights(observation[key] or [])
                         ))
+                    )
+                elif key == 'observation_questions_workflow':
+                    row_val = ', '.join([
+                        '. '.join((
+                            str(idx),
+                            QUESTION_WORKFLOW_MAP.get(val, val)
+                        )) for idx, val
+                        in enumerate(observation[key], start=1)
+                    ])
+                    row.append(
+                        row_val if row_val else
+                        QUESTION_WORKFLOW_MAP.get(
+                            observation['observation_status'],
+                            'unknown'
+                        )
                     )
                 else:
                     row.append(safe_unicode(observation[key]))

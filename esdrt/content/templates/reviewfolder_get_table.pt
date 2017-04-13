@@ -37,7 +37,7 @@
           Step
         </th>
         <th id="reviewfolder-workflow" class="nosort">
-          Workflow
+          Question workflow
         </th>
         <th tal:condition="view/is_secretariat">
           Author
@@ -85,28 +85,20 @@
           <td>
             <div tal:attributes="class observation/observation_phase">&nbsp;</div>
           </td>
-          <td >
-            <span tal:condition="python: observation.observation_status == 'SRRE'">
-              Sector Reviewer / Review Expert
-            </span>
-            <span tal:condition="python: observation.observation_status == 'LRQE'">
-              Lead Reviewer / Quality Expert
-            </span>
-            <span tal:condition="python: observation.observation_status == 'MSC'">
-              MS Coordinator
-            </span>
-            <span tal:condition="python: observation.observation_status == 'answered'">
-              Answered
-            </span>
-            <span tal:condition="python: observation.observation_status == 'conclusions'">
-              Conclusions
-            </span>
-            <span tal:condition="python: observation.observation_status == 'close-requested'">
-              Close requested
-            </span>
-            <span tal:condition="python: observation.observation_status == 'finalised'">
-              Finalised
-            </span>
+          <td tal:define="workflow_questions observation/observation_questions_workflow">
+            <ol style="margin-left: 0" tal:condition="workflow_questions">
+              <tal:question repeat="qw workflow_questions">
+                <li>
+                  <span tal:content="python:view.question_workflow_map.get(qw, qw)">
+                    Status
+                  </span>
+                </li>
+              </tal:question>
+            </ol>
+            <tal:block condition="not:workflow_questions"
+                       define="obs_status python:observation.observation_status">
+              <span tal:content="python:view.question_workflow_map.get(obs_status, obs_status)"></span>
+            </tal:block>
           </td>
           <td tal:condition="view/is_secretariat">
             <span tal:replace="observation/get_author_name" />

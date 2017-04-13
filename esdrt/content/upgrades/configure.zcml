@@ -394,4 +394,23 @@
           />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="49"
+        destination="50"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+          title="Update catalog config"
+          description="[refs #83911] New index and column added: observation_questions_workflow."
+          import_steps="catalog"
+          />
+
+      <genericsetup:upgradeStep
+          title="Reindex observations"
+          description="[refs #83911] New index and column added: observation_questions_workflow."
+          handler=".49_50.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
 </configure>

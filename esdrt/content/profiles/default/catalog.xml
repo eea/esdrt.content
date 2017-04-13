@@ -58,8 +58,12 @@
  </index>
 
 
- <index name="observation_question_status" meta_type="KeywordIndex">
+ <index name="observation_question_status" meta_type="FieldIndex">
     <indexed_attr value="observation_question_status" />
+ </index>
+
+ <index name="observation_questions_workflow" meta_type="KeywordIndex">
+    <indexed_attr value="observation_questions_workflow" />
  </index>
 
  <index name="last_answer_has_replies" meta_type="BooleanIndex">
@@ -115,6 +119,7 @@
  <column value="overview_status" />
  <column value="observation_phase" />
  <column value="observation_question_status" />
+ <column value="observation_questions_workflow" />
  <column value="last_answer_reply_number" />
  <column value="observation_already_replied" />
  <column value="reply_comments_by_mse" />

@@ -547,6 +547,7 @@ class Observation(dexterity.Container):
     def observation_status(self):
         status = self.observation_question_status()
         my_status = self.get_status()
+
         if status in ['phase1-draft', 'phase2-draft',
                       'phase1-counterpart-comments',
                       'phase2-counterpart-comments',
@@ -900,6 +901,24 @@ class Observation(dexterity.Container):
                     return "observation-phase1-draft"
                 else:
                     return "observation-phase2-draft"
+
+    def observation_questions_workflow(self):
+        questions = self.get_values_cat('Question')
+        if not questions:
+            return tuple()
+
+        # there is always only one question.
+        question = questions[0]
+
+        items = question.values()
+
+        comments = [i for i in items if i.portal_type == 'Comment']
+        answers = [i for i in items if i.portal_type == 'CommentAnswer']
+
+        len_comments = len(comments)
+        obs_status = self.observation_status()
+
+        return tuple(['Answered'] * (len_comments - 1) + [obs_status])
 
     def observation_css_class(self):
         if self.highlight:
