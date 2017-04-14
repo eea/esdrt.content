@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.59.39 (unreleased)
+1.59.39 (2017-04-14)
 --------------------
 
 - Update: #83911 - Observation questions status
