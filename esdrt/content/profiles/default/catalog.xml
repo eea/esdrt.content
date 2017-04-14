@@ -58,7 +58,7 @@
  </index>
 
 
- <index name="observation_question_status" meta_type="FieldIndex">
+ <index name="observation_question_status" meta_type="KeywordIndex">
     <indexed_attr value="observation_question_status" />
  </index>
 
