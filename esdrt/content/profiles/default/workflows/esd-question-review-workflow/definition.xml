@@ -145,6 +145,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -206,6 +207,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -270,6 +272,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -523,6 +526,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -703,6 +707,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -766,6 +771,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -838,6 +844,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -1091,6 +1098,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -1226,7 +1234,7 @@
   </guard>
  </transition>
  <transition transition_id="go-to-phase2" title="Go to phase 2" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
    <guard-role>Manager</guard-role>
    <guard-role>ReviewerPhase2</guard-role>
@@ -1239,7 +1247,7 @@
   </guard>
  </transition>
  <transition transition_id="phase1-add-answer" title="Add Answer" new_state="phase1-pending-answer-drafting" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
    <guard-role>MSAuthority</guard-role>
   </guard>
@@ -1278,13 +1286,13 @@
   </guard>
  </transition>
  <transition transition_id="phase1-close" title="Finish Observation" new_state="phase1-closed" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
    <guard-role>ReviewerPhase1</guard-role>
   </guard>
  </transition>
  <transition transition_id="phase1-close-lr" title="Finish Observation" new_state="phase1-closed" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
    <guard-role>QualityExpert</guard-role>
   </guard>
@@ -1341,7 +1349,7 @@
   </guard>
  </transition>
  <transition transition_id="phase1-reopen" title="Reopen" new_state="phase1-draft" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
   </guard>
  </transition>
@@ -1385,7 +1393,7 @@
   </guard>
  </transition>
  <transition transition_id="phase2-add-answer" title="Add Answer" new_state="phase2-pending-answer-drafting" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
    <guard-role>MSAuthority</guard-role>
   </guard>
@@ -1494,7 +1502,7 @@
   </guard>
  </transition>
  <transition transition_id="phase2-reopen" title="Reopen" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
   </guard>
  </transition>
@@ -1533,7 +1541,7 @@
  <variable variable_id="action" for_catalog="False" for_status="True" update_always="True">
   <description>Previous transition</description>
   <default>
-   
+
    <expression>transition/getId|nothing</expression>
   </default>
   <guard>
@@ -1542,7 +1550,7 @@
  <variable variable_id="actor" for_catalog="False" for_status="True" update_always="True">
   <description>The ID of the user who performed the previous transition</description>
   <default>
-   
+
    <expression>user/getUserName</expression>
   </default>
   <guard>
@@ -1551,7 +1559,7 @@
  <variable variable_id="comments" for_catalog="False" for_status="True" update_always="True">
   <description>Comment about the last transition</description>
   <default>
-   
+
    <expression>python:state_change.kwargs.get('comment', '')</expression>
   </default>
   <guard>
@@ -1560,7 +1568,7 @@
  <variable variable_id="review_history" for_catalog="False" for_status="False" update_always="False">
   <description>Provides access to workflow history</description>
   <default>
-   
+
    <expression>state_change/getHistory</expression>
   </default>
   <guard>
@@ -1571,7 +1579,7 @@
  <variable variable_id="time" for_catalog="False" for_status="True" update_always="True">
   <description>When the previous transition was performed</description>
   <default>
-   
+
    <expression>state_change/getDateTime</expression>
   </default>
   <guard>

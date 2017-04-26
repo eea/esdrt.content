@@ -413,4 +413,17 @@
           />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="50"
+        destination="51"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+          title="Update question workflow."
+          description="[refs #84445] Grant MSAuthority 'Access contents information' when the question is in a '-draft' state."
+          handler=".50_51.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
 </configure>
