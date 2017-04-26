@@ -13,6 +13,7 @@
 
   <include file="permissions.zcml" />
   <include file="profiles.zcml" />
+  <include file="patches.zcml" />
   <include package=".upgrades" />
   <include package=".adapters" />
   <include package=".utilities" />

@@ -38,7 +38,8 @@ setup(name='esdrt.content',
           'collective.deletepermission',
           'tablib',
           'python-docx == 0.8.5',
-          'zc.dict'
+          'zc.dict',
+          'collective.monkeypatcher',
       ],
       entry_points="""
       # -*- Entry points: -*-

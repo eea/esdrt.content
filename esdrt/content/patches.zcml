@@ -1,0 +1,25 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:monkey="http://namespaces.plone.org/monkey"
+  i18n_domain="emrt.necd.content">
+
+  <include package="collective.monkeypatcher" />
+
+  <monkey:patch
+    description="Add eea.cache for Products.LDAPUserFolder.LDAPUserFolder._lookupuserbyattr"
+    class="Products.LDAPUserFolder.LDAPUserFolder.LDAPUserFolder"
+    original="_lookupuserbyattr"
+    replacement=".patches._lookupuserbyattr"
+    preserveOriginal="true"
+    />
+
+  <monkey:patch
+    description="Add eea.cache for Products.LDAPUserFolder.LDAPDelegate.search"
+    class="Products.LDAPUserFolder.LDAPDelegate.LDAPDelegate"
+    original="search"
+    replacement=".patches.LDAPDelegate_search"
+    preserveOriginal="true"
+    />
+
+</configure>
+
