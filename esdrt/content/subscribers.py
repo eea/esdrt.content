@@ -206,6 +206,13 @@ def observation_transition(observation, event):
                     obj=question,
                     transition='phase2-reopen'
                 )
+                # Refs #84444 - If observation has Q&A
+                # go directly to phase2-open.
+                api.content.transition(
+                    obj=observation,
+                    transition='phase2-open'
+                )
+
             conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
