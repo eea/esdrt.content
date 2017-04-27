@@ -2,10 +2,16 @@ Changelog
 =========
 
 
-1.59.40 (unreleased)
+1.59.40 (2017-04-27)
 --------------------
 
 - Update: #84571 - Porting emrt.necd.content LDAP cache patches
+  [batradav]
+
+- Update: #84444 - Important observation invisible to country
+  [batradav]
+
+- Update: #84445 - Q&A of important observation is invisible to MS
   [batradav]
 
 
