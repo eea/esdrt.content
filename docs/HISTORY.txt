@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-1.59.41 (unreleased)
+1.59.41 (2017-04-27)
 --------------------
 
-- Nothing changed yet.
+- Update: #84445 - Q&A of important observation is invisible to MS
+  [batradav]
 
 
 1.59.40 (2017-04-27)
