@@ -12,6 +12,17 @@ from Products.CMFCore.utils import getToolByName
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 
+def run_as_manager(context, func, *args, **kwargs):
+    # Adopt_roles doesn't work as expeded, need to explicitly
+    # grant and revoke the 'Manager' role.
+    curr_user = api.user.get_current()
+    api.user.grant_roles(user=curr_user, obj=context, roles=['Manager'])
+    try:
+        func(*args, **kwargs)
+    finally:
+        api.user.revoke_roles(user=curr_user, obj=context, roles=['Manager'])
+
+
 @grok.subscribe(IQuestion, IActionSucceededEvent)
 def question_transition(question, event):
     if event.action in ['phase1-approve-question', 'phase2-approve-question']:
@@ -208,10 +219,13 @@ def observation_transition(observation, event):
                 )
                 # Refs #84444 - If observation has Q&A
                 # go directly to phase2-open.
-                api.content.transition(
+                run_as_manager(
+                    observation,
+                    api.content.transition,
                     obj=observation,
-                    transition='phase2-open'
+                    transition='phase2-open',
                 )
+
 
             conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
             if conclusions:
