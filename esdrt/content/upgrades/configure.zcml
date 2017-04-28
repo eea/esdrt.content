@@ -439,4 +439,17 @@
           />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="52"
+        destination="53"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+          title="Update QuestionAnswer workflow."
+          description="[refs #84648] Allow Manager access to 'Initial' answers."
+          handler=".52_53.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
 </configure>

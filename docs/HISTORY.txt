@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-1.59.43 (unreleased)
+1.59.43 (2017-04-28)
 --------------------
 
-- Nothing changed yet.
+- Fix: #84648 - second Q&A lost
+  [batradav]
 
 
 1.59.42 (2017-04-28)
