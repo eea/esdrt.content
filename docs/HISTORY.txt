@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.59.42 (unreleased)
+1.59.42 (2017-04-28)
 --------------------
 
 - Update: #84445 - Fix phase2-closed acquired permissions.
