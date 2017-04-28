@@ -1333,7 +1333,8 @@ class ObservationMixin(grok.View):
             question = self.question()
             if question is not None:
                 qs = question.get_questions()
-                return qs[-1].getObject()
+                if qs:
+                    return qs[-1].getObject()
 
         return None
 
