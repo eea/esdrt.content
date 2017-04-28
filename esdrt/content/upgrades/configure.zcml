@@ -426,4 +426,17 @@
           />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="51"
+        destination="52"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+          title="Update question workflow."
+          description="[refs #84445] Fixing permission for phase2-closed."
+          handler=".51_52.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
 </configure>

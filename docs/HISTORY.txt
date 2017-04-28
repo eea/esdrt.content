@@ -5,7 +5,8 @@ Changelog
 1.59.42 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Update: #84445 - Fix phase2-closed acquired permissions.
+  [batradav]
 
 
 1.59.41 (2017-04-27)
