@@ -19,28 +19,35 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>MSAuthority</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="False">
    <permission-role>MSAuthority</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>MSAuthority</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Reply to item" acquired="True">
   </permission-map>
   <permission-map name="View" acquired="False">
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add ESDRTFile" acquired="False">
    <permission-role>MSAuthority</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Edit CommentAnswer" acquired="True">
   </permission-map>
@@ -95,15 +102,17 @@
   </permission-map>
  </state>
  <transition transition_id="publish" title="Publish" new_state="public" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
    <guard-role>MSAuthority</guard-role>
+   <guard-role>Manager</guard-role>
   </guard>
  </transition>
  <transition transition_id="retract" title="Retract" new_state="initial" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
    <guard-role>MSAuthority</guard-role>
+   <guard-role>Manager</guard-role>
   </guard>
  </transition>
  <worklist worklist_id="reviewer_queue" title="">
@@ -117,7 +126,7 @@
  <variable variable_id="action" for_catalog="False" for_status="True" update_always="True">
   <description>Previous transition</description>
   <default>
-   
+
    <expression>transition/getId|nothing</expression>
   </default>
   <guard>
@@ -126,7 +135,7 @@
  <variable variable_id="actor" for_catalog="False" for_status="True" update_always="True">
   <description>The ID of the user who performed the previous transition</description>
   <default>
-   
+
    <expression>user/getId</expression>
   </default>
   <guard>
@@ -135,7 +144,7 @@
  <variable variable_id="comments" for_catalog="False" for_status="True" update_always="True">
   <description>Comment about the last transition</description>
   <default>
-   
+
    <expression>python:state_change.kwargs.get('comment', '')</expression>
   </default>
   <guard>
@@ -144,7 +153,7 @@
  <variable variable_id="review_history" for_catalog="False" for_status="False" update_always="False">
   <description>Provides access to workflow history</description>
   <default>
-   
+
    <expression>state_change/getHistory</expression>
   </default>
   <guard>
@@ -155,7 +164,7 @@
  <variable variable_id="time" for_catalog="False" for_status="True" update_always="True">
   <description>When the previous transition was performed</description>
   <default>
-   
+
    <expression>state_change/getDateTime</expression>
   </default>
   <guard>
