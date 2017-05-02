@@ -53,6 +53,10 @@
     <permission name="esdrt.content: View Comment Discussion" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />
+      <role name="LeadReviewer" />
+      <role name="QualityExpert" />
+      <role name="ReviewerPhase1" />
+      <role name="ReviewerPhase2" />
     </permission>
     <permission name="esdrt.content: Export Observations" acquire="False">
       <role name="Manager" />
@@ -65,6 +69,8 @@
     </permission>
     <permission name="esdrt.content: View Answer Discussion" acquire="False">
       <role name="Manager" />
+      <role name="MSAuthority" />
+      <role name="MSExpert" />
     </permission>
     <permission name="esdrt.content: Add Question" acquire="False">
       <role name="Manager" />

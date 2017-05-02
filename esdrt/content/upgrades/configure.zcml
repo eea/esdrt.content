@@ -452,4 +452,17 @@
           />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="53"
+        destination="54"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+          title="Import rolemap."
+          description="[#84579] Global Answer/Commend discussion permissions."
+          import_steps="rolemap"
+          />
+
+    </genericsetup:upgradeSteps>
 </configure>
