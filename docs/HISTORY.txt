@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+1.59.44 (2017-05-02)
+--------------------
+
+- Fix: #84579 - Visibility of commenting loop for MS Coordinator
+  [batradav]
+
+
 1.59.43 (2017-04-28)
 --------------------
 
