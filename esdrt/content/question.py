@@ -475,6 +475,7 @@ class DeleteLastComment(grok.View):
     grok.require('zope2.View')
 
     def render(self):
+        catalog = api.portal.get_tool('portal_catalog')
         comments = [c for c in self.context.values() if c.portal_type == 'Comment']
         if comments:
             last_comment = comments[-1]
@@ -482,12 +483,14 @@ class DeleteLastComment(grok.View):
             if len(comments) == 1:
                 # delete also the parent question
                 self.context.manage_delObjects([last_comment.getId()])
+                catalog.unindexObject(last_comment)
                 observation = aq_parent(question)
                 del observation[question.getId()]
                 return self.request.response.redirect(observation.absolute_url())
             else:
                 question_state = api.content.get_state(obj=question)
                 self.context.manage_delObjects([last_comment.getId()])
+                catalog.unindexObject(last_comment)
                 url = question.absolute_url()
                 if question_state == 'phase1-draft':
                     url += '/content_status_modify?workflow_action=phase1-delete-question'
