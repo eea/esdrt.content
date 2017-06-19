@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+1.59.46 (2017-06-19)
+--------------------
+
+- Fix: #84710 - MS able to add two consecutive answers
+  [batradav]
+
+
 1.59.45 (2017-06-17)
 --------------------
 
