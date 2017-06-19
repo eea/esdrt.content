@@ -1755,6 +1755,10 @@ class AddAnswerForm(Form):
             context = questions[0]
         else:
             raise ActionExecutionError(Invalid(u"Invalid context"))
+
+        if context.has_answers():
+            raise ActionExecutionError(Invalid(u"Question is already answered!"))
+
         id = str(int(time()))
         item_id = context.invokeFactory(
             type_name='CommentAnswer',
