@@ -132,7 +132,8 @@ class ReviewFolderMixin(grok.View):
 
     def is_secretariat(self):
         user = api.user.get_current()
-        return 'Manager' in user.getRoles()
+        allowed_roles = ['Manager', 'MSExpert', 'MSAuthority']
+        return any(role in user.getRoles() for role in allowed_roles)
 
     def get_countries(self):
         vtool = getToolByName(self, 'portal_vocabularies')
