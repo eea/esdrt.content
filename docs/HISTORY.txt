@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.59.47 (unreleased)
+--------------------
+
+- Task: #91901 - Add columns in xls export
+  [batradav]
 
 1.59.46 (2017-06-19)
 --------------------

@@ -30,6 +30,8 @@ from zope.interface import Interface
 from zope.interface import provider
 from z3c.form.interfaces import HIDDEN_MODE
 from esdrt.content.utilities.ms_user import IUserIsMS
+from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
+
 
 grok.templatedir('templates')
 
@@ -43,6 +45,12 @@ QUESTION_WORKFLOW_MAP = {
     'close-requested': 'Close requested',
     'finalised': 'Finalised',
 }
+
+
+TPL_LDAP_QE = 'extranet-esd-ghginv-qualityexpert-{sector}'
+TPL_LDAP_LR = 'extranet-esd-esdreview-leadreview-{country}'
+TPL_LDAP_SE = 'extranet-esd-ghginv-sr-{sector}-{country}'
+TPL_LDAP_RE = 'extranet-esd-esdreview-reviewexp-{sector}-{country}'
 
 
 # Cache helper methods
@@ -313,7 +321,14 @@ EXPORT_FIELDS = OrderedDict([
     ('observation_finalisation_reason_step2', 'Conclusion step 2'),
     ('observation_finalisation_text_step2', 'Conclusion step 2 note'),
     ('observation_questions_workflow', 'Question workflow'),
-    ('get_author_name', 'Author')
+    ('last_question_workflow', 'Last question workflow'),
+    ('get_author_name', 'Author'),
+    ('get_name_qe', 'Quality expert'),
+    ('get_name_lr', 'Lead reviewer'),
+    ('get_name_se', 'Sector expert'),
+    ('get_name_re', 'Review expert'),
+    ('export_date', 'Export date'),
+    ('export_time', 'Export time'),
 ])
 
 # Don't show conclusion notes to MS users.
@@ -421,6 +436,27 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         except LookupError:
             return term
 
+    _cache_get_ldap_names = None
+
+    def _get_ldap_names(self, brain_obs, tpl_group):
+        """ Given an observation brain and a LDAP group template,
+            returns the 'fullname' of the group members.
+        """
+        if self._cache_get_ldap_names is None:
+            self._cache_get_ldap_names = dict()
+
+        sector = get_category_ldap_from_crf_code(brain_obs.get_crf_code)
+        country = brain_obs.country
+        group_name = tpl_group.format(sector=sector, country=country)
+        if group_name not in self._cache_get_ldap_names:
+            group = api.group.get(group_name)
+            users = [
+                user.getProperty('fullname')
+                for user in group.getGroupMembers()
+            ]
+            self._cache_get_ldap_names[group_name] = users
+        return self._cache_get_ldap_names[group_name]
+
     def extract_data(self, form_data):
         """ Create xls file
         """
@@ -473,6 +509,36 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                             'unknown'
                         )
                     )
+                elif key == 'last_question_workflow':
+                    q_wfs = observation['observation_questions_workflow']
+                    last_q_wf = q_wfs[-1] if q_wfs else None
+                    row_val = (
+                        QUESTION_WORKFLOW_MAP.get(last_q_wf, last_q_wf)
+                        if last_q_wf else None
+                    )
+                    row.append(
+                        row_val if row_val else
+                        QUESTION_WORKFLOW_MAP.get(
+                            observation['observation_status'],
+                            'unknown'
+                        )
+                    )
+                elif key == 'get_name_qe':
+                    names = self._get_ldap_names(observation, TPL_LDAP_QE)
+                    row.append(', '.join(names))
+                elif key == 'get_name_lr':
+                    names = self._get_ldap_names(observation, TPL_LDAP_LR)
+                    row.append(', '.join(names))
+                elif key == 'get_name_se':
+                    names = self._get_ldap_names(observation, TPL_LDAP_SE)
+                    row.append(', '.join(names))
+                elif key == 'get_name_re':
+                    names = self._get_ldap_names(observation, TPL_LDAP_RE)
+                    row.append(', '.join(names))
+                elif key == 'export_date':
+                    row.append(datetime.now().strftime('%d/%m/%Y'))
+                elif key == 'export_time':
+                    row.append(datetime.now().strftime('%H:%M:%S'))
                 else:
                     row.append(safe_unicode(observation[key]))
 
@@ -483,7 +549,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                 # Include Q&A threads if user is Manager
                 extracted_qa = self.extract_qa(catalog, observation)
                 extracted_qa_len = len(extracted_qa)
-                qa_len = extracted_qa_len if extracted_qa_len > qa_len else qa_len
+                qa_len = (
+                    extracted_qa_len if extracted_qa_len > qa_len else qa_len)
                 row.extend(extracted_qa)
 
             rows.append(row)
