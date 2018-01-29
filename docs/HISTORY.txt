@@ -1,12 +1,12 @@
 Changelog
 =========
 
-1.59.47 (unreleased)
+1.59.47 (2018-01-29)
 --------------------
 
 - Task: #91901 - Add columns in xls export
   [batradav]
-  
+
 - Task: #91895 - Made QA thread option visible for MS
   [irina-botez]
 
