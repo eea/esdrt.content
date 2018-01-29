@@ -6,6 +6,9 @@ Changelog
 
 - Task: #91901 - Add columns in xls export
   [batradav]
+  
+- Task: #91895 - Made QA thread option visible for MS
+  [irina-botez]
 
 1.59.46 (2017-06-19)
 --------------------
