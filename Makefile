@@ -3,7 +3,7 @@
 
 PACKAGE=esdrt.content
 
-VERSION=`grep "version = " setup.py | grep -o '[0-9.]*'`
+VERSION=$(shell grep "version = " setup.py | grep -o '[0-9.]*')
 
 all:
 

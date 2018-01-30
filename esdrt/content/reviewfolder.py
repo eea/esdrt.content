@@ -31,6 +31,7 @@ from zope.interface import provider
 from z3c.form.interfaces import HIDDEN_MODE
 from esdrt.content.utilities.ms_user import IUserIsMS
 from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
+from esdrt.content import ldap_utils
 
 
 grok.templatedir('templates')
@@ -51,6 +52,15 @@ TPL_LDAP_QE = 'extranet-esd-ghginv-qualityexpert-{sector}'
 TPL_LDAP_LR = 'extranet-esd-esdreview-leadreview-{country}'
 TPL_LDAP_SE = 'extranet-esd-ghginv-sr-{sector}-{country}'
 TPL_LDAP_RE = 'extranet-esd-esdreview-reviewexp-{sector}-{country}'
+
+LDAP_QUERY_GROUPS = (
+    '(|'
+    '(cn=extranet-esd-ghginv-qualityexpert-*)'
+    '(cn=extranet-esd-esdreview-leadreview-*)'
+    '(cn=extranet-esd-ghginv-sr-*)'
+    '(cn=extranet-esd-esdreview-reviewexp-*)'
+    ')'
+)
 
 
 # Cache helper methods
@@ -437,26 +447,23 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         except LookupError:
             return term
 
-    _cache_get_ldap_names = None
+    # populated if export requires ldap queries
+    _ldap_group_members = dict()
 
     def _get_ldap_names(self, brain_obs, tpl_group):
         """ Given an observation brain and a LDAP group template,
             returns the 'fullname' of the group members.
         """
-        if self._cache_get_ldap_names is None:
-            self._cache_get_ldap_names = dict()
-
         sector = get_category_ldap_from_crf_code(brain_obs.get_crf_code)
         country = brain_obs.country
         group_name = tpl_group.format(sector=sector, country=country)
-        if group_name not in self._cache_get_ldap_names:
-            group = api.group.get(group_name)
-            users = [
-                user.getProperty('fullname')
-                for user in group.getGroupMembers()
-            ]
-            self._cache_get_ldap_names[group_name] = users
-        return self._cache_get_ldap_names[group_name]
+        return self._ldap_group_members.get(group_name, [])
+
+    def fetch_ldap_groups(self, query):
+        ldap_plugin = api.portal.get()['acl_users']['ldap-plugin']['acl_users']
+        ldap_config = ldap_utils.get_config(ldap_plugin)
+        ldap_conn = ldap_utils.connect(ldap_config)
+        return ldap_utils.query_group_members(ldap_config, ldap_conn, query)
 
     def extract_data(self, form_data):
         """ Create xls file
@@ -477,6 +484,14 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         base_len = 0
 
         rows = []
+
+        query_ldap = set(fields_to_export).intersection(
+            ('get_name_qe', 'get_name_lr', 'get_name_se', 'get_name_re'))
+
+        if query_ldap:
+            self._ldap_group_members = self.fetch_ldap_groups(
+                LDAP_QUERY_GROUPS
+            )
 
         for observation in observations:
             row = [observation.getId]
