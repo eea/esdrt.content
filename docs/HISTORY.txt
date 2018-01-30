@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.59.48 (2018-01-30)
+--------------------
+
+- Task: #91901 - Add columns in xls export - performance improvements
+  [batradav]
+
 1.59.47 (2018-01-29)
 --------------------
 

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.59.47'
+version = '1.59.48'
 
 setup(name='esdrt.content',
       version=version,
@@ -40,6 +40,7 @@ setup(name='esdrt.content',
           'python-docx == 0.8.5',
           'zc.dict',
           'collective.monkeypatcher',
+          'python-ldap',
       ],
       entry_points="""
       # -*- Entry points: -*-
