@@ -150,6 +150,10 @@ class ReviewFolderMixin(grok.View):
 
     def is_secretariat(self):
         user = api.user.get_current()
+        return 'Manager' in user.getRoles()
+
+    def is_MS(self):
+        user = api.user.get_current()
         user_roles = user.getRoles()
         allowed_roles = ['Manager', 'MSExpert', 'MSAuthority']
         return any(role in user_roles for role in allowed_roles)
@@ -394,7 +398,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         self.widgets['come_from'].value = '%s?%s' % (
             self.context.absolute_url(), self.request['QUERY_STRING']
         )
-        if not self.is_secretariat():
+        if not self.is_MS():
             self.widgets['include_qa'].mode = HIDDEN_MODE
 
     def action(self):
@@ -561,7 +565,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             if base_len == 0:
                 base_len = len(row)
 
-            if form_data.get('include_qa') and self.is_secretariat():
+            if form_data.get('include_qa') and self.is_MS():
                 # Include Q&A threads if user is Manager
                 extracted_qa = self.extract_qa(catalog, observation)
                 extracted_qa_len = len(extracted_qa)
