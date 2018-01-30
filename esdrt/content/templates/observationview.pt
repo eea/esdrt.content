@@ -676,7 +676,10 @@
             <dt>Reason:</dt>
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
-            <dt>SE comments on conclusion:</dt>
+            <dt>
+              SE comments on conclusion:
+              <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
+            </dt>
             <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
             </tal:block>
           </dl>
@@ -687,7 +690,10 @@
           <dl>
             <dt>Observation Finishing denied</dt>
             <dd></dd>
-            <dt>QE comments on conclusion:</dt>
+            <dt>
+              QE comments on conclusion:
+              <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
+            </dt>
             <dd><span tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
           </dl>
         </div>
@@ -820,6 +826,7 @@
                 <div class="cell position-0 width-16">
                   Conclusion comments
                   <span class="eea-icon eea-icon-left"></span>
+                  <span class="tooltipIconBlue" title="The internal commenting loop between team members is not visible for Member States."></span>
                 </div>
               </div>
               <div class="conclusion-discussion conclusion-discussion-2" tal:content="structure provider:esdrt.content.commentmanager"  style="display:none"/>
@@ -1088,6 +1095,7 @@
                   <div class="cell position-0 width-16">
                     Comments
                     <span class="eea-icon eea-icon-left"></span>
+                    <span class="tooltipIconBlue" title="The internal commenting loop between team members is not visible for Member States."></span>
                   </div>
                 </div>
                 <div class="answer-comments" tal:content="structure provider:esdrt.content.commentmanager" style="display:none" />
