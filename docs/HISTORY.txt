@@ -1,6 +1,15 @@
 Changelog
 =========
 
+1.59.49 (2018-02-05)
+--------------------
+
+- Task: #28742 - A few more tooltips
+  [irina-botez]
+
+- Task: #91895 - Made QA thread option visible for MS
+  [irina-botez]
+
 1.59.48 (2018-01-30)
 --------------------
 
