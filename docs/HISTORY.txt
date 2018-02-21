@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.59.50 (2018-02-21)
+--------------------
+
+- Task: #91895 - Make QA thread option visible for MS
+  [irina-botez]
+
 1.59.49 (2018-02-05)
 --------------------
 
