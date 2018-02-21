@@ -152,11 +152,22 @@ class ReviewFolderMixin(grok.View):
         user = api.user.get_current()
         return 'Manager' in user.getRoles()
 
-    def is_MS(self):
+    def can_export_qa(self):
         user = api.user.get_current()
-        user_roles = user.getRoles()
+
+        user_roles = user.getRolesInContext(self.context)
+        user_groups = user.getGroups()
+
         allowed_roles = ['Manager', 'MSExpert', 'MSAuthority']
-        return any(role in user_roles for role in allowed_roles)
+        allowed_groups = [
+            'extranet-esd-countries-msexpert',
+            'extranet-esd-countries-msa',
+        ]
+
+        has_roles = set(user_roles).intersection(allowed_roles)
+        has_groups = set(user_groups).intersection(allowed_groups)
+
+        return has_roles or has_groups
 
     def get_countries(self):
         vtool = getToolByName(self, 'portal_vocabularies')
@@ -180,9 +191,10 @@ class ReviewFolderMixin(grok.View):
 
     def get_review_years(self):
         catalog = api.portal.get_tool('portal_catalog')
-        review_years = catalog.uniqueValuesFor('review_year')
-        review_years = [c for c in catalog.uniqueValuesFor('review_year') if isinstance(c, basestring)]
-        return review_years
+        return [
+            c for c in catalog.uniqueValuesFor('review_year')
+            if isinstance(c, basestring)
+        ]
 
     def get_inventory_years(self):
         catalog = api.portal.get_tool('portal_catalog')
@@ -398,7 +410,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         self.widgets['come_from'].value = '%s?%s' % (
             self.context.absolute_url(), self.request['QUERY_STRING']
         )
-        if not self.is_MS():
+
+        if not self.can_export_qa():
             self.widgets['include_qa'].mode = HIDDEN_MODE
 
     def action(self):
@@ -565,7 +578,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             if base_len == 0:
                 base_len = len(row)
 
-            if form_data.get('include_qa') and self.is_MS():
+            if form_data.get('include_qa') and self.can_export_qa():
                 # Include Q&A threads if user is Manager
                 extracted_qa = self.extract_qa(catalog, observation)
                 extracted_qa_len = len(extracted_qa)
