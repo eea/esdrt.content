@@ -4,4 +4,14 @@
 
   <utility factory=".ms_user.UserIsMS" />
 
+  <utility
+      factory=".ldap_utils.LDAPQuery"
+      provides=".interfaces.ILDAPQuery"
+  />
+
+  <utility
+      factory=".roles.SetupReviewFolderRoles"
+      provides=".interfaces.ISetupReviewFolderRoles"
+  />
+
 </configure>

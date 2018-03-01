@@ -465,4 +465,17 @@
           />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="54"
+        destination="55"
+        profile="esdrt.content:default">
+
+        <genericsetup:upgradeStep
+            title="[refs #93446] Grant roles to LDAP groups."
+            description="Iterate over all LDAP MSA, LR and SE groups and grant them appropiate Zope roles."
+            handler=".54_55.upgrade"
+        />
+
+    </genericsetup:upgradeSteps>
 </configure>

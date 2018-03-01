@@ -69,6 +69,23 @@
   <adapter name="observation_status" factory=".indexers.observation_status" />
   <adapter name="observation_step" factory=".indexers.observation_step" />
 
+  <!-- ReviewFolder custom add form -->
+  <adapter
+      for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+      provides="zope.publisher.interfaces.browser.IBrowserPage"
+      factory="esdrt.content.reviewfolder.AddView"
+      name="esdrt.content.reviewfolder"
+  />
+
+  <class class=".reviewfolder.AddView">
+    <require
+        permission="esdrt.content.AddReviewFolder"
+        interface="zope.publisher.interfaces.browser.IBrowserPage"
+    />
+  </class>
+
   <!-- Crons view -->
   <browser:page
       name="cron_update_vocabularies"

@@ -4,18 +4,18 @@ import tablib
 from datetime import datetime
 from Acquisition import aq_inner
 from AccessControl import getSecurityManager, Unauthorized
-from five import grok
 from plone import api
 from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
-from plone.directives import dexterity
-from plone.directives import form
+from plone.dexterity.browser import add
+from plone.dexterity.content import Container
 from plone.memoize import ram
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.Five import BrowserView
 from esdrt.content.timeit import timeit
 from eea.cache import cache
 from zope.component import getUtility
@@ -24,17 +24,19 @@ from zope.schema.interfaces import IContextSourceBinder
 from zc.dict import OrderedDict
 from z3c.form import button
 from z3c.form import field
+from zope.interface import implementer
+from plone.z3cform.layout import wrap_form
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema import List, Choice, TextLine, Bool
 from zope.interface import Interface
 from zope.interface import provider
+from z3c.form import form
 from z3c.form.interfaces import HIDDEN_MODE
 from esdrt.content.utilities.ms_user import IUserIsMS
+from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
+
 from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
 from esdrt.content import ldap_utils
-
-
-grok.templatedir('templates')
 
 
 QUESTION_WORKFLOW_MAP = {
@@ -68,18 +70,18 @@ def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
 
 
-class IReviewFolder(form.Schema, IImageScaleTraversable):
+class IReviewFolder(IImageScaleTraversable):
     """
     Folder to have all observations together
     """
 
 
-class ReviewFolder(dexterity.Container):
-    grok.implements(IReviewFolder)
+@implementer(IReviewFolder)
+class ReviewFolder(Container):
+    """ """
 
 
-class ReviewFolderMixin(grok.View):
-    grok.baseclass()
+class ReviewFolderMixin(BrowserView):
 
     @memoize
     def get_questions(self, sort_on="modified", sort_order="reverse"):
@@ -264,9 +266,6 @@ class ReviewFolderMixin(grok.View):
 
 
 class ReviewFolderView(ReviewFolderMixin):
-    grok.context(IReviewFolder)
-    grok.require('zope2.View')
-    grok.name('view')
 
     def contents_table(self):
         table = ReviewFolderBrowserView(aq_inner(self.context), self.request)
@@ -278,9 +277,6 @@ class ReviewFolderView(ReviewFolderMixin):
 
 
 class ReviewFolderBrowserView(ReviewFolderMixin):
-    grok.context(IReviewFolder)
-    grok.require('zope2.View')
-    grok.name('get_table')
 
     def folderitems(self, sort_on="modified", sort_order="reverse"):
         """
@@ -305,7 +301,8 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
             pagesize=pagesize
         )
 
-        table.render = ViewPageTemplateFile("templates/reviewfolder_get_table.pt")
+        table.render = ViewPageTemplateFile(
+            "browser/templates/reviewfolder_get_table.pt")
         table.is_secretariat = self.is_secretariat
         table.question_workflow_map = QUESTION_WORKFLOW_MAP
         return table
@@ -393,9 +390,6 @@ class IExportForm(Interface):
 
 
 class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
-    grok.context(IReviewFolder)
-    grok.require('esdrt.content.ExportObservations')
-    grok.name('export_as_xls')
 
     fields = field.Fields(IExportForm)
     ignoreContext = True
@@ -643,6 +637,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         return
 
 
+ExportReviewFolderFormView = wrap_form(ExportReviewFolderForm)
+
+
 def _item_user(fun, self, user, item):
     return (user.getId(), item.getId(), item.modified())
 
@@ -681,10 +678,7 @@ def _catalog_change(fun, self, *args, **kwargs):
     return (counter, user, path)
 
 
-class Inbox2ReviewFolderView(grok.View):
-    grok.context(IReviewFolder)
-    grok.require('zope2.View')
-    grok.name('inboxview2')
+class Inbox2ReviewFolderView(BrowserView):
 
     def update(self):
         freeText = self.request.form.get('freeText', '')
@@ -709,8 +703,6 @@ class Inbox2ReviewFolderView(grok.View):
         Sector expert / Review expert
     """
 
-
-
     def get_draft_observations(self):
         """
          Role: Sector expert / Review expert
@@ -723,8 +715,6 @@ class Inbox2ReviewFolderView(grok.View):
                     'observation-phase2-draft']:
                 items.append(item)
         return items
-
-
 
     def get_draft_questions(self):
         """
@@ -745,8 +735,6 @@ class Inbox2ReviewFolderView(grok.View):
     def get_roles_for_item(self, user, item):
         return api.user.get_roles(username=user.id, obj=item, inherit=False)
 
-
-
     def get_counterpart_questions_to_comment(self):
         """
          Role: Sector expert / Review expert
@@ -762,8 +750,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(item)
         return items
 
-
-
     def get_counterpart_conclusion_to_comment(self):
         """
          Role: Sector expert / Review expert
@@ -778,8 +764,6 @@ class Inbox2ReviewFolderView(grok.View):
                     obj.get('isCP', ''):
                 items.append(item)
         return items
-
-
 
     def get_ms_answers_to_review(self):
         """
@@ -804,8 +788,6 @@ class Inbox2ReviewFolderView(grok.View):
                     ]):
                 items.append(obj)
         return items
-
-
 
     def get_unanswered_questions(self):
         """
@@ -840,8 +822,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_waiting_for_comment_from_counterparts_for_question(self):
         """
          Role: Sector expert / Review expert
@@ -858,8 +838,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_waiting_for_comment_from_counterparts_for_conclusion(self):
         """
          Role: Sector expert / Review expert
@@ -875,8 +853,6 @@ class Inbox2ReviewFolderView(grok.View):
                     obj.get('isCP', ''):
                 items.append(obj)
         return items
-
-
 
     def get_observation_for_finalisation(self):
         """
@@ -897,7 +873,6 @@ class Inbox2ReviewFolderView(grok.View):
         Lead Reviewer / Quality expert
     """
 
-
     def get_questions_to_be_sent(self):
         """
          Role: Lead Reviewer / Quality expert
@@ -913,8 +888,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_observations_to_finalise(self):
         """
          Role: Lead Reviewer / Quality expert
@@ -927,8 +900,6 @@ class Inbox2ReviewFolderView(grok.View):
                     'phase2-close-requested']:
                 items.append(obj)
         return items
-
-
 
     def get_questions_to_comment(self):
         """
@@ -945,8 +916,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_conclusions_to_comment(self):
         """
          Role: Lead Reviewer / Quality expert
@@ -961,8 +930,6 @@ class Inbox2ReviewFolderView(grok.View):
                     obj.get('isCP', ''):
                 items.append(obj)
         return items
-
-
 
     def get_questions_with_comments_from_reviewers(self):
         """
@@ -979,8 +946,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_answers_from_ms(self):
         """
          Role: Lead Reviewer / Quality expert
@@ -993,8 +958,6 @@ class Inbox2ReviewFolderView(grok.View):
                     'phase2-answered']:
                 items.append(obj)
         return items
-
-
 
     def get_unanswered_questions_lr_qe(self):
         """
@@ -1018,8 +981,6 @@ class Inbox2ReviewFolderView(grok.View):
     """
         MS Coordinator
     """
-
-
     def get_questions_to_be_answered(self):
         """
          Role: MS Coordinator
@@ -1038,8 +999,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_questions_with_comments_received_from_mse(self):
         """
          Role: MS Coordinator
@@ -1054,8 +1013,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_answers_requiring_comments_from_mse(self):
         """
          Role: MS Coordinator
@@ -1068,8 +1025,6 @@ class Inbox2ReviewFolderView(grok.View):
                     'phase2-expert-comments']:
                 items.append(obj)
         return items
-
-
 
     def get_answers_sent_to_se_re(self):
         """
@@ -1089,8 +1044,6 @@ class Inbox2ReviewFolderView(grok.View):
     """
         MS Expert
     """
-
-
     def get_questions_with_comments_for_answer_needed_by_msc(self):
         """
          Role: MS Expert
@@ -1103,8 +1056,6 @@ class Inbox2ReviewFolderView(grok.View):
                     'phase2-expert-comments']:
                 items.append(obj)
         return items
-
-
 
     def get_observations_with_my_comments(self):
         """
@@ -1121,8 +1072,6 @@ class Inbox2ReviewFolderView(grok.View):
                     obj.get('reply_comments_by_mse'):
                 items.append(obj)
         return items
-
-
 
     def get_observations_with_my_comments_sent_to_se_re(self):
         """
@@ -1143,8 +1092,6 @@ class Inbox2ReviewFolderView(grok.View):
     """
         Finalised observations
     """
-
-
     def get_no_response_needed_observations(self):
         """
          Finalised with 'no response needed'
@@ -1157,8 +1104,6 @@ class Inbox2ReviewFolderView(grok.View):
                     obj.get('observation_finalisation_reason', '') == 'no-response-needed':
                 items.append(obj)
         return items
-
-
 
     def get_resolved_observations(self):
         """
@@ -1173,8 +1118,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_unresolved_observations(self):
         """
          Finalised with 'unresolved'
@@ -1187,8 +1130,6 @@ class Inbox2ReviewFolderView(grok.View):
                     obj.get('observation_finalisation_reason', '') == 'unresolved':
                 items.append(obj)
         return items
-
-
 
     def get_partly_resolved_observations(self):
         """
@@ -1203,8 +1144,6 @@ class Inbox2ReviewFolderView(grok.View):
                 items.append(obj)
         return items
 
-
-
     def get_technical_correction_observations(self):
         """
          Finalised with 'technical correction'
@@ -1217,8 +1156,6 @@ class Inbox2ReviewFolderView(grok.View):
                     obj.get('observation_finalisation_reason', '') == 'technical-correction':
                 items.append(obj)
         return items
-
-
 
     def get_revised_estimate_observations(self):
         """
@@ -1289,16 +1226,6 @@ class Inbox2ReviewFolderView(grok.View):
         return "extranet-esd-countries-msexpert" in user.getGroups()
 
 
-class InboxReviewFolderView(grok.View):
-    grok.context(IReviewFolder)
-    grok.require('zope2.View')
-    grok.name('inboxview4')
-
-    def can_add_observation(self):
-        sm = getSecurityManager()
-        return sm.checkPermission('esdrt.content: Add Observation', self)
-
-
 class RoleMapItem(object):
 
     def __init__(self, roles):
@@ -1329,10 +1256,7 @@ class RoleMapItem(object):
         return False
 
 
-class Inbox3ReviewFolderView(grok.View):
-    grok.context(IReviewFolder)
-    grok.require('zope2.View')
-    grok.name('inboxview')
+class InboxReviewFolderView(BrowserView):
 
     @memoize
     def get_current_user(self):
@@ -1901,27 +1825,7 @@ class Inbox3ReviewFolderView(grok.View):
         return "extranet-esd-countries-msexpert" in user.getGroups()
 
 
-class FirstObservation(Inbox3ReviewFolderView):
-    grok.context(IReviewFolder)
-    grok.name('get-first-reviewable-observation')
-    grok.require('zope2.View')
-
-    def update(self):
-        super(FirstObservation, self).update()
-        url = ''
-        obs = self.get_draft_observations()
-        if obs:
-            url = obs[0].absolute_url()
-
-        return self.request.response.redirect(url)
-
-    def render(self):
-        return ''
-
-class FinalisedFolderView(grok.View):
-    grok.context(IReviewFolder)
-    grok.require('zope2.View')
-    grok.name('finalisedfolderview')
+class FinalisedFolderView(BrowserView):
 
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
         observationsBatch = Batch(observations, int(b_size), int(b_start), orphan=1)
@@ -1945,7 +1849,7 @@ class FinalisedFolderView(grok.View):
 
         return map(decorate, [b.getObject() for b in catalog.searchResults(query)])
 
-    def get_observations(self, rolecheck=None, **kw):
+    def get_observations(self, **kw):
         freeText = self.request.form.get('freeText', '')
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
@@ -1959,45 +1863,7 @@ class FinalisedFolderView(grok.View):
             query['SearchableText'] = freeText
 
         query.update(kw)
-        #from logging import getLogger
-        #log = getLogger(__name__)
-        if rolecheck is None:
-            #log.info('Querying Catalog: %s' % query)
-            return [b.getObject() for b in catalog.searchResults(query)]
-        else:
-            #log.info('Querying Catalog with Rolecheck %s: %s ' % (rolecheck, query))
-
-            def makefilter(rolename):
-                """
-                https://stackoverflow.com/questions/7045754/python-list-filtering-with-arguments
-                """
-                def myfilter(x):
-                    if rolename == 'CounterPart':
-                        return x.isCP
-                    elif rolename == 'MSAuthority':
-                        return x.isMSA
-                    elif rolename == 'SectorExpert':
-                        return x.isSE
-                    elif rolename == 'ReviewExpert':
-                        return x.isRE
-                    elif rolename == 'NotCounterPartPhase1':
-                        return not x.isCP and x.isSE
-                    elif rolename == 'NotCounterPartPhase2':
-                        return not x.isCP and x.isRE
-                    elif rolename == 'LeadReviewer':
-                        return x.isLR
-                    elif rolename == 'QualityExpert':
-                        return x.isQE
-                    return False
-                return myfilter
-
-            filterfunc = makefilter(rolecheck)
-
-            return filter(
-                filterfunc,
-                map(decorate2,
-                    [b.getObject() for b in catalog.searchResults(query)])
-            )
+        return [b.getObject() for b in catalog.searchResults(query)]
 
     """
         Finalised observations
@@ -2128,3 +1994,16 @@ class FinalisedFolderView(grok.View):
     def is_member_state_expert(self):
         user = api.user.get_current()
         return "extranet-esd-countries-msexpert" in user.getGroups()
+
+
+class AddForm(add.DefaultAddForm):
+
+    def create(self, *args, **kwargs):
+        folder = super(AddForm, self).create(*args, **kwargs)
+        updated = getUtility(ISetupReviewFolderRoles)(folder)
+        updated.reindexObjectSecurity()
+        return updated
+
+
+class AddView(add.DefaultAddView):
+    form = AddForm

@@ -8,7 +8,55 @@
   <!-- -*- extra stuff goes here -*- -->
 
 
-    <browser:page
+  <browser:page
+      name="view"
+      for="..reviewfolder.IReviewFolder"
+      class="..reviewfolder.ReviewFolderView"
+      permission="zope2.View"
+      template="templates/reviewfolderview.pt"
+  />
+
+
+  <browser:page
+      name="get_table"
+      for="..reviewfolder.IReviewFolder"
+      class="..reviewfolder.ReviewFolderBrowserView"
+      permission="zope2.View"
+      template="templates/reviewfolder_get_table.pt"
+  />
+
+  <browser:page
+      name="export_as_xls"
+      for="..reviewfolder.IReviewFolder"
+      class="..reviewfolder.ExportReviewFolderFormView"
+      permission="esdrt.content.ExportObservations"
+  />
+
+  <browser:page
+      name="inboxview2"
+      for="..reviewfolder.IReviewFolder"
+      class="..reviewfolder.Inbox2ReviewFolderView"
+      permission="zope2.View"
+      template="templates/inbox2reviewfolderview.pt"
+  />
+
+  <browser:page
+      name="inboxview"
+      for="..reviewfolder.IReviewFolder"
+      class="..reviewfolder.InboxReviewFolderView"
+      permission="zope2.View"
+      template="templates/inboxreviewfolderview.pt"
+  />
+
+  <browser:page
+      name="finalisedfolderview"
+      for="..reviewfolder.IReviewFolder"
+      class="..reviewfolder.FinalisedFolderView"
+      permission="zope2.View"
+      template="templates/finalisedfolderview.pt"
+  />
+
+  <browser:page
         name="assign_counterpart_form"
         for="..question.IQuestion"
         class=".statechange.AssignCounterPartForm"
