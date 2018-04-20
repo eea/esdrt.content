@@ -48,11 +48,10 @@ f_start_msa = partial(f_start, LDAP_MSA)
 
 def setup_reviewfolder_roles(folder):
     site = getSite()
-    acl = site['acl_users'].objectValues('Plone LDAP plugin')[0].acl_users
-    q_ldap = getUtility(ILDAPQuery)
-    q_ldap.connect(acl)
+    acl = site['acl_users']['ldap-plugin']['acl_users']
 
-    q_groups = q_ldap.query_groups(QUERY_LDAP_ROLES, ('cn',))
+    with getUtility(ILDAPQuery)(acl, paged=True) as q_ldap:
+        q_groups = q_ldap.query_groups(QUERY_LDAP_ROLES, ('cn',))
 
     groups = [r[1]['cn'][0] for r in q_groups]
 
