@@ -65,7 +65,7 @@ class LDAPQuery(object):
         """
         self.acl = acl
         self.config = get_config(acl)
-        self.connection = connect(self.config)
+        self.connection = connect(self.config, auth=True)
         return self.connection
 
     def query_ou(self, ou, query, attrs):

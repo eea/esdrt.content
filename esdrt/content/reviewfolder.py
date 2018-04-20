@@ -470,12 +470,6 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         group_name = tpl_group.format(sector=sector, country=country)
         return self._ldap_group_members.get(group_name, [])
 
-    def fetch_ldap_groups(self, query):
-        ldap_plugin = api.portal.get()['acl_users']['ldap-plugin']['acl_users']
-        ldap_config = ldap_utils.get_config(ldap_plugin)
-        ldap_conn = ldap_utils.connect(ldap_config)
-        return ldap_utils.query_group_members(ldap_config, ldap_conn, query)
-
     def extract_data(self, form_data):
         """ Create xls file
         """
@@ -500,9 +494,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             ('get_name_qe', 'get_name_lr', 'get_name_se', 'get_name_re'))
 
         if query_ldap:
-            self._ldap_group_members = self.fetch_ldap_groups(
-                LDAP_QUERY_GROUPS
-            )
+            self._ldap_group_members = ldap_utils.query_group_members(
+                api.portal.get(), LDAP_QUERY_GROUPS)
 
         for observation in observations:
             row = [observation.getId]
