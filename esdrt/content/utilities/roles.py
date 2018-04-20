@@ -50,7 +50,7 @@ def setup_reviewfolder_roles(folder):
     site = getSite()
     acl = site['acl_users']['ldap-plugin']['acl_users']
 
-    with getUtility(ILDAPQuery)(acl) as q_ldap:
+    with getUtility(ILDAPQuery)(acl, paged=True) as q_ldap:
         q_groups = q_ldap.query_groups(QUERY_LDAP_ROLES, ('cn',))
 
     groups = [r[1]['cn'][0] for r in q_groups]

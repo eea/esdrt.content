@@ -23,7 +23,7 @@ def format_groups(q_attr, ldap_result):
 
 def query_group_members(portal, query):
     ldap_plugin = portal['acl_users']['ldap-plugin']['acl_users']
-    with getUtility(ILDAPQuery)(ldap_plugin) as q_ldap:
+    with getUtility(ILDAPQuery)(ldap_plugin, paged=True) as q_ldap:
         res_groups = format_groups(
             'uniqueMember',
             q_ldap.query_groups(query, ('uniqueMember', ))
