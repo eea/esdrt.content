@@ -52,13 +52,13 @@ class LDAPQuery(object):
     config = None
     connection = None
 
-    def connect(self, acl):
+    def __call__(self, acl):
         """ acl needs to be a LDAPUserFolder instance.
         """
         self.acl = acl
         self.config = get_config(acl)
         self.connection = connect(self.config, auth=True)
-        return self.connection
+        return self
 
     def query_ou(self, ou, query, attrs):
         if not self.connection:
@@ -70,3 +70,16 @@ class LDAPQuery(object):
 
     def query_users(self, query, attrs=tuple()):
         return self.query_ou(self.config['ou_users'], query, attrs)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        """ Method called when used in an `with` block.
+            This object is used as an utility, which means there is only
+            one instance available. Cleanup on exit.
+        """
+        self.connection.unbind()
+        self.connection = None
+        self.acl = None
+        self.config = None

@@ -23,23 +23,21 @@ def format_groups(q_attr, ldap_result):
 
 def query_group_members(portal, query):
     ldap_plugin = portal['acl_users']['ldap-plugin']['acl_users']
-    q_ldap = getUtility(ILDAPQuery)
-    q_ldap.connect(ldap_plugin)
-
-    res_groups = format_groups(
-        'uniqueMember',
-        q_ldap.query_groups(query, ('uniqueMember', ))
-    )
-
-    unique_users = set(chain(*res_groups.values()))
-    user_names = format_users(
-        'cn',
-        q_ldap.query_users(
-            format_or('', unique_users), ('cn', )
+    with getUtility(ILDAPQuery)(ldap_plugin) as q_ldap:
+        res_groups = format_groups(
+            'uniqueMember',
+            q_ldap.query_groups(query, ('uniqueMember', ))
         )
-    )
 
-    return {
-        gname: [user_names[muid] for muid in muids]
-        for gname, muids in res_groups.items()
-    }
+        unique_users = set(chain(*res_groups.values()))
+        user_names = format_users(
+            'cn',
+            q_ldap.query_users(
+                format_or('', unique_users), ('cn', )
+            )
+        )
+
+        return {
+            gname: [user_names[muid] for muid in muids]
+            for gname, muids in res_groups.items()
+        }
