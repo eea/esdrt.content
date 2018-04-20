@@ -2,13 +2,19 @@
 """
 
 import ldap
+from functools import partial
 
 
 def format_or(prefix, items):
     """ Turns 'uid', ['a', 'b', 'c']
         into (|(uid=a)(uid=b)(uid=c)).
     """
-    with_parens = ['({}={})'.format(prefix, item) for item in items]
+    formatter = (
+        partial('({}={})'.format, prefix)
+        if prefix else
+        '({})'.format
+    )
+    with_parens = map(formatter, items)
     return '(|{})'.format(''.join(with_parens))
 
 
@@ -38,20 +44,6 @@ def connect(config, auth=False):
         conn.simple_bind_s('', '')
 
     return conn
-
-
-def query_users(ou, l, query):
-    result = l.search_s(ou, ldap.SCOPE_SUBTREE, query, ['cn'])
-    return {uid.split(',')[0]: attr['cn'][0] for uid, attr in result}
-
-
-def query_groups(ou, l, query):
-    result = l.search_s(ou, ldap.SCOPE_SUBTREE, query, ['uniqueMember'])
-    return {
-        res[0].split(',')[0][3:]:
-            [x.split(',')[0] for x in res[-1]['uniqueMember']]
-        for res in result
-    }
 
 
 class LDAPQuery(object):
