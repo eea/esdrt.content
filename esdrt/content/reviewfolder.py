@@ -673,9 +673,10 @@ def _catalog_change(fun, self, *args, **kwargs):
 
 class Inbox2ReviewFolderView(BrowserView):
 
-    def update(self):
+    def __call__(self):
         freeText = self.request.form.get('freeText', '')
         self.observations = self.get_all_observations(freeText)
+        return super(Inbox2ReviewFolderView, self).__call__()
 
     @cache(_catalog_change)
     @timeit
@@ -1262,8 +1263,9 @@ class InboxReviewFolderView(BrowserView):
         roles = user.getRolesInContext(observation)
         return RoleMapItem(roles)
 
-    def update(self):
+    def __call__(self):
         self.rolemap_observations = {}
+        return super(InboxReviewFolderView, self).__call__()
 
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
         observationsBatch = Batch(observations, int(b_size), int(b_start), orphan=1)
