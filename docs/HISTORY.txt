@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.70.1 (2018-04-23)
+-------------------
+- Bug: #94970 - My view is not working for review experts
+  Fixing _update_ and _render_ not being called on BrowserViews ported
+  over from Grok.View.
+  [batradav]
+
+
 1.70.0 (2018-04-20)
 -------------------
 
