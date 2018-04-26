@@ -405,20 +405,24 @@
         <dl>
           <dt>Observation Finish Requested</dt>
           <dd></dd>
+          <tal:block condition="show_internal_notes">
           <dt>RE comments on finish observation request:</dt>
           <dd><span tal:replace="context/closing_comments_phase2/output|context/closing_comments_phase2|nothing" /></dd>
+          </tal:block>
         </dl>
 
         <div class="finish-denied" tal:condition="python:context.closing_deny_comments_phase2 and context.get_status() == 'phase2-close-requested'" >
           <dl>
             <dt>Observation Finalisation previously denied</dt>
             <dd></dd>
+            <tal:block condition="show_internal_notes">
             <dt>LR comments on finish observation request:</dt>
             <dd>
               <div tal:replace="context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing">
               Content
               </div>
             </dd>
+            </tal:block>
           </dl>
         </div>
 
@@ -690,11 +694,13 @@
           <dl>
             <dt>Observation Finishing denied</dt>
             <dd></dd>
+            <tal:block condition="show_internal_notes">
             <dt>
               QE comments on conclusion:
               <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
             </dt>
             <dd><span tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
+            </tal:block>
           </dl>
         </div>
 
@@ -1080,7 +1086,7 @@
         <div id="comment-discussion-wrapper"
           tal:define="context nocall:question">
             <tal:block tal:define="portalType question/portal_type/lower">
-              <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
+              <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion() and show_internal_notes">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
                   <div class="cell position-0 width-16">
                     Internal comments on question between experts/reviewers/QE/LR
@@ -1090,7 +1096,7 @@
                 </div>
                 <div class="question-comments" tal:content="structure provider:esdrt.content.commentmanager" style="display:none" />
               </tal:block>
-              <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion()">
+              <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion() and show_internal_notes">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="answer-comments">
                   <div class="cell position-0 width-16">
                     Comments
