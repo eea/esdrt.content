@@ -13,6 +13,7 @@ from Acquisition import aq_parent
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from five import grok
 from plone import api
+from plone.autoform.interfaces import READ_PERMISSIONS_KEY
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.app.discussion.interfaces import IConversation
@@ -51,6 +52,8 @@ from .crf_code_matching import get_category_ldap_from_crf_code
 from .crf_code_matching import get_category_value_from_crf_code
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
+from esdrt.content.utilities.permissions import ICheckFieldPermission
+
 import datetime
 
 HIDDEN_ACTIONS = [
@@ -175,24 +178,28 @@ class IObservation(form.Schema, IImageScaleTraversable):
     )
 
     form.write_permission(closing_comments='cmf.ManagePortal')
+    form.read_permission(closing_comments='esdrt.content.ViewInternalNotes')
     closing_comments = schema.Text(
         title=u'Finish request comments',
         required=False,
     )
 
     form.write_permission(closing_deny_comments='cmf.ManagePortal')
+    form.read_permission(closing_comments='esdrt.content.ViewInternalNotes')
     closing_deny_comments = schema.Text(
         title=u'Finish deny comments',
         required=False,
     )
 
     form.write_permission(closing_comments_phase2='cmf.ManagePortal')
+    form.read_permission(closing_comments='esdrt.content.ViewInternalNotes')
     closing_comments_phase2 = schema.Text(
         title=u'Finish request comments for phase 2',
         required=False,
     )
 
     form.write_permission(closing_deny_comments_phase2='cmf.ManagePortal')
+    form.read_permission(closing_comments='esdrt.content.ViewInternalNotes')
     closing_deny_comments_phase2 = schema.Text(
         title=u'Finish deny comments for phase 2',
         required=False,
@@ -320,6 +327,16 @@ def add_observation(context, event):
 class Observation(dexterity.Container):
     grok.implements(IObservation)
     # Add your class methods and properties here
+
+    def __getattribute__(self, item):
+        value = dexterity.Container.__getattribute__(self, item)
+        checker = getUtility(ICheckFieldPermission)
+        has_permission = checker(self, IObservation, item)
+
+        if has_permission is False:
+            raise AttributeError
+
+        return value
 
     def get_values(self):
         """

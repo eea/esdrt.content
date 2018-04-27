@@ -460,7 +460,7 @@
 
       <genericsetup:upgradeDepends
           title="Import rolemap."
-          description="[#84579] Global Answer/Commend discussion permissions."
+          description="[#84579] Global Answer/Comment discussion permissions."
           import_steps="rolemap"
           />
 
@@ -475,6 +475,19 @@
             title="[refs #93446] Grant roles to LDAP groups."
             description="Iterate over all LDAP MSA, LR and SE groups and grant them appropiate Zope roles."
             handler=".54_55.upgrade"
+        />
+
+    </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="55"
+        destination="56"
+        profile="esdrt.content:default">
+
+        <genericsetup:upgradeDepends
+          title="Import rolemap."
+          description="[#95125] New esdrt.content: View Internal Notes permission."
+          import_steps="rolemap"
         />
 
     </genericsetup:upgradeSteps>

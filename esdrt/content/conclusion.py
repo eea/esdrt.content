@@ -24,6 +24,7 @@ from types import ListType
 from types import TupleType
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
+from esdrt.content.utilities.permissions import ICheckFieldPermission
 
 
 class IConclusion(form.Schema, IImageScaleTraversable):
@@ -38,6 +39,7 @@ class IConclusion(form.Schema, IImageScaleTraversable):
 
     )
 
+    form.read_permission(text='esdrt.content.ViewInternalNotes')
     text = schema.Text(
         title=_(u'Internal note for expert/reviewers'),
         required=True,
@@ -67,6 +69,16 @@ def hidden(menuitem):
 class Conclusion(dexterity.Container):
     grok.implements(IConclusion)
     # Add your class methods and properties here
+
+    def __getattribute__(self, item):
+        value = dexterity.Container.__getattribute__(self, item)
+        checker = getUtility(ICheckFieldPermission)
+        has_permission = checker(self, IConclusion, item)
+
+        if has_permission is False:
+            raise AttributeError
+
+        return value
 
     def reason_value(self):
         return self._vocabulary_value('esdrt.content.conclusionreasons',

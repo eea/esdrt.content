@@ -58,6 +58,17 @@
       <role name="ReviewerPhase1" />
       <role name="ReviewerPhase2" />
     </permission>
+    <permission name="esdrt.content: View Internal Notes" acquire="False">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+      <role name="CounterPart" />
+      <role name="SectorExpert" />
+      <role name="QualityExpert" />
+      <role name="ReviewExpert" />
+      <role name="LeadReviewer" />
+      <role name="ReviewerPhase1" />
+      <role name="ReviewerPhase2" />
+    </permission>
     <permission name="esdrt.content: Export Observations" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />

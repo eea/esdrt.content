@@ -10,6 +10,7 @@ from esdrt.content.observation import hidden
 from five import grok
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.autoform.interfaces import READ_PERMISSIONS_KEY
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.directives import dexterity
 from plone.directives import form
@@ -31,6 +32,7 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
 from z3c.form import interfaces
+from esdrt.content.utilities.permissions import ICheckFieldPermission
 
 
 DEFAULTCONCLUSIONTEXT = u"""For category x and gases a, b, c for year[s]... the TERT noted that...
@@ -64,6 +66,7 @@ class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
         required=True,
     )
 
+    form.read_permission(text='esdrt.content.ViewInternalNotes')
     text = schema.Text(
         title=_(u'Text'),
         required=True,
@@ -98,6 +101,16 @@ def check_ghg_estimations(value):
 # in separate view classes.
 class ConclusionsPhase2(dexterity.Container):
     grok.implements(IConclusionsPhase2)
+
+    def __getattribute__(self, item):
+        value = dexterity.Container.__getattribute__(self, item)
+        checker = getUtility(ICheckFieldPermission)
+        has_permission = checker(self, IConclusionsPhase2, item)
+
+        if has_permission is False:
+            raise AttributeError
+
+        return value
 
     def reason_value(self):
         return self._vocabulary_value(

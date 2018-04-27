@@ -3,6 +3,7 @@
   i18n_domain="esdrt.content">
 
   <utility factory=".ms_user.UserIsMS" />
+  <utility factory=".permissions.CheckFieldPermission" />
 
   <utility
       factory=".ldap_utils.LDAPQuery"

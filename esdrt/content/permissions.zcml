@@ -1,90 +1,92 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
-    i18n_domain="esdrt.content">
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:i18n="http://namespaces.zope.org/i18n"
+  i18n_domain="esdrt.content">
+
+  <permission
+    id="esdrt.content.AddConclusionsPhase2"
+    title="esdrt.content: Add ConclusionsPhase2"
+  />
 
 
-      <!-- -*- extra stuff goes here -*- -->
-       <permission
-          id="esdrt.content.AddConclusionsPhase2"
-	  title="esdrt.content: Add ConclusionsPhase2"
-	  />
+  <permission
+    id="esdrt.content.AddConclusion"
+    title="esdrt.content: Add Conclusion"
+  />
 
 
-       <permission
-          id="esdrt.content.AddConclusion"
-	  title="esdrt.content: Add Conclusion"
-	  />
-
-
-       <permission
-          id="esdrt.content.AddReviewFolder"
+  <permission
+    id="esdrt.content.AddReviewFolder"
     title="esdrt.content: Add ReviewFolder"
-    />
+  />
 
 
-       <permission
-          id="esdrt.content.AddESDRTFile"
+  <permission
+    id="esdrt.content.AddESDRTFile"
     title="esdrt.content: Add ESDRTFile"
-    />
+  />
 
 
-       <permission
-          id="esdrt.content.AddCommentAnswer"
+  <permission
+    id="esdrt.content.AddCommentAnswer"
     title="esdrt.content: Add CommentAnswer"
-    />
+  />
 
-       <permission
-          id="esdrt.content.EditCommentAnswer"
+  <permission
+    id="esdrt.content.EditCommentAnswer"
     title="esdrt.content: Edit CommentAnswer"
-    />
+  />
 
 
-       <permission
-          id="esdrt.content.AddComment"
+  <permission
+    id="esdrt.content.AddComment"
     title="esdrt.content: Add Comment"
-    />
+  />
 
-       <permission
-          id="esdrt.content.EditComment"
+  <permission
+    id="esdrt.content.EditComment"
     title="esdrt.content: Edit Comment"
-    />
+  />
 
-       <permission
-          id="esdrt.content.AddQuestion"
+  <permission
+    id="esdrt.content.AddQuestion"
     title="esdrt.content: Add Question"
-    />
+  />
 
-       <permission
-          id="esdrt.content.ViewCommentDiscussion"
+  <permission
+    id="esdrt.content.ViewCommentDiscussion"
     title="esdrt.content: View Comment Discussion"
-    />
+  />
 
-       <permission
-          id="esdrt.content.ViewAnswerDiscussion"
+  <permission
+    id="esdrt.content.ViewAnswerDiscussion"
     title="esdrt.content: View Answer Discussion"
-    />
+  />
 
-       <permission
-          id="esdrt.content.ViewConclusionDiscussion"
+  <permission
+    id="esdrt.content.ViewConclusionDiscussion"
     title="esdrt.content: View Conclusion Discussion"
-    />
+  />
 
-       <permission
-          id="esdrt.content.AddObservation"
+  <permission
+    id="esdrt.content.ViewInternalNotes"
+    title="esdrt.content: View Internal Notes"
+  />
+
+  <permission
+    id="esdrt.content.AddObservation"
     title="esdrt.content: Add Observation"
-    />
+  />
 
-    <permission
-          id="esdrt.content.ExportObservations"
+  <permission
+    id="esdrt.content.ExportObservations"
     title="esdrt.content: Export Observations"
-    />
+  />
 
-    <permission
-          id="esdrt.content.ExportAnObservation"
+  <permission
+    id="esdrt.content.ExportAnObservation"
     title="esdrt.content: Export an Observation"
-    />
-
+  />
 
 
 </configure>
