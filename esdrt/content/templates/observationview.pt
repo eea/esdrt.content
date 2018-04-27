@@ -447,7 +447,10 @@
             <dt>Final status of observation:</dt>
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
-            <dt>Recommendation/internal note:</dt>
+            <dt>
+              Recommendation/internal note:
+              <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
+            </dt>
             <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
             <tal:comment replace="nothing">
               hide the table https://taskman.eionet.europa.eu/issues/71375
@@ -640,6 +643,7 @@
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-1">
                 <div class="cell position-0 width-16">
                   Internal comments on conclusion between experts/reviewers/QE/LR
+                  <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
                   <span class="eea-icon eea-icon-left"></span>
                 </div>
               </div>
@@ -1086,7 +1090,7 @@
         <div id="comment-discussion-wrapper"
           tal:define="context nocall:question">
             <tal:block tal:define="portalType question/portal_type/lower">
-              <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion() and show_internal_notes">
+              <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
                   <div class="cell position-0 width-16">
                     Internal comments on question between experts/reviewers/QE/LR
@@ -1096,12 +1100,12 @@
                 </div>
                 <div class="question-comments" tal:content="structure provider:esdrt.content.commentmanager" style="display:none" />
               </tal:block>
-              <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion() and show_internal_notes">
+              <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="answer-comments">
                   <div class="cell position-0 width-16">
                     Comments
                     <span class="eea-icon eea-icon-left"></span>
-                    <span class="tooltipIconBlue" title="The internal commenting loop between team members is not visible for Member States."></span>
+                    <span class="tooltipIconBlue" title="The internal commenting loop between team members is not visible to the review team."></span>
                   </div>
                 </div>
                 <div class="answer-comments" tal:content="structure provider:esdrt.content.commentmanager" style="display:none" />
