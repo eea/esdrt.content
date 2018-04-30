@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.70.4 (2018-04-30)
+-------------------
+- Bug: #95125- Internal comments visible to MS
+  Adding missing role checks for phase 1 - finish observation request.
+  [batradav]
+
 1.70.3 (2018-04-27)
 -------------------
 - Bug: #95138 - Internal comments not visible to Member States
