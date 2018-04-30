@@ -358,20 +358,24 @@
         <dl>
           <dt>Observation Finish Requested</dt>
           <dd></dd>
+          <tal:block condition="show_internal_notes">
           <dt>SE comments on finish observation request:</dt>
           <dd><span tal:replace="context/closing_comments/output|context/closing_comments|nothing" /></dd>
+          </tal:block>
         </dl>
 
         <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'phase1-close-requested'" >
           <dl>
             <dt>Observation Finalisation previously denied</dt>
             <dd></dd>
+            <tal:block condition="show_internal_notes">
             <dt>QE comments on finish observation request:</dt>
             <dd>
               <div tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing">
               Content
               </div>
             </dd>
+            </tal:block>
           </dl>
         </div>
 
