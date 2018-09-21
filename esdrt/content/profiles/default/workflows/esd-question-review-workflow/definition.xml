@@ -32,6 +32,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
   </permission-map>
@@ -56,6 +57,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -93,6 +95,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
   </permission-map>
@@ -117,6 +120,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -150,6 +154,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>ReviewerPhase1</permission-role>
@@ -176,6 +181,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -212,6 +218,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>ReviewerPhase1</permission-role>
@@ -238,6 +245,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
@@ -277,6 +285,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>QualityExpert</permission-role>
@@ -304,6 +313,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -339,6 +349,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -365,6 +376,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -404,6 +416,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -432,6 +445,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
@@ -467,6 +481,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -493,6 +508,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -531,6 +547,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>QualityExpert</permission-role>
@@ -555,6 +572,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -588,6 +606,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -611,6 +630,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -649,6 +669,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
   </permission-map>
@@ -673,6 +694,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -712,6 +734,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>ReviewerPhase1</permission-role>
@@ -737,6 +760,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -776,6 +800,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>Manager</permission-role>
@@ -806,6 +831,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
@@ -849,6 +875,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -877,6 +904,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -912,6 +940,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -938,6 +967,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -978,6 +1008,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -1006,6 +1037,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
@@ -1041,6 +1073,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -1066,6 +1099,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -1103,6 +1137,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -1127,6 +1162,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>
@@ -1160,6 +1196,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -1183,6 +1220,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Comment" acquired="False">
   </permission-map>

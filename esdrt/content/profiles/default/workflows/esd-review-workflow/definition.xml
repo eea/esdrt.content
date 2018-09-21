@@ -25,6 +25,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -51,6 +52,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -82,6 +84,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -104,6 +107,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -132,6 +136,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -160,6 +165,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -195,6 +201,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -223,6 +230,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
    <permission-role>ReviewerPhase1</permission-role>
@@ -251,6 +259,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>Manager</permission-role>
@@ -267,6 +276,7 @@
   <permission-map name="View" acquired="False">
    <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -293,6 +303,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -321,6 +332,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
    <permission-role>ReviewerPhase1</permission-role>
@@ -356,6 +368,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -378,6 +391,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -402,6 +416,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>Manager</permission-role>
@@ -420,6 +435,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -446,6 +462,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>CounterPart</permission-role>
@@ -472,6 +489,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -503,6 +521,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -529,6 +548,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -558,6 +578,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -584,6 +605,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
@@ -616,6 +638,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -644,6 +667,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Conclusion" acquired="False">
   </permission-map>
