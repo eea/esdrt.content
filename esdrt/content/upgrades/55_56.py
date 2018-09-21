@@ -60,8 +60,12 @@ def install_workflow(context, logger):
     brains_len = len(brains)
 
     for idx, brain in enumerate(brains, start=1):
-        content = brain.getObject()
         url = brain.getURL()
+        try:
+            content = brain.getObject()
+        except KeyError:
+            logger.warn('Removing stale brain: %s', url)
+            catalog.uncatalog_object(brain.getPath())
         for permission in PERMISSIONS:
             current_roles = [
                 r['name'] for r in
