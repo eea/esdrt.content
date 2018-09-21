@@ -1,3 +1,4 @@
+import transaction
 from zope.globalrequest import getRequest
 from Products.CMFCore.utils import getToolByName
 import plone.api as api
@@ -81,3 +82,6 @@ def install_workflow(context, logger):
             catalog.catalog_object(content)
         logger.info('Updated %s %s/%s.', url, idx, brains_len)
 
+        if idx % 1000 == 0:
+            logger.info('transaction.commit after %s!', idx)
+            transaction.commit()
