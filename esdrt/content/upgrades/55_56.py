@@ -22,8 +22,14 @@ PERMISSIONS = (
 )
 
 TYPES = (
-    'Observation',
-    'ReviewFolder',
+  'ConclusionsPhase2',
+  'Conclusion',
+  'ESDRTFile',
+  'CommentAnswer',
+  'Comment',
+  'Question',
+  'Observation',
+  'ReviewFolder',
 )
 
 
@@ -46,11 +52,16 @@ def install_workflow(context, logger):
     setup.runImportStepFromProfile(PROFILE_ID, 'workflow')
     logger.info('Reinstalled Workflows.')
 
-    brains = catalog(portal_type=TYPES)
+    # make sure the Observation and ReviewFolder are indexed last.
+    brains = sorted(
+        catalog(portal_type=TYPES),
+        key=lambda b: TYPES.index(b.portal_type)
+    )
     brains_len = len(brains)
 
     for idx, brain in enumerate(brains, start=1):
         content = brain.getObject()
+        url = brain.getURL()
         for permission in PERMISSIONS:
             current_roles = [
                 r['name'] for r in
@@ -59,6 +70,10 @@ def install_workflow(context, logger):
             ]
             new_roles = list(set(current_roles + ['Auditor']))
             content.manage_permission(permission, roles=new_roles, acquire=0)
-        content.reindexObjectSecurity()
-        logger.info('Updated %s %s/%s.', brain.getURL(), idx, brains_len)
+        try:
+            content.reindexObjectSecurity()
+        except KeyError:
+            logger.warn('Cannot reindex. Calling catalog_object for %s!', url)
+            catalog.catalog_object(content)
+        logger.info('Updated %s %s/%s.', url, idx, brains_len)
 
