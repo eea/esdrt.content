@@ -59,7 +59,6 @@
       <role name="QualityExpert" />
       <role name="ReviewerPhase1" />
       <role name="ReviewerPhase2" />
-      <role name="Auditor" />
     </permission>
     <permission name="esdrt.content: Export Observations" acquire="False">
       <role name="Manager" />
@@ -74,7 +73,6 @@
       <role name="Manager" />
       <role name="MSAuthority" />
       <role name="MSExpert" />
-      <role name="Auditor" />
     </permission>
     <permission name="esdrt.content: Add Question" acquire="False">
       <role name="Manager" />
