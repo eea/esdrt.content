@@ -22,6 +22,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
@@ -47,6 +48,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add ESDRTFile" acquired="False">
    <permission-role>Manager</permission-role>
@@ -58,6 +60,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
  </state>
  <state state_id="comments" title="Comments">
@@ -70,6 +73,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>CounterPart</permission-role>
@@ -101,6 +105,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add ESDRTFile" acquired="False">
    <permission-role>Manager</permission-role>
@@ -112,6 +117,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
  </state>
  <state state_id="draft" title="Draft">
@@ -122,6 +128,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>QualityExpert</permission-role>
@@ -143,6 +150,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add ESDRTFile" acquired="True">
    <permission-role>Owner</permission-role>
@@ -152,6 +160,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
  </state>
  <state state_id="published" title="Published">
@@ -164,6 +173,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
@@ -190,6 +200,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add ESDRTFile" acquired="False">
    <permission-role>Manager</permission-role>
@@ -200,30 +211,31 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Auditor</permission-role>
   </permission-map>
  </state>
  <transition transition_id="ask-approval" title="Ask Approval" new_state="approval" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
   </guard>
  </transition>
  <transition transition_id="publish" title="Publish" new_state="published" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
   </guard>
  </transition>
  <transition transition_id="redraft" title="Redraft" new_state="draft" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
   </guard>
  </transition>
  <transition transition_id="request-comments" title="Request comments" new_state="comments" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
   </guard>
  </transition>
  <transition transition_id="retract" title="Retract" new_state="approval" trigger="USER" before_script="" after_script="">
-  
+
   <guard>
   </guard>
  </transition>
@@ -238,7 +250,7 @@
  <variable variable_id="action" for_catalog="False" for_status="True" update_always="True">
   <description>Previous transition</description>
   <default>
-   
+
    <expression>transition/getId|nothing</expression>
   </default>
   <guard>
@@ -247,7 +259,7 @@
  <variable variable_id="actor" for_catalog="False" for_status="True" update_always="True">
   <description>The ID of the user who performed the previous transition</description>
   <default>
-   
+
    <expression>user/getId</expression>
   </default>
   <guard>
@@ -256,7 +268,7 @@
  <variable variable_id="comments" for_catalog="False" for_status="True" update_always="True">
   <description>Comment about the last transition</description>
   <default>
-   
+
    <expression>python:state_change.kwargs.get('comment', '')</expression>
   </default>
   <guard>
@@ -265,7 +277,7 @@
  <variable variable_id="review_history" for_catalog="False" for_status="False" update_always="False">
   <description>Provides access to workflow history</description>
   <default>
-   
+
    <expression>state_change/getHistory</expression>
   </default>
   <guard>
@@ -276,7 +288,7 @@
  <variable variable_id="time" for_catalog="False" for_status="True" update_always="True">
   <description>When the previous transition was performed</description>
   <default>
-   
+
    <expression>state_change/getDateTime</expression>
   </default>
   <guard>

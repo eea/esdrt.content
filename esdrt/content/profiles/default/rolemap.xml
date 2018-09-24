@@ -15,6 +15,8 @@
     <role name="ReviewerPhase1" />
     <role name="ReviewerPhase2" />
 
+    <role name="Auditor" />
+
   </roles>
   <permissions>
     <!-- -*- extra stuff goes here -*- -->

@@ -478,4 +478,17 @@
         />
 
     </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="55"
+        destination="56"
+        profile="esdrt.content:default">
+
+        <genericsetup:upgradeStep
+            title="[refs #98703] Add new Auditor role"
+            description="Update workflows and existing Observations"
+            handler=".55_56.upgrade"
+        />
+
+    </genericsetup:upgradeSteps>
 </configure>
