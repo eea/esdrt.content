@@ -49,7 +49,7 @@ def upgrade(context):
     install_workflow(context)
 
 
-def get_object(catalog, brain):
+def get_object(catalog, brain, url):
     try:
         return brain.getObject()
     except KeyError:
@@ -82,7 +82,7 @@ def update_ptype(catalog, ptype, do_reindex):
     for idx, brain in enumerate(brains, start=1):
         url = brain.getURL()
 
-        content = get_object(catalog, brain)
+        content = get_object(catalog, brain, url)
 
         if content:
             update_permissions(content)
