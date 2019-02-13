@@ -489,6 +489,19 @@
             description="Update workflows and existing Observations"
             handler=".55_56.upgrade"
         />
+    </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="56"
+        destination="57"
+        profile="esdrt.content:default">
+
+         <genericsetup:upgradeStep
+              title="[refs #102630 #98703] Fix acquire for some objects and states"
+              description="Update existing content types local roles."
+              handler=".56_57.upgrade"
+         />
 
     </genericsetup:upgradeSteps>
+
 </configure>

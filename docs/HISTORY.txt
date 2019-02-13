@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.71.2 (2019-02-13)
+-------------------
+- Bug: #102630 - Q&A loop visibility
+  [batradav]
+
 1.71.1 (2018-09-24)
 -------------------
 - Bug: #98703 - Auditor role - fixed migration step
