@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update content in accordance with workflow.</title>
+  <script>
+    window.zmiTool = (function(){
+      function cloneRow(elRow) {
+        const elNew = elRow.cloneNode(true);
+        const elBtnAdd = elNew.querySelector('button[data-type="add"]');
+        const elBtnRemove = (function() {
+          let elBtn = elNew.querySelector('button[data-type="remove"]');
+          if (!elBtn) {
+            elBtn = btnRemove();
+            elNew.appendChild(elBtn);
+          }
+          return elBtn;
+        })();
+        enableClone(elBtnAdd);
+        enableRemove(elBtnRemove);
+        return elNew;
+      }
+
+      function btnAdd() {
+        const btn = document.createElement('button');
+        btn.setAttribute('data-type', 'add');
+        btn.textContent = '+';
+        return btn;
+      }
+
+      function btnRemove() {
+        const btn = document.createElement('button');
+        btn.setAttribute('data-type', 'remove');
+        btn.textContent = '-';
+        return btn;
+      }
+
+      function enableClone(btn) {
+        btn.addEventListener('click', function(evt) {
+          evt.preventDefault();
+          const elParent = evt.target.parentElement;
+          elParent.insertAdjacentElement('afterend', cloneRow(elParent));
+          return false;
+        })
+        return btn;
+      }
+
+      function enableRemove(btn) {
+        btn.addEventListener('click', function(evt) {
+          evt.preventDefault();
+          const elParent = evt.target.parentElement;
+          elParent.parentElement.removeChild(elParent);
+          return false;
+        })
+        return btn;
+      }
+
+      function initClone(selRow) {
+        const elRow = document.querySelector(selRow);
+        elRow.appendChild(enableClone(btnAdd()));
+      }
+
+      return {
+        "initClone": initClone
+      }
+
+    })()
+  </script>
+</head>
+<body>
+  <h1>Update content in accordance with workflow.</h1>
+  <p>
+    Create content type - review state pairs and click on Apply and reindex.
+    This insures the integrity of content type permissions when
+    making a change to the workflow definition.
+  </p>
+  <form action="./@@apply-and-reindex" method="POST">
+    <div class="query-row">
+      <label>
+        Content type
+        <select name="queries.portal_type:records" required="required">
+          <option tal:repeat="portal_type options/portal_types" tal:attributes="value portal_type" tal:content="portal_type">portal_type</option>
+        </select>
+      </label>
+      <label>
+        State
+        <select name="queries.review_state:records" required="required">
+          <option tal:repeat="review_state options/review_states" tal:attributes="value review_state" tal:content="review_state">review_state</option>
+        </select>
+      </label>
+    </div>
+    <script>zmiTool.initClone('.query-row')</script>
+    <input type="submit" value="Apply and reindex" />
+  </form>
+</body>
+</html>

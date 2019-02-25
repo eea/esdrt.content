@@ -1,7 +1,15 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="esdrt.content">
+
+    <browser:page
+      name="apply-and-reindex"
+      for="Products.CMFCore.interfaces._tools.IWorkflowTool"
+      class=".portal_workflow.ApplyAndReindex"
+      permission="cmf.ManagePortal"
+      />
 
     <genericsetup:upgradeStep
          title="Upgrade to 2."
