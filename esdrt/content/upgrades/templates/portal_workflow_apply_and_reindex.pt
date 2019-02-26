@@ -78,14 +78,20 @@
       <label>
         Content type
         <select name="queries.portal_type:records" required="required">
+          <option value="">-</option>
           <option tal:repeat="portal_type options/portal_types" tal:attributes="value portal_type" tal:content="portal_type">portal_type</option>
         </select>
       </label>
       <label>
         State
         <select name="queries.review_state:records" required="required">
+          <option value="">-</option>
           <option tal:repeat="review_state options/review_states" tal:attributes="value review_state" tal:content="review_state">review_state</option>
         </select>
+      </label>
+      <label>
+        Reindex self
+        <input type="checkbox" name="queries.reindex_self_only:boolean:records" value="True" />
       </label>
     </div>
     <script>zmiTool.initClone('.query-row')</script>

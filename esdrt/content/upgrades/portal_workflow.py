@@ -48,7 +48,9 @@ def reindex_or_catalog(catalog, content, url):
 
 def upgrade(wft, catalog, type_mapping, queries):
     reindex = []
-    for query in queries:
+    for _query in queries:
+        # filter 'reindex_self_only', which is not an index
+        query = {k: v for k, v in _query.items() if k != 'reindex_self_only'}
         ctwf = wft.getWorkflowById(type_mapping[query['portal_type']])
         brains = catalog(**query)
 
@@ -59,7 +61,10 @@ def upgrade(wft, catalog, type_mapping, queries):
 
             if content:
                 ctwf.updateRoleMappingsFor(content)
-                reindex.append(get_observation(content) or content)
+                if _query.get('reindex_self_only', False):
+                    reindex.append(content)
+                else:
+                    reindex.append(get_observation(content) or content)
 
                 logger.info('Updated %s %s/%s.', url, idx, brains_len)
 
