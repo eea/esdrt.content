@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.71.3 (2019-02-26)
+-------------------
+- Bug: #103117 - Visibility of follow up questions in the EMRT
+  [batradav]
+
 1.71.2 (2019-02-13)
 -------------------
 - Bug: #102630 - Q&A loop visibility
