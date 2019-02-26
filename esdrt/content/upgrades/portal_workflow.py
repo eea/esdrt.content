@@ -20,6 +20,18 @@ QUERIES = (
 )
 
 
+def get_indexed_values(indexes, index_name):
+    return sorted(set(indexes[index_name]._unindex.itervalues()))
+
+
+def get_workflow_type_mapping(wft):
+    default_wf = wft._default_chain[0]
+    return {
+        k: v[0] if v else default_wf
+        for k, v in wft._chains_by_type.items()
+    }
+
+
 def get_observation(obj):
     if obj.portal_type == 'Observation':
         return obj
@@ -93,11 +105,7 @@ class ApplyAndReindex(BrowserView):
         catalog = getToolByName(context, 'portal_catalog')
 
         if request.method == 'POST':
-            default_wf = context._default_chain[0]
-            type_mapping = {
-                k: v[0] if v else default_wf
-                for k, v in context._chains_by_type.items()
-            }
+            type_mapping = get_workflow_type_mapping(context)
             queries =  request.get('queries', [])
             upgrade(context, catalog, type_mapping, queries)
             return 'Updated! Please refer to zinstance log for information.'
@@ -105,7 +113,7 @@ class ApplyAndReindex(BrowserView):
         # get information from catalog indexes
         indexes = catalog._catalog.indexes
 
-        portal_types = sorted(set(indexes['portal_type']._unindex.itervalues()))
-        review_states = sorted(set(indexes['review_state']._unindex.itervalues()))
+        portal_types = get_indexed_values(indexes, 'portal_type')
+        review_states = get_indexed_values(indexes, 'review_state')
 
         return self.index(portal_types=portal_types, review_states=review_states)

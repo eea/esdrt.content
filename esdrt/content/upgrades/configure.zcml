@@ -512,4 +512,22 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+        source="57"
+        destination="58"
+        profile="esdrt.content:default">
+
+        <genericsetup:upgradeDepends
+          title="Import workflows"
+          import_steps="workflow"
+          />
+
+         <genericsetup:upgradeStep
+          title="[refs #103117] Visibility of follow up questions in the EMRT"
+          description="Update Comment objects in the initial state."
+          handler=".57_58.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
+
 </configure>

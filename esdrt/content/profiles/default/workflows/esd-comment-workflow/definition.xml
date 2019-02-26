@@ -16,8 +16,14 @@
  <permission>esdrt.content: Edit Comment</permission>
  <state state_id="initial" title="Initial">
   <exit-transition transition_id="publish"/>
-  <permission-map name="Access contents information" acquired="True">
-   <permission-role>Auditor</permission-role>
+  <permission-map name="Access contents information" acquired="False">
+    <permission-role>CounterPart</permission-role>
+    <permission-role>LeadReviewer</permission-role>
+    <permission-role>Manager</permission-role>
+    <permission-role>QualityExpert</permission-role>
+    <permission-role>ReviewerPhase1</permission-role>
+    <permission-role>ReviewerPhase2</permission-role>
+    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -27,8 +33,14 @@
   </permission-map>
   <permission-map name="Reply to item" acquired="True">
   </permission-map>
-  <permission-map name="View" acquired="True">
-   <permission-role>Auditor</permission-role>
+  <permission-map name="View" acquired="False">
+    <permission-role>CounterPart</permission-role>
+    <permission-role>LeadReviewer</permission-role>
+    <permission-role>Manager</permission-role>
+    <permission-role>QualityExpert</permission-role>
+    <permission-role>ReviewerPhase1</permission-role>
+    <permission-role>ReviewerPhase2</permission-role>
+    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add ESDRTFile" acquired="True">
   </permission-map>
