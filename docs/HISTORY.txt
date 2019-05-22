@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.71.4 (2019-05-22)
+-------------------
+- Bug: #103135 - Recalling observations sent to step 2
+- Bug: #103381 - Secretariat rights
+  [batradav]
+
 1.71.3 (2019-02-26)
 -------------------
 - Bug: #103117 - Visibility of follow up questions in the EMRT
@@ -213,14 +219,14 @@ Changelog
   [batradav]
 
 1.59.30 (2016-06-23)
------------------
+--------------------
 
 - Task #73129 Don't show internal discussions to MS users.
 - Task #72922 Implemented automatization using plone registry
 
 
 1.59.29 (2016-05-31)
------------------
+--------------------
 
 - Task #72885 Change a heading
 - Bug #72890 Overview list links not working
@@ -228,19 +234,19 @@ Changelog
   [lucas]
 
 1.59.28 (2016-05-30)
------------------
+--------------------
 
 - Fix #72796 observations export in xls
   [lucas]
 
 1.59.27.1 (2016-05-27)
------------------
+----------------------
 
 - Fix error on edit conclusionphase2 objects
   [lucas]
 
 1.59.27 (2016-05-26)
-------------------
+--------------------
 
 - refs #72138, #72739 fixed workflow permissions
   [lucas]
@@ -248,26 +254,26 @@ Changelog
   [lucas]
 
 1.59.26 (2016-05-17)
------------------
+--------------------
 
 - refs #72197 interface fixes
   [cornel]
 
 1.59.25 (2016-05-16)
------------------
+--------------------
 
 - refs #28348 review "my view" for sector expert and review
   [cornel]
 
 1.59.23 (2016-05-16)
------------------
+--------------------
 
 - refs #28348 review "my view" for sector expert and review
   [lucas]
 
 
 1.59.21 (2016-05-09)
------------------
+--------------------
 
 - refs #68683 ajax sorting on reviewfolder view added
 - refs #30550 added Counterpart's names in commenting loop
@@ -275,7 +281,7 @@ Changelog
   [lucas]
 
 1.59.20.1 (2016-05-05)
------------------
+----------------------
 
 - refs #68919  fix Internal comments invisble for QA expert
 - refs #71992 fix notifications emails
@@ -283,40 +289,40 @@ Changelog
   [lucas]
 
 1.59.19 (2016-04-27)
------------------
+--------------------
 
 - refs #71752, #71692 fix "go to conclusion" in step1
   [lucas]
 
 1.59.18 (2016-04-26)
------------------
+--------------------
 
 - refs #69929, #71670 added exports view
   added "esdrt.content: Export Observations" and "esdrt.content: Export an Observation" permissions
   [lucas]
 
 1.59.17 (2016-04-22)
--------------------
+--------------------
 
 - refs #71532 check if the user can create a conclusion
 - refs #71619 Extraction of step 1 conclusions for observation in step 2
   [lucas]
 
 1.59.16 (2016-04-21)
------------------
+--------------------
 
 - refs #71598, #71602 bug fixed
   [lucas]
 
 
 1.59.15 (2016-04-20)
------------------
+--------------------
 
 - refs #71532 fixed ValueError: Subobject type disallowed by IConstrainTypes adapter: ConclusionsPhase2
   [lucas]
 
 1.59.14 (2016-04-19)
--------------------
+--------------------
 
 - refs #71051 fix rules to show "Edit Key Flags"
   [lucas]
@@ -324,30 +330,30 @@ Changelog
   [lucas]
 
 1.59.13.2 (2016-04-15)
--------------------
+----------------------
 
 - refs #28230 added upgraded steps
   [lucas]
 
 1.59.13 (2016-04-12)
------------------
+--------------------
 
 - refs #28230 added area subscribe notifications configurations
   [lucas]
 
 1.59.12 (2016-04-08)
------------------
+--------------------
 
 - Nothing changed yet.
 
 1.59.11 (2016-04-07)
------------------
+--------------------
 
 - refs #71016 add view to manage objects states
   [lucas]
 
 1.59.10 (2016-04-04)
------------------
+--------------------
 
 - refs #69911 added list of the years format to Inventory year
   [lucas]
@@ -566,7 +572,7 @@ Changelog
 
 - Task #29664: please add another to the CRF categories
 - Bug #29308: Observation look locked. Remove validation that allows only the answer author to submit it
--Task #29635: missing fuel type: peat
+- Task #29635: missing fuel type: peat
 
 
 1.41 (2015-10-01)
@@ -897,7 +903,7 @@ Changelog
 - Update "My view" for different roles [MikelS]
 
 1.18 (2014-10-17)
-----------------------
+-----------------
 
 - Implementation of phase2 conclusions workflow [erral]
 
@@ -907,7 +913,7 @@ Changelog
 
 
 1.17 (2014-10-16)
--------------------
+-----------------
 
 - Change on permissions settings of the workflow [erral]
 
@@ -917,7 +923,7 @@ Changelog
 
 
 1.16 (2014-10-15)
---------------------
+-----------------
 
 - Simplify CRF category/code/sector metadata [erral]
 
@@ -928,7 +934,7 @@ Changelog
 - Allow several gases to be selected in an observation [erral]
 
 1.15 (2014-10-14)
----------------------
+-----------------
 
 - Phase 2 workflow fixes [erral]
 
@@ -938,18 +944,18 @@ Changelog
 
 
 1.14 (2014-09-10)
---------------------
+-----------------
 - internal-release
 
 - Phase 2 workflow include [erral]
 
 1.13.1 (2014-09-02)
------------------------
+-------------------
 
 - Missing profile upgrade [erral]
 
 1.13 (2014-09-02)
-------------------
+-----------------
 
 - Several bugfixes [erral]
 
@@ -959,7 +965,7 @@ Changelog
 - Fix Finish Observation actions [erral]
 
 1.11 (2014-08-29)
-------------------
+-----------------
 
 - Add link to go to phase 2 [erral]
 
@@ -1019,7 +1025,7 @@ Changelog
 
 
 1.6 (2014-07-16)
----------------------
+----------------
 
 - Changed workflow to have MSAuthorities to answer the questions [erral]
 
@@ -1031,7 +1037,7 @@ Changelog
 
 
 1.5 (2014-07-02)
------------------------
+----------------
 
 - Change notification handling: do it on group-membership basis [erral]
 
@@ -1044,7 +1050,7 @@ Changelog
 - Workflow history is shown to see the review process [msantamaria]
 
 1.4 (2014-05-23)
-----------------------
+----------------
 
 - Workflow changes [erral]
 
@@ -1052,13 +1058,13 @@ Changelog
 
 
 1.3 (2014-05-07)
----------------------
+----------------
 
 - Changes in Workflows [erral]
 
 
 1.2 (2014-04-28)
------------------------
+----------------
 
 - Visualization changes
   [msantamaria]
@@ -1066,13 +1072,13 @@ Changelog
 - Add content-type: electronic files in comment and answers [erral]
 
 1.1.1 (2014-04-11)
----------------------
+------------------
 
 - Add changelog for previous version [erral]
 
 
 1.1 (2014-04-11)
-------------------
+----------------
 
 - Fix vocabularies
   [erral]
@@ -1094,7 +1100,7 @@ Changelog
   [erral]
 
 1.0 (2014-04-04)
--------------------
+----------------
 
 - Initial release
   [erral]
