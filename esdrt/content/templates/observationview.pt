@@ -1226,7 +1226,7 @@
                   Action
                 </a>
               </tal:block>
-              <tal:block tal:condition="question/has_answers">
+              <tal:block tal:condition="not: question/has_answers">
                 <a href=""
                   tal:attributes="href string:${action/action}&amp;comment=${question/getId};
                                   title action/description|nothing;"
