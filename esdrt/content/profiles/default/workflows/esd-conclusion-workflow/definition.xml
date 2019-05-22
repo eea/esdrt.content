@@ -161,6 +161,7 @@
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
    <permission-role>Auditor</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="published" title="Published">

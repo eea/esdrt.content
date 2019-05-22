@@ -78,6 +78,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase1-closed" title="Closed">
@@ -141,6 +142,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase1-counterpart-comments" title="Counterpart comments">
@@ -201,6 +203,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase1-draft" title="Draft">
@@ -269,6 +272,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase1-drafted" title="Drafted">
@@ -335,6 +339,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase1-expert-comments" title="Expert Comments">
@@ -399,6 +404,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase1-pending" title="Pending">
@@ -532,6 +538,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase1-recalled-lr" title="Recalled (LR)">
@@ -593,6 +600,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase1-recalled-msa" title="Recalled (MSA)">
@@ -655,6 +663,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-answered" title="phase2-answered">
@@ -715,6 +724,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-closed" title="phase2-closed">
@@ -782,6 +792,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-draft" title="phase2-draft">
@@ -859,6 +870,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-drafted" title="phase2-drafted">
@@ -926,6 +938,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-expert-comments" title="phase2-expert-comments">
@@ -991,6 +1004,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-pending" title="phase2-pending">
@@ -1123,6 +1137,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-recalled-lr" title="phase2-recalled-lr">
@@ -1183,6 +1198,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-recalled-msa" title="phase2-recalled-msa">
@@ -1245,6 +1261,7 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
  </state>
  <transition transition_id="finish-observation-lr" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">

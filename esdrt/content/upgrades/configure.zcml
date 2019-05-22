@@ -530,4 +530,22 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+        source="58"
+        destination="59"
+        profile="esdrt.content:default">
+
+        <genericsetup:upgradeDepends
+          title="Import workflows"
+          import_steps="workflow"
+          />
+
+         <genericsetup:upgradeStep
+          title="[refs #103381] Allow Managers to view comment loop."
+          description="Update questions and observations"
+          handler=".58_59.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
+
 </configure>
