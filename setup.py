@@ -41,6 +41,7 @@ setup(name='esdrt.content',
           'zc.dict',
           'collective.monkeypatcher',
           'python-ldap',
+          'Products.LDAPUserFolder',
       ],
       entry_points="""
       # -*- Entry points: -*-
