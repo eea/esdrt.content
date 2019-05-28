@@ -1350,6 +1350,32 @@
 
     </div>
   </div>
+  <script>
+    (function(){
+
+      var fileInputs = document.querySelectorAll('input[type="file"]');
+
+      function makeResetButton(el) {
+        var parent = el.parentNode;
+        var resetInput = document.createElement('button');
+        resetInput.textContent = 'Delete attached file';
+        resetInput.addEventListener('click', function(evt){
+          evt.preventDefault();
+          el.value = '';
+          el.type = '';
+          el.type = 'file';
+          return false;
+        });
+        parent.appendChild(resetInput);
+      }
+
+      for (var i = 0; i < fileInputs.length; i++) {
+        var fileInput = fileInputs[i];
+        makeResetButton(fileInput);
+      }
+
+    })()
+  </script>
   </metal:content-core>
 </metal:main>
 </body>
