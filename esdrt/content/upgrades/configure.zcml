@@ -558,6 +558,12 @@
           import_steps="workflow"
           />
 
+         <genericsetup:upgradeStep
+           title="[refs #103380] Remove CounterPart view from phase{1,2}-pending."
+           description="CounterPart should only access observations during the discussion phase."
+           handler=".59_60.upgrade"
+          />
+
     </genericsetup:upgradeSteps>
 
 </configure>

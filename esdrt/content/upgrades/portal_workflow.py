@@ -83,7 +83,7 @@ def upgrade(wft, catalog, type_mapping, queries):
     reindex = set(reindex)
     logger.info('Reindexing %s objects...', len(reindex))
     for idx, obs in enumerate(reindex, start=1):
-        reindex_or_catalog(catalog, content, url)
+        reindex_or_catalog(catalog, obs, url)
         if idx % 10 == 0:
             logger.info('transaction.commit after %s!', idx)
             transaction.commit()

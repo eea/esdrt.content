@@ -295,7 +295,6 @@
   <exit-transition transition_id="phase1-edit-highlights"/>
   <exit-transition transition_id="phase1-draft-conclusions"/>
   <permission-map name="Access contents information" acquired="False">
-   <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
@@ -324,7 +323,6 @@
    <permission-role>ReviewerPhase1</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
-   <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
@@ -349,7 +347,6 @@
    <permission-role>MSExpert</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: View Comment Discussion" acquired="False">
-   <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -631,7 +628,6 @@
   <exit-transition transition_id="phase2-draft-conclusions"/>
   <exit-transition transition_id="phase2-edit-highlights"/>
   <permission-map name="Access contents information" acquired="False">
-   <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
@@ -660,7 +656,6 @@
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
-   <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
@@ -686,7 +681,6 @@
    <permission-role>MSExpert</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: View Comment Discussion" acquired="False">
-   <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
    <permission-role>Manager</permission-role>
