@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.71.5 (2019-05-28)
+-------------------
+- Bug: #103380 - Sector permissions and observation visibility
+- Feature: #103375 - Ask SE to redraft - comment box
+- Feature: #103378 - Delete attached file
+  [batradav]
+
 1.71.4 (2019-05-22)
 -------------------
 - Bug: #103135 - Recalling observations sent to step 2
