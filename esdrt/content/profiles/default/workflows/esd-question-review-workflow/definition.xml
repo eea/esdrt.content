@@ -1398,7 +1398,7 @@
   </guard>
  </transition>
  <transition transition_id="phase1-redraft" title="Ask SE to redraft" new_state="phase1-draft" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase1-redraft" category="workflow" icon="">Ask SE to redraft</action>
+  <action url="%(content_url)s/request-redraft?workflow_action=phase1-redraft" category="workflow" icon="">Ask SE to redraft</action>
   <guard>
    <guard-role>QualityExpert</guard-role>
   </guard>
@@ -1551,7 +1551,7 @@
   </guard>
  </transition>
  <transition transition_id="phase2-redraft" title="Ask SE to redraft" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-redraft" category="workflow" icon="">Ask SE to redraft</action>
+  <action url="%(content_url)s/request-redraft?workflow_action=phase2-redraft" category="workflow" icon="">Ask SE to redraft</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
   </guard>

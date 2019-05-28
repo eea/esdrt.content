@@ -85,6 +85,13 @@
         />
 
     <browser:page
+        name="request-redraft"
+        for="..question.IQuestion"
+        class=".statechange.RequestRedraftReasonForm"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="assign_conclusion_reviewer_form"
         for="..observation.IObservation"
         class=".statechange.AssignConclusionReviewerForm"
@@ -160,7 +167,7 @@
         class=".attachmentdownload.Download"
         permission="zope2.View"
         />
-    
+
     <browser:page
         name="manage_forcing_workflow_state"
         for="*"

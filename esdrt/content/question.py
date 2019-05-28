@@ -18,6 +18,7 @@ from z3c.form import button
 from z3c.form import field
 from z3c.form.form import Form
 from z3c.form.interfaces import ActionExecutionError
+from zope import schema
 from zope.component import createObject
 from zope.component import getUtility
 from zope.interface import Invalid
@@ -29,6 +30,18 @@ class IQuestion(form.Schema, IImageScaleTraversable):
     """
     New Question regarding an Observation
     """
+
+    form.write_permission(request_redraft_comments='cmf.ManagePortal')
+    request_redraft_comments = schema.Text(
+        title=u'Request redraft reasons',
+        required=False,
+    )
+
+    form.write_permission(request_redraft_comments_phase2='cmf.ManagePortal')
+    request_redraft_comments_phase2 = schema.Text(
+        title=u'Request redraft reasons for phase 2',
+        required=False,
+    )
 
 # Custom content-type class; objects created for this content type will
 # be instances of this class. Use this class to add content-type specific

@@ -446,6 +446,48 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
             return self.index()
 
 
+class IRequestRedraftReasonForm(Interface):
+
+    comments = schema.Text(
+        title=_(u'Enter your reasons to request redraft of this question'),
+        required=False,
+    )
+
+
+class RequestRedraftReasonForm(Form):
+    fields = field.Fields(IRequestRedraftReasonForm)
+    label = _(u'Ask SE to redraft')
+    description = _(u'Enter your reasons to request redraft of this question')
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Ask SE to redraft')
+    def request_redraft(self, action):
+        comments = self.request.get('form.widgets.comments')
+        with api.env.adopt_roles(['Manager']):
+            cur_state = api.content.get_state(self.context)
+            if cur_state.startswith('phase1'):
+                self.context.request_redraft_comments = comments
+                return self.context.content_status_modify(
+                    workflow_action='phase1-redraft',
+                )
+            elif cur_state.startswith('phase2'):
+                self.context.request_redraft_comments_phase2 = comments
+                return self.context.content_status_modify(
+                    workflow_action='phase2-redraft',
+                )
+
+        return self.response.redirect(self.context.absolute_url())
+
+    def updateWidgets(self):
+        super(RequestRedraftReasonForm, self).updateWidgets()
+        self.widgets['comments'].rows = 15
+
+    def updateActions(self):
+        super(RequestRedraftReasonForm, self).updateActions()
+        for k in self.actions.keys():
+            self.actions[k].addClass('standardButton')
+
+
 class AssignConclusionReviewerForm(BrowserView):
 
     index = ViewPageTemplateFile('templates/assign_conclusion_reviewer_form.pt')
