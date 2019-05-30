@@ -4,6 +4,7 @@ except ImportError:
     from StringIO import StringIO
 import datetime
 import re
+from itertools import chain
 from docx import Document
 from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
@@ -51,6 +52,7 @@ from .crf_code_matching import get_category_ldap_from_crf_code
 from .crf_code_matching import get_category_value_from_crf_code
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
+from esdrt.content.constants import ROLE_MSE
 import datetime
 
 HIDDEN_ACTIONS = [
@@ -872,7 +874,6 @@ class Observation(dexterity.Container):
         sm = getSecurityManager()
         return sm.checkPermission('Modify portal content', self)
 
-    @instance.memoize
     def get_question(self):
         questions = self.get_values_cat('Question')
 
@@ -991,16 +992,18 @@ class Observation(dexterity.Container):
         return replynum
 
     def reply_comments_by_mse(self):
-        questions = self.get_values_cat('Question')
-        user = api.user.get_current().id
-        if questions:
-            comments = [c for c in questions[-1].values() if c.portal_type == "CommentAnswer"]
-            if comments:
-                last = comments[-1]
-                disc = IConversation(last)
-                return user in IConversation(last).commentators
+        question = self.get_question()
+        commentators = []
+        if question:
+            commentators = list(set(chain.from_iterable([
+                IConversation(c).commentators
+                for c in question.values()
+            ])))
 
-        return False
+        return [
+            uid for uid in commentators
+            if ROLE_MSE in api.user.get_roles(username=uid, obj=self)
+        ]
 
     def observation_already_replied(self):
 

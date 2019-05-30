@@ -33,14 +33,6 @@
   />
 
   <browser:page
-      name="inboxview2"
-      for="..reviewfolder.IReviewFolder"
-      class="..reviewfolder.Inbox2ReviewFolderView"
-      permission="zope2.View"
-      template="templates/inbox2reviewfolderview.pt"
-  />
-
-  <browser:page
       name="inboxview"
       for="..reviewfolder.IReviewFolder"
       class="..reviewfolder.InboxReviewFolderView"

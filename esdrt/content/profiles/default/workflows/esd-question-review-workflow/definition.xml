@@ -610,6 +610,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -618,6 +619,7 @@
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -634,6 +636,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -1208,6 +1211,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -1216,6 +1220,7 @@
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -1232,6 +1237,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>

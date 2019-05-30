@@ -566,4 +566,28 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+        source="60"
+        destination="61"
+        profile="esdrt.content:default">
+
+        <genericsetup:upgradeStep
+          title="[refs #103382] MSE permissions in -recalled-msa states."
+          description="Delete reply_comments_by_mse index. Will be added back by the catalog import step."
+          handler=".60_61.delete_index"
+          />
+
+        <genericsetup:upgradeDepends
+          title="Import workflows and catalog"
+          import_steps="workflow catalog"
+          />
+
+        <genericsetup:upgradeStep
+          title="[refs #103382] MSE permissions in -recalled-msa states."
+          description="Bring MSE permissions for -recalled-msa in line with -pending-answer-drafting"
+          handler=".60_61.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
+
 </configure>
