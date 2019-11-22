@@ -12,12 +12,35 @@ def notification_ms(context, event):
     When:   Observation was finalised
     """
     _temp = PageTemplateFile('observation_finalised.pt')
-    if event.action in ['phase1-close', 'phase2-confirm-finishing-observation']:
+    _temp_remarks = PageTemplateFile('observation_finalised_ms_remarks.pt')
+
+    _subj = u'An observation for your country was finalised'
+    _subj_remarks = u'Observation finalised with a concluding remark'
+
+    _act_ph1 = 'phase1-close'
+    _act_ph2 = 'phase2-confirm-finishing-observation'
+
+    if event.action in [_act_ph1, _act_ph2]:
         observation = context
-        subject = u'An observation for your country was finalised'
+
+        subject = _subj
+        tpl = _temp
+
+        tpl_remarks = False
+
+        if event.action == _act_ph1:
+            tpl_remarks = bool(observation.get_conclusion().remarks)
+
+        elif event.action == _act_ph2:
+            tpl_remarks = bool(observation.get_conclusion_phase2().remarks)
+
+        if tpl_remarks:
+            subject = _subj_remarks
+            tpl = _temp_remarks
+
         notify(
             observation,
-            _temp,
+            tpl,
             subject,
             'MSAuthority',
             'observation_finalised'

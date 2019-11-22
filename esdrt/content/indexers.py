@@ -343,3 +343,27 @@ def observation_finalisation_text_step2(context):
         return conclusions[0] and conclusions[0].text or ''
     except:
         return None
+
+
+@indexer(IObservation)
+def observation_finalisation_remarks_step1(context):
+    try:
+        conclusions = [
+            c for c in context.values()
+            if c.portal_type == "Conclusion"
+        ]
+        return conclusions[0] and conclusions[0].remarks or ''
+    except:
+        return None
+
+
+@indexer(IObservation)
+def observation_finalisation_remarks_step2(context):
+    try:
+        conclusions = [
+            c for c in context.values()
+            if c.portal_type == "ConclusionsPhase2"
+        ]
+        return conclusions[0] and conclusions[0].remarks or ''
+    except:
+        return None

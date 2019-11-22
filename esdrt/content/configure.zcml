@@ -64,6 +64,8 @@
   <adapter name="observation_finalisation_reason_step2" factory=".indexers.observation_finalisation_reason_step2" />
   <adapter name="observation_finalisation_text_step1" factory=".indexers.observation_finalisation_text_step1" />
   <adapter name="observation_finalisation_text_step2" factory=".indexers.observation_finalisation_text_step2" />
+  <adapter name="observation_finalisation_remarks_step1" factory=".indexers.observation_finalisation_remarks_step1" />
+  <adapter name="observation_finalisation_remarks_step2" factory=".indexers.observation_finalisation_remarks_step2" />
   <adapter name="observation_sent_to_msc" factory=".indexers.observation_sent_to_msc" />
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />

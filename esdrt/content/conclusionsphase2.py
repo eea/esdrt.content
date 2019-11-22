@@ -59,16 +59,22 @@ class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
     """
 
     closing_reason = schema.Choice(
-        title=_(u'Conclusion'),
+        title=_(u'Final Status of Observation'),
         vocabulary='esdrt.content.conclusionphase2reasons',
         required=True,
     )
 
     text = schema.Text(
-        title=_(u'Text'),
+        title=_(u'Draft Recommendation for Draft Review Report (not visible to MS)'),
         required=True,
         default=DEFAULTCONCLUSIONTEXT,
     )
+
+    remarks = schema.Text(
+        title=_(u'Concluding remark'),
+        required=False,
+        )
+
 
     form.widget(ghg_estimations=DataGridFieldFactory)
     ghg_estimations = schema.List(
@@ -161,7 +167,8 @@ class AddForm(dexterity.AddForm):
     def updateFields(self):
         super(AddForm, self).updateFields()
         from .observation import IObservation
-        conclusion_fields = field.Fields(IConclusionsPhase2).select('closing_reason', 'text') #, 'ghg_estimations')
+        conclusion_fields = field.Fields(IConclusionsPhase2).select(
+            'closing_reason', 'text', 'remarks') #, 'ghg_estimations')
         observation_fields = field.Fields(IObservation).select('highlight')
         self.fields = field.Fields(conclusion_fields, observation_fields)
         self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
@@ -171,6 +178,7 @@ class AddForm(dexterity.AddForm):
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
+        self.widgets['remarks'].rows = 15
 
     def create(self, data={}):
         # import pdb; pdb.set_trace()
@@ -189,6 +197,7 @@ class AddForm(dexterity.AddForm):
         content.title = id
         content.id = id
         content.text = self.request.form.get('form.widgets.text', '')
+        content.remarks = self.request.form.get('form.widgets.remarks', '')
         reason = self.request.form.get('form.widgets.closing_reason', '')
         content.closing_reason = reason[0]
         adapted = IAllowDiscussion(content)
@@ -241,17 +250,20 @@ class EditForm(dexterity.EditForm):
     def updateFields(self):
         super(EditForm, self).updateFields()
         from .observation import IObservation
-        conclusion_fields = field.Fields(IConclusionsPhase2).select('closing_reason', 'text') #, 'ghg_estimations')
+        conclusion_fields = field.Fields(IConclusionsPhase2).select(
+            'closing_reason', 'text', 'remarks') #, 'ghg_estimations')
         observation_fields = field.Fields(IObservation).select('highlight')
         self.fields = field.Fields(conclusion_fields, observation_fields)
         self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
         #self.fields['ghg_estimations'].widgetFactory = DataGridFieldFactory
         self.fields['text'].rows = 15
+        self.fields['remarks'].rows = 15
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
 
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
         self.widgets['text'].rows = 15
+        self.widgets['remarks'].rows = 15
 
     def updateActions(self):
         super(EditForm, self).updateActions()
@@ -263,8 +275,10 @@ class EditForm(dexterity.EditForm):
         context = aq_inner(self.context)
         container = aq_parent(context)
         text = self.request.form.get('form.widgets.text')
+        remarks = self.request.form.get('form.widgets.remarks')
         closing_reason = self.request.form.get('form.widgets.closing_reason')
         context.text = text
+        context.remarks = remarks
         if type(closing_reason) in (ListType, TupleType):
             context.closing_reason = closing_reason[0]
         #context.ghg_estimations = data['ghg_estimations']
@@ -272,4 +286,3 @@ class EditForm(dexterity.EditForm):
         container.highlight = highlight
         notify(ObjectModifiedEvent(context))
         notify(ObjectModifiedEvent(container))
-        

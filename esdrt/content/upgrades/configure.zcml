@@ -590,4 +590,17 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+      source="61"
+      destination="62"
+      profile="esdrt.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update catalog config"
+      description="[refs #110292] New indexes and columns added: observation_finalisation_remarks_step{1,2}."
+      import_steps="catalog"
+      />
+
+    </genericsetup:upgradeSteps>
+
 </configure>

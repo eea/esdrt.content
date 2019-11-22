@@ -1578,7 +1578,7 @@ class ExportAsDocView(ObservationMixin):
 
             p = document.add_paragraph('Final status of observation:', style="Label Bold")
             p = document.add_paragraph(conclusion_2.reason_value())
-            p = document.add_paragraph('Recommendation/internal note:', style="Label Bold")
+            p = document.add_paragraph('Recommendation:', style="Label Bold")
             p = document.add_paragraph(conclusion_2.text)
 
             if self.context.closing_deny_comments_phase2:
@@ -1592,9 +1592,9 @@ class ExportAsDocView(ObservationMixin):
                 document.add_page_break()
             document.add_heading('Conclusions Step 1', level=2)
 
-            p = document.add_paragraph('Reason:', style="Label Bold")
+            p = document.add_paragraph('Status of Observation:', style="Label Bold")
             p = document.add_paragraph(conclusion.reason_value())
-            p = document.add_paragraph('SE comments on conclusion:', style="Label Bold")
+            p = document.add_paragraph('Internal Note:', style="Label Bold")
             p = document.add_paragraph(conclusion.text)
 
             if self.context.closing_deny_comments:

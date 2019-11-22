@@ -30,6 +30,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema import List, Choice, TextLine, Bool
 from zope.interface import Interface
 from zope.interface import provider
+import Missing
 from z3c.form import form
 from z3c.form.interfaces import HIDDEN_MODE
 from esdrt.content.utilities.ms_user import IUserIsMS
@@ -342,8 +343,10 @@ EXPORT_FIELDS = OrderedDict([
     ('observation_phase', 'Step'),
     ('observation_finalisation_reason_step1', 'Conclusion step 1'),
     ('observation_finalisation_text_step1', 'Conclusion step 1 note'),
+    ('observation_finalisation_remarks_step1', 'Conclusion step 1 remark'),
     ('observation_finalisation_reason_step2', 'Conclusion step 2'),
     ('observation_finalisation_text_step2', 'Conclusion step 2 note'),
+    ('observation_finalisation_remarks_step2', 'Conclusion step 2 remark'),
     ('observation_questions_workflow', 'Question workflow'),
     ('last_question_workflow', 'Last question workflow'),
     ('get_author_name', 'Author'),
@@ -358,7 +361,9 @@ EXPORT_FIELDS = OrderedDict([
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
     'observation_finalisation_text_step1',
+    'observation_finalisation_remarks_step1',
     'observation_finalisation_text_step2',
+    'observation_finalisation_remarks_step2',
 )
 
 
@@ -560,7 +565,10 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                 elif key == 'export_time':
                     row.append(datetime.now().strftime('%H:%M:%S'))
                 else:
-                    row.append(safe_unicode(observation[key]))
+                    _val = observation[key]
+                    if _val == Missing.Value:
+                        _val = ''
+                    row.append(safe_unicode(_val))
 
             if base_len == 0:
                 base_len = len(row)
