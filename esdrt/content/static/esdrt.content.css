@@ -821,3 +821,16 @@ form[action$="esdrt.content.crf_code_matching.IEsdrtSettings.crfcodeMapping"] di
     width: 100%;
     overflow-y: visible;
 }
+
+/*observation import form*/
+.import-info {
+    border: 1px solid;
+    padding: 15px 10px 15px 10px;
+    color: #00529B;
+    background-color: #BDE5F8;
+    }
+
+input[name="xls_file"]{
+    margin-bottom: 10px;
+    display: block;
+    }

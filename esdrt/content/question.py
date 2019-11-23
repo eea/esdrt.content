@@ -70,6 +70,25 @@ OPEN_STATUS_NAME = 'open'
 CLOSED_STATUS_NAME = 'closed'
 
 
+def create_question(context):
+    fti = getUtility(IDexterityFTI, name='Question')
+    container = aq_inner(context)
+    content = createObject(fti.factory)
+    if hasattr(content, '_setPortalTypeName'):
+        content._setPortalTypeName(fti.getId())
+
+    # Acquisition wrap temporarily to satisfy things like vocabularies
+    # depending on tools
+    if IAcquirer.providedBy(content):
+        content = content.__of__(container)
+
+    ids = [id for id in context.keys() if id.startswith('question-')]
+    id = len(ids) + 1
+    content.title = 'Question %d' % id
+
+    return aq_base(content)
+
+
 class Question(dexterity.Container):
     grok.implements(IQuestion)    # Add your class methods and properties here
 
