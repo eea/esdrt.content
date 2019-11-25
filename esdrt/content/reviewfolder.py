@@ -38,6 +38,7 @@ from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
 
 from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
 from esdrt.content import ldap_utils
+from esdrt.content.browser.inbox_sections import SECTIONS
 
 
 QUESTION_WORKFLOW_MAP = {
@@ -712,12 +713,39 @@ class RoleMapItem(object):
         return False
 
 
+def _do_section_queries(view, action):
+    action['num_obs'] = 0
+
+    for section in action['sec']:
+        objs = section['getter'](view)
+        len_objs = len(objs)
+        section['objs'] = objs
+        section['num_obs'] = len_objs
+        action['num_obs'] += len_objs
+
+    return action['num_obs']
+
+
 class InboxReviewFolderView(BrowserView):
 
     @memoize
     def get_current_user(self):
         return api.user.get_current()
 
+    def get_sections(self):
+        is_sec = self.is_secretariat()
+        viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)]
+
+        total_sum = 0
+        for section in viewable:
+            section['num_obs'] = 0
+
+            for action in section['actions']:
+                section['num_obs'] += _do_section_queries(self, action)
+
+            total_sum += section['num_obs']
+
+        return dict(viewable=viewable, total_sum=total_sum)
 
     def rolemap(self, observation):
         """ prepare a plain object, so that we can cache it in a RAM cache """
