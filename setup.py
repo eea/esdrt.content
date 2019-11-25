@@ -42,6 +42,7 @@ setup(name='esdrt.content',
           'collective.monkeypatcher',
           'python-ldap',
           'Products.LDAPUserFolder',
+          'openpyxl',
       ],
       entry_points="""
       # -*- Entry points: -*-
