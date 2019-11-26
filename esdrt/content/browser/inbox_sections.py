@@ -179,8 +179,8 @@ SECTIONS = (
         )
     ),
     dict(
-        title='Lead reviewer',
-        check=methodcaller('is_lead_reviewer'),
+        title='Lead reviewer / Quality expert',
+        check=methodcaller('is_lead_reviewer_or_quality_expert'),
         actions=(
             dict(title='My actions', sec=SEC_LR_ME),
             dict(title='My teams\'s actions', sec=SEC_LR_TEAM),
