@@ -225,6 +225,7 @@ class EditForm(dexterity.EditForm):
         container = aq_parent(context)
         data = {}
         data['text'] = context.text
+        data['remarks'] = context.remarks
         if type(context.closing_reason) in (ListType, TupleType):
             data['closing_reason'] = context.closing_reason[0]
         else:

@@ -512,7 +512,7 @@
           </dl>
         </div>
 
-        <div tal:condition="python:context.get_status() == 'phase2-closed'">
+        <div tal:condition="python:view.can_view_conclusion_remarks_phase2()">
           <tal:remarks define="remarks conclusion/remarks/output|conclusion/remarks|nothing">
             <tal:if condition="remarks">
               <dt>Concluding remark (sent to Member State)</dt>
@@ -711,7 +711,7 @@
           </dl>
         </div>
 
-        <div tal:condition="python:context.get_status() == 'phase1-closed'">
+        <div tal:condition="python:view.can_view_conclusion_remarks_phase1()">
           <tal:remarks define="remarks conclusion/remarks/output|conclusion/remarks|nothing">
             <tal:if condition="remarks">
               <dt>Concluding remark (sent to Member State)</dt>
