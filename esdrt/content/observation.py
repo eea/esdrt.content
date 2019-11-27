@@ -1180,6 +1180,21 @@ class ObservationMixin(grok.View):
     def show_internal_notes(self):
         return not getUtility(IUserIsMS)(self.context)
 
+    def _can_view_conclusion_remarks(self, state):
+        result = True
+        user_is_ms = getUtility(IUserIsMS)(self.context)
+        if self.context.is_secretariat():
+            result = True
+        elif user_is_ms:
+            result = self.context.get_status() == state
+        return result
+
+    def can_view_conclusion_remarks_phase1(self):
+        return self._can_view_conclusion_remarks('phase1-closed')
+
+    def can_view_conclusion_remarks_phase2(self):
+        return self._can_view_conclusion_remarks('phase2-closed')
+
     def add_question_form(self):
         from plone.z3cform.interfaces import IWrappedForm
         form_instance = AddQuestionForm(self.context, self.request)

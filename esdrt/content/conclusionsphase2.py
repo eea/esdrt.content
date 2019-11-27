@@ -239,6 +239,8 @@ class EditForm(dexterity.EditForm):
         data['text'] = DEFAULTCONCLUSIONTEXT
         if context.text:
             data['text'] = context.text
+        if context.remarks:
+            data['remarks'] = context.remarks
         if type(context.closing_reason) in (ListType, TupleType):
             data['closing_reason'] = context.closing_reason[0]
         else:
