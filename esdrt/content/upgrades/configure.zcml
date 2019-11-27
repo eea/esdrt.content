@@ -601,6 +601,11 @@
       import_steps="catalog"
       />
 
+    <genericsetup:upgradeDepends
+      title="Import workflows"
+      import_steps="workflow"
+      />
+
     </genericsetup:upgradeSteps>
 
 </configure>
