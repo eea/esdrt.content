@@ -590,4 +590,15 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+        source="61"
+        destination="62"
+        profile="esdrt.content:default">
+
+        <genericsetup:upgradeDepends
+          title="Import workflows"
+          import_steps="workflow"
+          />
+    </genericsetup:upgradeSteps>
+
 </configure>
