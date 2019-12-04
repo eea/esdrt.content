@@ -45,6 +45,7 @@ class IConclusion(form.Schema, IImageScaleTraversable):
 
     remarks = schema.Text(
         title=_(u'Concluding remark'),
+        description=_(u'(visible to MS when observation finalised)'),
         required=False,
         )
 
