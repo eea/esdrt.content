@@ -65,13 +65,14 @@ class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
     )
 
     text = schema.Text(
-        title=_(u'Draft Recommendation for Draft Review Report (not visible to MS)'),
+        title=_(u'Recommendation for Draft Review Report (not visible to MS)'),
         required=True,
         default=DEFAULTCONCLUSIONTEXT,
     )
 
     remarks = schema.Text(
         title=_(u'Concluding remark'),
+        description=_(u'(visible to MS when observation finalised)'),
         required=False,
         )
 

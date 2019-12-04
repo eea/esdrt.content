@@ -362,10 +362,6 @@
           <dt>SE comments on finish observation request:</dt>
           <dd><span tal:replace="context/closing_comments/output|context/closing_comments|nothing" /></dd>
           </tal:block>
-          <tal:block condition="show_internal_notes">
-          <dt>SE comments on finish observation request:</dt>
-          <dd><span tal:replace="context/closing_comments/output|context/closing_comments|nothing" /></dd>
-          </tal:block>
         </dl>
 
         <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'phase1-close-requested'" >
@@ -515,7 +511,7 @@
         <div tal:condition="python:view.can_view_conclusion_remarks_phase2()">
           <tal:remarks define="remarks conclusion/remarks/output|conclusion/remarks|nothing">
             <tal:if condition="remarks">
-              <dt>Concluding remark (sent to Member State)</dt>
+              <dt>Concluding remark <span class="tooltipIconBlue" title="Concluding remark sent to Member State when observation is finalised"></span></dt>
               <dd><span tal:replace="remarks" /></dd>
             </tal:if>
           </tal:remarks>
@@ -658,7 +654,7 @@
         </div>
 
         <div class="finish-denied" tal:condition="context/closing_deny_comments_phase2|nothing">
-          <dl>
+          <dl tal:condition="show_internal_notes">
             <dt>Observation Finishing denied</dt>
             <dd></dd>
             <tal:block condition="show_internal_notes">
@@ -714,14 +710,14 @@
         <div tal:condition="python:view.can_view_conclusion_remarks_phase1()">
           <tal:remarks define="remarks conclusion/remarks/output|conclusion/remarks|nothing">
             <tal:if condition="remarks">
-              <dt>Concluding remark (sent to Member State)</dt>
+              <dt>Concluding remark <span class="tooltipIconBlue" title="Concluding remark sent to Member State when observation is finalised"></span></dt>
               <dd><span tal:replace="remarks" /></dd>
             </tal:if>
           </tal:remarks>
         </div>
 
         <div class="finish-denied" tal:condition="context/closing_deny_comments|nothing">
-          <dl>
+          <dl tal:condition="show_internal_notes">
             <dt>Observation Finishing denied</dt>
             <dd></dd>
             <tal:block condition="show_internal_notes">
