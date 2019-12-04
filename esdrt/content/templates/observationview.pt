@@ -1219,6 +1219,46 @@
                 style="display:none">
                   Upload file
           </span>
+          <tal:block tal:repeat="action view/actions">
+            <tal:block tal:condition="python:question and '/assign_counterpart_form' in action['action']">
+              <tal:block tal:condition="question/can_be_sent_to_lr">
+                <a href=""
+                  tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+                                  title action/description|nothing;"
+                  class="standardButton "
+                  tal:content="action/title">
+                  Action
+                </a>
+              </tal:block>
+              <tal:block tal:condition="not: question/can_be_sent_to_lr ">
+                <a href=""
+                  tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+                                  title action/description|nothing;"
+                  class="standardButton defaultWFButton"
+                  tal:content="action/title">
+                  Action
+                </a>
+              </tal:block>
+            </tal:block>
+            <tal:block tal:condition="python:question and ('send-comment' in action['action'] or 'send-to-lr' in action['action'] or 'approve-question' in action['action'] or 'ask-answer-approval' in action['action'] or 'answer-to-lr' in action['action'] or 'validate-answer-msa' in action['action'])">
+              <a href=""
+                tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+                                title action/description|nothing;"
+                class="standardButton defaultWFButton"
+                tal:content="action/title">
+                Action
+              </a>
+            </tal:block>
+            <tal:block tal:condition="python:question and '/assign_counterpart_form' not in action['action'] and 'send-comment' not in action['action'] and 'send-to-lr' not in action['action'] and 'approve-question' not in action['action'] and 'ask-answer-approval' not in action['action'] and 'answer-to-lr' not in action['action'] and 'validate-answer-msa' not in action['action'] and 'draft-conclusions' not in action['action'] and 'edit-highlights' not in action['action']">
+              <a href=""
+                tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+                                title action/description|nothing;"
+                class="standardButton"
+                tal:content="action/title">
+                Action
+              </a>
+            </tal:block>
+        </tal:block>
         </div>
       </tal:qactions>
       </div>
@@ -1246,35 +1286,6 @@
               </tal:block>
             </tal:block>
           </tal:block>
-          <tal:block tal:condition="python:question and '/assign_counterpart_form' in action['action']">
-            <tal:block tal:condition="question/can_be_sent_to_lr">
-              <a href=""
-                tal:attributes="href string:${action/action}&amp;comment=${question/getId};
-                                title action/description|nothing;"
-                class="standardButton "
-                tal:content="action/title">
-                Action
-              </a>
-            </tal:block>
-            <tal:block tal:condition="not: question/can_be_sent_to_lr ">
-              <a href=""
-                tal:attributes="href string:${action/action}&amp;comment=${question/getId};
-                                title action/description|nothing;"
-                class="standardButton defaultWFButton"
-                tal:content="action/title">
-                Action
-              </a>
-            </tal:block>
-          </tal:block>
-          <tal:block tal:condition="python:question and ('send-comment' in action['action'] or 'send-to-lr' in action['action'] or 'approve-question' in action['action'] or 'ask-answer-approval' in action['action'] or 'answer-to-lr' in action['action'] or 'validate-answer-msa' in action['action'])">
-            <a href=""
-              tal:attributes="href string:${action/action}&amp;comment=${question/getId};
-                              title action/description|nothing;"
-              class="standardButton defaultWFButton"
-              tal:content="action/title">
-              Action
-            </a>
-          </tal:block>
           <tal:block tal:condition="python:question and 'edit-highlights' in action['action']"
                     tal:define="question view/question;
                                 cond1 python: (question and question.get_state_api() in ['phase1-drafted', 'phase2-drafted']) and ('ReviewerPhase1' in view.user_roles);
@@ -1288,15 +1299,6 @@
                 Action
               </a>
             </tal:block>
-          </tal:block>
-          <tal:block tal:condition="python:question and '/assign_counterpart_form' not in action['action'] and 'send-comment' not in action['action'] and 'send-to-lr' not in action['action'] and 'approve-question' not in action['action'] and 'ask-answer-approval' not in action['action'] and 'answer-to-lr' not in action['action'] and 'validate-answer-msa' not in action['action'] and 'draft-conclusions' not in action['action'] and 'edit-highlights' not in action['action']">
-            <a href=""
-              tal:attributes="href string:${action/action}&amp;comment=${question/getId};
-                              title action/description|nothing;"
-              class="standardButton"
-              tal:content="action/title">
-              Action
-            </a>
           </tal:block>
           <tal:block tal:condition="python:'recall-from-phase2' in action['action']">
             <a href=""
