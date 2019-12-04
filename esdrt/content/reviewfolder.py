@@ -813,6 +813,20 @@ class InboxReviewFolderView(BrowserView):
 
         return phase1 + phase2
 
+    def get_draft_conclusions(self):
+        """
+         Role: Sector expert / Review expert
+         [refs #108182]
+        """
+        phase1 = self.get_observations(
+            rolecheck='SectorExpert',
+            observation_question_status=['phase1-conclusions'])
+        phase2 = self.get_observations(
+            rolecheck='ReviewExpert',
+            observation_question_status=['phase2-conclusions'])
+
+        return phase1 + phase2
+
     @timeit
     def get_draft_questions(self):
         """
