@@ -1,0 +1,23 @@
+<metal:page use-macro="here/main_template/macros/master">
+  <metal:content fill-slot="main">
+    <h1 class="documentFirstHeading">Import an observation as a xls file</h1>
+
+    <br />
+
+    <p class="import-info"><b>Important: </b>
+      <br />When writing to your excel file, in case of fields such as 'Gas' or 'Parameter',
+      if your observation has multiple values, please write them one per line, as in the sample import file.
+      <br/> The "Fuel" and 'Description Flags' fields can be left empty as they are not mandatory fields.
+      <br /> The MS/EU Key Category field can be set to 'True' if the observation belongs to this category
+      or it can be left empty if it doesn't.
+    </p>
+    <p>You can download a sample import file by clicking <a href="./get_sample_xls">here</a>.</p>
+
+    <form method="post" action="./observation_import" enctype="multipart/form-data">
+      <input type="file" name="xls_file" required="true" />
+      <input type="submit" value="Import" class="standardButton" />
+    </form>
+
+  </metal:content>
+
+</metal:page>

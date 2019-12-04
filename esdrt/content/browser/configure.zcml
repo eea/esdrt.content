@@ -167,4 +167,26 @@
         permission="cmf.ManagePortal"
         />
 
+    <browser:page
+        name="observation_import_form"
+        for="esdrt.content.reviewfolder.IReviewFolder"
+        template="templates/import_observation.pt"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        name="observation_import"
+        for="esdrt.content.reviewfolder.IReviewFolder"
+        class=".observation_import.ObservationXLSImport"
+        attribute="do_import"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        name="get_sample_xls"
+        for="esdrt.content.reviewfolder.IReviewFolder"
+        class=".get_sample_xls.GetSampleXLS"
+        permission="cmf.ManagePortal"
+        />
+
 </configure>

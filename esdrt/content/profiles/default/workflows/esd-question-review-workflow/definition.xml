@@ -224,6 +224,7 @@
    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
+   <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
@@ -292,6 +293,7 @@
    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
+   <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
@@ -895,6 +897,7 @@
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>QualityExpert</permission-role>
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
    <permission-role>LeadReviewer</permission-role>

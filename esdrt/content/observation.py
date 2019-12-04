@@ -1847,14 +1847,8 @@ class AddCommentForm(Form):
         else:
             raise
 
-        id = str(int(time()))
-        item_id = context.invokeFactory(
-            type_name='Comment',
-            id=id,
-        )
         text = self.request.form.get('form.widgets.text', '')
-        comment = context.get(item_id)
-        comment.text = text
+        create_comment(text, context)
 
         return self.request.response.redirect(observation.absolute_url())
 
@@ -2068,3 +2062,11 @@ class AddConclusions(grok.View):
 
         self.context.reindexObject()
         return self.request.response.redirect(url)
+
+
+def create_comment(text, question):
+    id = str(int(time()))
+    item_id = question.invokeFactory(type_name='Comment', id=id)
+    comment = question.get(item_id)
+    comment.text = text
+    return comment
