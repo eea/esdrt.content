@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.71.7 (2019-12-04)
+-------------------
+- Feature: #108181 - Adding Bulk Upload Feature
+- Bug: #111611 - Bug in EMRT question sending
+  [batradav]
+
 1.71.6 (2019-05-30)
 -------------------
 - Bug: #103382 - Member State Expert my view
