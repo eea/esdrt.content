@@ -611,7 +611,8 @@ class Observation(dexterity.Container):
         else:
             return 'open'
 
-    def is_secretariat(self):
+    @staticmethod
+    def is_secretariat():
         user = api.user.get_current()
         return 'Manager' in user.getRoles()
 
@@ -1059,7 +1060,10 @@ class AddForm(dexterity.AddForm):
         self.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
         self.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
         self.widgets['text'].rows = 15
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+        if not Observation.is_secretariat():
+            self.widgets['review_year'].readonly = 'readonly'
+        self.groups = [
+            g for g in self.groups if g.label == 'label_schema_default']
 
     def updateActions(self):
         super(AddForm, self).updateActions()
@@ -1727,6 +1731,9 @@ class ModificationForm(dexterity.EditForm):
         elif 'QualityExpert' in roles or 'LeadReviewer' in roles:
             fields = ['text', 'highlight']
 
+        elif 'Manager' in roles:
+            fields = [f for f in field.Fields(IObservation)]
+
         self.fields = field.Fields(IObservation).select(*fields)
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
         if 'parameter' in fields:
@@ -1736,10 +1743,19 @@ class ModificationForm(dexterity.EditForm):
         if 'gas' in fields:
             self.fields['gas'].widgetFactory = CheckBoxFieldWidget
 
+    def updateWidgets(self):
+        super(ModificationForm, self).updateWidgets()
+        if 'review_year' in self.widgets and not Observation.is_secretariat():
+            self.widgets['review_year'].readonly = 'readonly'
+
     def updateActions(self):
         super(ModificationForm, self).updateActions()
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
+
+
+class EditForm(ModificationForm):
+    grok.name('edit')
 
 
 class AddAnswerForm(Form):
