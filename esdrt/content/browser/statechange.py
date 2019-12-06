@@ -334,14 +334,19 @@ class AssignCounterPartForm(BrowserView):
 
         users = []
 
-        def isCP(userId):
-            target = self.assignation_target()
-            return False
-            #return 'CounterPart' in api.user.get_roles(username=userId, obj=target, inherit=False)
+        target = self.assignation_target()
+        local_roles = target.get_local_roles()
+        counterpart_users = [
+            u[0] for u in local_roles if 'CounterPart' in u[1]
+        ]
 
         for groupname in self.target_groupnames():
             try:
-                data = [(u[0], u[1], isCP(u[0])) for u in self.get_users(groupname) if current_id != u]
+                data = [
+                    (u[0], u[1], u[0] in counterpart_users)
+                    for u in self.get_users(groupname)
+                    if current_id != u
+                ]
                 users.extend(data)
             except api.user.GroupNotFoundError:
                 from logging import getLogger
@@ -540,14 +545,19 @@ class AssignConclusionReviewerForm(BrowserView):
 
         users = []
 
-        def isCP(u):
-            target = self.assignation_target()
-            return False
-            #return 'CounterPart' in api.user.get_roles(username=u, obj=target, inherit=False)
+        target = self.assignation_target()
+        local_roles = target.get_local_roles()
+        counterpart_users = [
+            u[0] for u in local_roles if 'CounterPart' in u[1]
+        ]
 
         for groupname in self.target_groupnames():
             try:
-                data = [(u[0], u[1], isCP(u[0])) for u in self.get_users(groupname=groupname) if current_id != u]
+                data = [
+                    (u[0], u[1], u[0] in counterpart_users)
+                    for u in self.get_users(groupname=groupname)
+                    if current_id != u
+                ]
                 users.extend(data)
             except api.user.GroupNotFoundError:
                 from logging import getLogger
