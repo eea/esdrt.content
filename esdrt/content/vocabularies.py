@@ -1,7 +1,14 @@
+import itertools
 from five import grok
 from plone import api
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
+
+import esdrt.content.constants as C
+
+
+def mk_term(key, value):
+    return SimpleVocabulary.createTerm(key, key, value)
 
 
 class MSVocabulary(object):
@@ -199,3 +206,26 @@ class ConclusionsPhase2(object):
 
 grok.global_utility(ConclusionsPhase2,
     name=u"esdrt.content.conclusionphase2reasons")
+
+
+class Roles(object):
+    grok.implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        terms = list(itertools.starmap(
+            mk_term, [
+                ('Manager', 'Manager'),
+                (C.ROLE_SE, 'Sector Expert'),
+                (C.ROLE_RE, 'Review Expert'),
+                (C.ROLE_QE, 'Quality Expert'),
+                (C.ROLE_LR, 'Lead Reviewer'),
+                (C.ROLE_RP1, 'Reviewer Phase 1'),
+                (C.ROLE_RP2, 'Reviewer Phase 2'),
+                (C.ROLE_MSA, 'MS Authority'),
+                (C.ROLE_MSE, 'MS Expert'),
+            ]))
+
+        return SimpleVocabulary(terms)
+
+
+grok.global_utility(Roles, name=u"esdrt.content.roles")

@@ -9,6 +9,7 @@ from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
 from plone.dexterity.browser import add
 from plone.dexterity.content import Container
+import plone.directives
 from plone.memoize import ram
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
@@ -24,10 +25,11 @@ from zope.schema.interfaces import IContextSourceBinder
 from zc.dict import OrderedDict
 from z3c.form import button
 from z3c.form import field
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope.interface import implementer
 from plone.z3cform.layout import wrap_form
 from zope.schema.vocabulary import SimpleVocabulary
-from zope.schema import List, Choice, TextLine, Bool
+from zope.schema import List, Choice, TextLine, Bool, Text
 from zope.interface import Interface
 from zope.interface import provider
 from z3c.form import form
@@ -70,10 +72,21 @@ def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
 
 
-class IReviewFolder(IImageScaleTraversable):
+class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
     """
     Folder to have all observations together
     """
+
+    tableau_statistics = Text(
+        title=u'Tableau statistics embed code',
+        required=False,
+    )
+
+    plone.directives.form.widget(tableau_statistics_roles=CheckBoxFieldWidget)
+    tableau_statistics_roles = List(
+        title=u'Roles that can access the statistics',
+        value_type=Choice(vocabulary='esdrt.content.roles'),
+    )
 
 
 @implementer(IReviewFolder)
@@ -149,6 +162,10 @@ class ReviewFolderMixin(BrowserView):
     def can_add_observation(self):
         sm = getSecurityManager()
         return sm.checkPermission('esdrt.content: Add Observation', self)
+
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
 
     def is_secretariat(self):
         user = api.user.get_current()
@@ -710,6 +727,9 @@ class InboxReviewFolderView(BrowserView):
     def get_current_user(self):
         return api.user.get_current()
 
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
 
     def rolemap(self, observation):
         """ prepare a plain object, so that we can cache it in a RAM cache """
@@ -1276,6 +1296,10 @@ class InboxReviewFolderView(BrowserView):
 
 
 class FinalisedFolderView(BrowserView):
+
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
 
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
         observationsBatch = Batch(observations, int(b_size), int(b_start), orphan=1)

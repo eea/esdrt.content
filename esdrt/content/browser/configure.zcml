@@ -7,6 +7,12 @@
 
   <!-- -*- extra stuff goes here -*- -->
 
+  <browser:page
+    name="tableau_dashboard"
+    for="..reviewfolder.IReviewFolder"
+    class=".tableau.DashboardView"
+    permission="zope2.View"
+  />
 
   <browser:page
       name="view"

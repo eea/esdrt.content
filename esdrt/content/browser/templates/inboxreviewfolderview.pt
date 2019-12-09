@@ -51,6 +51,9 @@
           <div class="active">
             <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
           </div>
+          <div tal:condition="python:view.can_view_tableau_dashboard()">
+            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/tableau_dashboard">Statistics</a>
+          </div>
           <div>
             <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/finalisedfolderview">Finalised observations</a>
           </div>

@@ -51,9 +51,12 @@
           <div>
             <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
           </div>
+          <div tal:condition="python:view.can_view_tableau_dashboard()">
+            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/tableau_dashboard">Statistics</a>
+          </div>
           <div class="active">
             <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/finalisedfolderview">Finalised observations</a>
-          </div>          
+          </div>
         </div>
       </div>
 
@@ -96,7 +99,7 @@
                   b_size request/b_size | b_size;
                   b_start1 python:0;
                   b_start1 request/b_start1 | b_start1;
-                  batch1 python:view.batch(observations, int(b_size), int(b_start1), orphan=1, b_start_str='b_start1');">        
+                  batch1 python:view.batch(observations, int(b_size), int(b_start1), orphan=1, b_start_str='b_start1');">
           <table class="observationList listing finalised-observations no-response-needed-observations">
             <thead>
               <tr>
@@ -166,7 +169,7 @@
               <tal:batchnavigation
                   define="batchnavigation nocall:context/@@batchnavigation"
                   replace="structure python:batchnavigation(batch1)" />
-            </tal:block>          
+            </tal:block>
         </div>
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="resolved-observations">
@@ -181,7 +184,7 @@
                   b_size request/b_size | b_size;
                   b_start2 python:0;
                   b_start2 request/b_start2 | b_start2;
-                  batch2 python:view.batch(observations, int(b_size), int(b_start2), orphan=1, b_start_str='b_start2');">           
+                  batch2 python:view.batch(observations, int(b_size), int(b_start2), orphan=1, b_start_str='b_start2');">
           <table class="observationList listing finalised-observations resolved-observations">
             <thead>
               <tr>
@@ -251,7 +254,7 @@
             <tal:batchnavigation
                   define="batchnavigation nocall:context/@@batchnavigation"
                   replace="structure python:batchnavigation(batch2)" />
-            </tal:block>  
+            </tal:block>
         </div>
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="unresolved-observations">
@@ -266,7 +269,7 @@
                   b_size request/b_size | b_size;
                   b_start3 python:0;
                   b_start3 request/b_start3 | b_start3;
-                  batch3 python:view.batch(observations, int(b_size), int(b_start3), orphan=1, b_start_str='b_start3');">           
+                  batch3 python:view.batch(observations, int(b_size), int(b_start3), orphan=1, b_start_str='b_start3');">
           <table class="observationList listing finalised-observations unresolved-observations">
             <thead>
               <tr>
@@ -336,7 +339,7 @@
             <tal:batchnavigation
                   define="batchnavigation nocall:context/@@batchnavigation"
                   replace="structure python:batchnavigation(batch3)" />
-            </tal:block>            
+            </tal:block>
         </div>
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="party-resolved-observations">
@@ -351,7 +354,7 @@
                   b_size request/b_size | b_size;
                   b_start4 python:0;
                   b_start4 request/b_start4 | b_start4;
-                  batch4 python:view.batch(observations, int(b_size), int(b_start4), orphan=1, b_start_str='b_start4');">    
+                  batch4 python:view.batch(observations, int(b_size), int(b_start4), orphan=1, b_start_str='b_start4');">
           <table class="observationList listing finalised-observations party-resolved-observations">
             <thead>
               <tr>
@@ -421,7 +424,7 @@
             <tal:batchnavigation
                   define="batchnavigation nocall:context/@@batchnavigation"
                   replace="structure python:batchnavigation(batch4)" />
-            </tal:block>            
+            </tal:block>
         </div>
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="technical-correction-observations">
@@ -436,7 +439,7 @@
                   b_size request/b_size | b_size;
                   b_start5 python:0;
                   b_start5 request/b_start5 | b_start5;
-                  batch5 python:view.batch(observations, int(b_size), int(b_start5), orphan=1, b_start_str='b_start5');">           
+                  batch5 python:view.batch(observations, int(b_size), int(b_start5), orphan=1, b_start_str='b_start5');">
           <table class="observationList listing finalised-observations technical-correction-observations">
             <thead>
               <tr>
@@ -506,7 +509,7 @@
             <tal:batchnavigation
                   define="batchnavigation nocall:context/@@batchnavigation"
                   replace="structure python:batchnavigation(batch5)" />
-            </tal:block>           
+            </tal:block>
         </div>
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="revised-estimate-observations">
@@ -521,7 +524,7 @@
                   b_size request/b_size | b_size;
                   b_start6 python:0;
                   b_start6 request/b_start6 | b_start6;
-                  batch6 python:view.batch(observations, int(b_size), int(b_start6), orphan=1, b_start_str='b_start6');">              
+                  batch6 python:view.batch(observations, int(b_size), int(b_start6), orphan=1, b_start_str='b_start6');">
           <table class="observationList listing finalised-observations revised-estimate-observations">
             <thead>
               <tr>
@@ -591,7 +594,7 @@
           <tal:batchnavigation
                   define="batchnavigation nocall:context/@@batchnavigation"
                   replace="structure python:batchnavigation(batch6)" />
-            </tal:block> 
+            </tal:block>
         </div>
       </div>
 
