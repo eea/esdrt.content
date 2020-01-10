@@ -5,6 +5,7 @@ from esdrt.content.comment import IComment
 from esdrt.content.commentanswer import ICommentAnswer
 from esdrt.content.observation import IObservation
 from esdrt.content.question import IQuestion
+from esdrt.content.browser.statechange import revoke_roles
 from five import grok
 from plone import api
 from Products.CMFCore.interfaces import IActionSucceededEvent
@@ -71,6 +72,19 @@ def question_transition(question, event):
             comment_state = api.content.get_state(obj=comment)
             if comment_state in ['public']:
                 api.content.transition(obj=comment, transition='retract')
+
+    if event.action in ['phase1-send-comments', 'phase2-send-comments']:
+        observation = aq_parent(question)
+        with api.env.adopt_roles(['Manager']):
+            local_roles = observation.get_local_roles()
+            for uid, roles in local_roles:
+                if 'CounterPart' in roles:
+                    revoke_roles(
+                        username=uid,
+                        obj=observation,
+                        roles=['CounterPart'],
+                        inherit=False,
+                    )
 
     observation = aq_parent(question)
     observation.reindexObject()

@@ -614,4 +614,22 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+        source="63"
+        destination="64"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+        title="[refs #103380] Import workflows"
+        import_steps="workflow"
+        />
+
+      <genericsetup:upgradeStep
+        title="[refs #103380] Add CounterPart view to phase{1,2}-pending."
+        description="CounterPart local roles are now removed when closing comments, so granting View is now OK."
+        handler=".62_63.upgrade"
+      />
+
+    </genericsetup:upgradeSteps>
+
 </configure>
