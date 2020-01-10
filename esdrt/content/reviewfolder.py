@@ -1248,6 +1248,31 @@ class InboxReviewFolderView(BrowserView):
             # last_answer_reply_number > 0
         )
 
+    def _get_observations_with_closing_remarks(self, rolecheck):
+        """
+         Role: $rolecheck
+         Finalised observations with closing remarks
+        """
+        return self.get_observations(
+            rolecheck=rolecheck,
+            observation_question_status=["phase1-closed", "phase2-closed"],
+            has_closing_remarks=True,
+        )
+
+    def get_observations_with_closing_remarks_msc(self):
+        """
+         Role: MS Coordinator
+         Finalised observations with closing remarks
+        """
+        return self._get_observations_with_closing_remarks("MSAuthority")
+
+    def get_observations_with_closing_remarks_mse(self):
+        """
+         Role: MS Expert
+         Finalised observations with closing remarks
+        """
+        return self._get_observations_with_closing_remarks("MSExpert")
+
     @timeit
     def get_answers_requiring_comments_from_mse(self):
         """

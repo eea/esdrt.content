@@ -379,3 +379,16 @@ def observation_finalisation_remarks_step2(context):
         return conclusions[0] and conclusions[0].remarks or ""
     except:
         return None
+
+
+@indexer(IObservation)
+def has_closing_remarks(context):
+    try:
+        conclusions = [
+            c
+            for c in context.values()
+            if c.portal_type in ["ConclusionsPhase1", "ConclusionsPhase2"]
+        ]
+        return conclusions[0] and bool(conclusions[0].remarks) or False
+    except:
+        return False

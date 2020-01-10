@@ -125,6 +125,11 @@ SEC_MSC_ME = (
         slug="msc-com-mse",
         getter=methodcaller("get_questions_with_comments_received_from_mse"),
     ),
+    dict(
+        title="Finalised with closing remarks",
+        slug="msc-final-cr",
+        getter=methodcaller("get_observations_with_closing_remarks_msc"),
+    ),
 )
 
 
@@ -153,6 +158,11 @@ SEC_MSE_ME = (
         getter=methodcaller(
             "get_questions_with_comments_for_answer_needed_by_msc"
         ),
+    ),
+    dict(
+        title="Finalised with closing remarks",
+        slug="mse-final-cr",
+        getter=methodcaller("get_observations_with_closing_remarks_mse"),
     ),
 )
 

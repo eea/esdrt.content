@@ -98,6 +98,10 @@
     <indexed_attr value="observation_step" />
  </index>
 
+ <index name="has_closing_remarks" meta_type="BooleanIndex">
+    <indexed_attr value="has_closing_remarks" />
+ </index>
+
  <column value="observation_status" />
  <column value="country" />
  <column value="country_value" />
