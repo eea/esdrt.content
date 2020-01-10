@@ -1180,6 +1180,21 @@ class ObservationMixin(grok.View):
     def show_internal_notes(self):
         return not getUtility(IUserIsMS)(self.context)
 
+    def _can_view_conclusion_remarks(self, state):
+        result = True
+        user_is_ms = getUtility(IUserIsMS)(self.context)
+        if self.context.is_secretariat():
+            result = True
+        elif user_is_ms:
+            result = self.context.get_status() == state
+        return result
+
+    def can_view_conclusion_remarks_phase1(self):
+        return self._can_view_conclusion_remarks('phase1-closed')
+
+    def can_view_conclusion_remarks_phase2(self):
+        return self._can_view_conclusion_remarks('phase2-closed')
+
     def add_question_form(self):
         from plone.z3cform.interfaces import IWrappedForm
         form_instance = AddQuestionForm(self.context, self.request)
@@ -1578,7 +1593,7 @@ class ExportAsDocView(ObservationMixin):
 
             p = document.add_paragraph('Final status of observation:', style="Label Bold")
             p = document.add_paragraph(conclusion_2.reason_value())
-            p = document.add_paragraph('Recommendation/internal note:', style="Label Bold")
+            p = document.add_paragraph('Recommendation:', style="Label Bold")
             p = document.add_paragraph(conclusion_2.text)
 
             if self.context.closing_deny_comments_phase2:
@@ -1592,9 +1607,9 @@ class ExportAsDocView(ObservationMixin):
                 document.add_page_break()
             document.add_heading('Conclusions Step 1', level=2)
 
-            p = document.add_paragraph('Reason:', style="Label Bold")
+            p = document.add_paragraph('Status of Observation:', style="Label Bold")
             p = document.add_paragraph(conclusion.reason_value())
-            p = document.add_paragraph('SE comments on conclusion:', style="Label Bold")
+            p = document.add_paragraph('Internal Note:', style="Label Bold")
             p = document.add_paragraph(conclusion.text)
 
             if self.context.closing_deny_comments:

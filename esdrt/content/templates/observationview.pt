@@ -452,8 +452,8 @@
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
             <dt>
-              Recommendation/internal note:
-              <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
+              Recommendation:
+              <span class="tooltipIconBlue" title="Draft Recommendation for Review Report. Not visible to Member States."></span>
             </dt>
             <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
             <tal:comment replace="nothing">
@@ -506,19 +506,17 @@
             </tal:comment>
             </tal:block>
           </dl>
-
         </div>
 
-        <div class="finish-denied" tal:condition="context/closing_deny_comments_phase2|nothing">
-          <dl>
-            <dt>Observation Finishing denied</dt>
-            <dd></dd>
-            <tal:block condition="show_internal_notes">
-            <dt>LR comments on finish observation request:</dt>
-            <dd><span tal:replace="context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing" /></dd>
-            </tal:block>
-          </dl>
+        <div tal:condition="python:view.can_view_conclusion_remarks_phase2()">
+          <tal:remarks define="remarks conclusion/remarks/output|conclusion/remarks|nothing">
+            <tal:if condition="remarks">
+              <dt>Concluding remark <span class="tooltipIconBlue" title="Concluding remark sent to Member State when observation is finalised"></span></dt>
+              <dd><span tal:replace="remarks" /></dd>
+            </tal:if>
+          </tal:remarks>
         </div>
+
 
         <div class="files" tal:condition="conclusion/get_files">
           Files:
@@ -654,6 +652,18 @@
               <div class="conclusion-discussion conclusion-discussion-1" tal:content="structure provider:esdrt.content.commentmanager"  style="display:none"/>
             </div>
         </div>
+
+        <div class="finish-denied" tal:condition="context/closing_deny_comments_phase2|nothing">
+          <dl tal:condition="show_internal_notes">
+            <dt>Observation Finishing denied</dt>
+            <dd></dd>
+            <tal:block condition="show_internal_notes">
+            <dt>LR comments on finish observation request:</dt>
+            <dd><span tal:replace="context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing" /></dd>
+            </tal:block>
+          </dl>
+        </div>
+
         <div class="actions" tal:condition="view/in_conclusions_phase2">
           <a href=""
             tal:condition="conclusion/can_edit"
@@ -685,21 +695,29 @@
       <div class="row">
         <div id="conclusions">
           <dl>
-            <dt>Reason:</dt>
+            <dt>Status of Observation:</dt>
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
             <dt>
-              SE comments on conclusion:
+              Internal Note:
               <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
             </dt>
             <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
             </tal:block>
           </dl>
+        </div>
 
+        <div tal:condition="python:view.can_view_conclusion_remarks_phase1()">
+          <tal:remarks define="remarks conclusion/remarks/output|conclusion/remarks|nothing">
+            <tal:if condition="remarks">
+              <dt>Concluding remark <span class="tooltipIconBlue" title="Concluding remark sent to Member State when observation is finalised"></span></dt>
+              <dd><span tal:replace="remarks" /></dd>
+            </tal:if>
+          </tal:remarks>
         </div>
 
         <div class="finish-denied" tal:condition="context/closing_deny_comments|nothing">
-          <dl>
+          <dl tal:condition="show_internal_notes">
             <dt>Observation Finishing denied</dt>
             <dd></dd>
             <tal:block condition="show_internal_notes">
