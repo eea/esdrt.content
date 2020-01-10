@@ -1,0 +1,55 @@
+<metal:obslist define-macro="observationlist"
+               tal:define="self python:here.restrictedTraverse('@@macros');
+               extra_classes extra_classes|nothing;
+               default_bsize default_bsize|nothing;
+               b_size python:request.get('b_size', default_bsize or 10);
+               b_start_str python:'b_start_{}'.format(idx);
+               b_start python:request.get(b_start_str, 0);
+               batch python:view.batch(observations, int(b_size), int(b_start), orphan=1, b_start_str=b_start_str);">
+<tal:nothing condition="not:observations">
+  There's nothing here.
+</tal:nothing>
+<tal:listing condition="observations">
+  <table tal:attributes="class string:observationList listing ${extra_classes}">
+    <thead>
+      <tr>
+        <th style="width:17%">Observation</th>
+        <th style="width:45%">In short</th>
+        <th>CRF code</th>
+        <th style="width:80px">Modification date</th>
+        <th>Step</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tal:block tal:repeat="item batch">
+        <tal:item define="observation nocall:item">
+          <tr tal:attributes="data-href observation/absolute_url; class string:clickableRow ${observation/observation_css_class}">
+            <td class="observationRefCell">
+              <a tal:attributes="href observation/absolute_url" target="_blank">
+                <span class="ref-num" tal:content="observation/getId"></span>
+              </a>
+              <br/>
+              <div class="potentialSignificantIssue" tal:condition="observation/observation_is_potential_significant_issue">
+                Potential significant issue
+              </div>
+              <div class="potentialTechnicalCorrectionTag" tal:condition="observation/observation_is_potential_technical_correction">
+                Potential technical correction
+              </div>
+              <div class="technicalCorrectionTag" tal:condition="observation/observation_is_technical_correction">
+                Technical correction
+              </div>
+            </td>
+            <td class="observationText" tal:content="python:self.reduce_text(observation.text)"></td>
+            <td tal:content="observation/crf_code_value"></td>
+            <td data-sorter="python:observation.modified()" tal:content="python:self.format_date(observation.modified())"></td>
+            <td>
+              <div tal:attributes="class observation/observation_phase">&nbsp;</div>
+            </td>
+          </tr>
+        </tal:item>
+      </tal:block>
+    </tbody>
+  </table>
+  <tal:batchnavigation define="batchnavigation nocall:context/@@batchnavigation" replace="structure python:batchnavigation(batch)" />
+</tal:listing>
+</metal:obslist>
