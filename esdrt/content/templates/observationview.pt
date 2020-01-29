@@ -448,6 +448,10 @@
       <div class="row">
         <div id="conclusions">
           <dl>
+            <tal:carryover condition="here/carryover_from|nothing">
+            <dt>Observation from:</dt>
+            <dd><span tal:replace="here/carryover_from"></span></dd>
+            </tal:carryover>
             <dt>Final status of observation:</dt>
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
@@ -695,6 +699,10 @@
       <div class="row">
         <div id="conclusions">
           <dl>
+            <tal:carryover condition="here/carryover_from|nothing">
+            <dt>Observation from:</dt>
+            <dd><span tal:replace="here/carryover_from"></span></dd>
+            </tal:carryover>
             <dt>Status of Observation:</dt>
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
@@ -952,7 +960,9 @@
       <div id="question-add-form" style="display: none" tal:condition="view/can_add_question">
         <span tal:replace="structure view/add_question_form"></span>
       </div>
-      <div class="question" tal:repeat="question view/get_chat" tal:attributes="id question/getId; class string:question ${question/portal_type/lower};">
+      <tal:question tal:repeat="question view/get_chat">
+      <div class="question" tal:define="old_qa_class python:'old-qa' if view.is_old_qa(question) else ''"
+        tal:attributes="id question/getId; class string:question ${question/portal_type/lower} ${old_qa_class};">
         <tal:block tal:define="portalType question/portal_type/lower"
           tal:condition="python:portalType == 'comment'">
           <div class="arrow-right-border"></div>
@@ -1280,6 +1290,7 @@
         </div>
       </tal:qactions>
       </div>
+      </tal:question>
       <div class="actions" tal:define="question view/question">
         <tal:block tal:repeat="action view/actions">
           <tal:block tal:condition="python:'draft-conclusions' in action['action']">

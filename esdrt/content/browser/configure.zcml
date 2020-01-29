@@ -197,4 +197,19 @@
         permission="zope2.View"
         />
 
+    <browser:page
+      name="carryover-form"
+      for="esdrt.content.reviewfolder.IReviewFolder"
+      class=".carryover.CarryOverView"
+      permission="cmf.ManagePortal"
+      />
+
+    <browser:page
+      name="carryover"
+      for="esdrt.content.reviewfolder.IReviewFolder"
+      class=".carryover.CarryOverView"
+      permission="cmf.ManagePortal"
+      attribute="start"
+      />
+
 </configure>
