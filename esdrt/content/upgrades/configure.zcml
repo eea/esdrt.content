@@ -609,8 +609,21 @@
     </genericsetup:upgradeSteps>
 
     <genericsetup:upgradeSteps
-        source="62"
-        destination="63"
+      source="62"
+      destination="63"
+      profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+        title="Update catalog config"
+        description="[refs #110292] New indexes and columns added: observation_finalisation_remarks_step{1,2}."
+        import_steps="catalog"
+        />
+
+    </genericsetup:upgradeSteps>
+
+    <genericsetup:upgradeSteps
+        source="63"
+        destination="64"
         profile="esdrt.content:default">
 
       <genericsetup:upgradeDepends
@@ -621,7 +634,7 @@
       <genericsetup:upgradeStep
         title="[refs #103380] Add CounterPart view to phase{1,2}-pending."
         description="CounterPart local roles are now removed when closing comments, so granting View is now OK."
-        handler=".62_63.upgrade"
+        handler=".63_64.upgrade"
       />
 
     </genericsetup:upgradeSteps>

@@ -209,6 +209,12 @@
                Bulk import from XLS
             </a>
           </li>
+          <li tal:condition="view/can_import_observation">
+            <a class="standardButton import_obs" href=""
+               tal:attributes="href string:${context/absolute_url}/carryover-form" >
+              Carry-over
+            </a>
+          </li>
           <li class="deleteButton" tal:condition="view/can_add_observation">
             <a href="./++add++Observation"
                tal:attributes="href string:${here/absolute_url}/++add++Observation"

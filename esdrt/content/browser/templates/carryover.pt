@@ -1,0 +1,82 @@
+<metal:page use-macro="here/main_template/macros/master">
+<metal:content fill-slot="main">
+    <h1 class="documentFirstHeading">Observations carry-over</h1>
+
+    <br />
+
+    <div class="import-info">
+        <div>
+            <strong>Important: </strong>
+            <ul>
+              <li>
+                You need to upload an XLS file with a specific format, depending on the selected action.
+                <strong>Please note that the first row of the XLS file will be ignored.</strong>
+              </li>
+              <li>The <strong>userid</strong> column needs to be a valid EIONET user id. It used for the Obsevation History.</li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <div>
+            <strong>Direct copy</strong>
+            <p>
+                Expects a 3 column XLS file, as below.
+                Observations are copied as-is, the ID will be preserved.
+                If provided, the conclusion text will replace the existing conclusion text.
+            </p>
+            <table class="listing">
+              <thead><tr><th>Source observation</th><th>Conclusion text</th><th>userid</th></tr></thead>
+                <tbody><tr>
+                    <td><tal:url replace="portal_url"/>/2018/AT-1A-2018-0000</td>
+                    <td>Conclusion text that will replace the existing one.</td>
+                    <td>someuserid</td>
+                </tr></tbody>
+            </table>
+
+        </div>
+
+        <div>
+            <strong>Complex copy</strong>
+            <div>
+                Expects a 4 column XLS file, as below. Observations are copied as-is from the "Source" and:
+                <ul>
+                    <li>The ID will be changed to that of the "Older source".</li>
+                    <li>"Older source" Q&A will be prepended to the "Source" one.</li>
+                    <li>The review year will be set to the "Older source".</li>
+                </ul>
+                If provided, the conclusion text will replace the existing conclusion text.
+            </div>
+            <table class="listing">
+                <thead><tr><th>Source observation</th><th>Older source</th><th>Conclusion text</th><th>userid</th></tr></thead>
+                <tbody><tr>
+                    <td><tal:url replace="portal_url"/>/2018/AT-1A-2018-0000</td>
+                    <td><tal:url replace="portal_url"/>/2018/AT-1A-2017-0000</td>
+                    <td>Conclusion text that will replace the existing one.</td>
+                    <td>someuserid</td>
+                </tr></tbody>
+            </table>
+
+        </div>
+
+    </div>
+    <br />
+    <div>
+        <form action="./carryover" method="POST" enctype="multipart/form-data">
+            <div class="field">
+                <label>Copy action
+                    <select name="action">
+                        <option value="">Select copy action</option>
+                        <option value="direct">Direct copy</option>
+                        <option value="complex">Complex copy</option>
+                    </select>
+                </label>
+            </div>
+            <div class="field">
+                <Label>Mapping file<input type="file" name="xls" /></Label>
+            </div>
+            <input type="submit" value="Submit" />
+        </form>
+    </div>
+</metal:content>
+
+</metal:page>

@@ -169,6 +169,9 @@
 	margin-top: 5px;
 	font-size: 13px !important;
 }
+.old-qa.question {
+	background-color: #dedede;
+}
 .question.comment{
 	margin-left:30px;
 }
