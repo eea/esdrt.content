@@ -387,7 +387,7 @@ def has_closing_remarks(context):
         conclusions = [
             c
             for c in context.values()
-            if c.portal_type in ["ConclusionsPhase1", "ConclusionsPhase2"]
+            if c.portal_type in ["Conclusion", "ConclusionsPhase2"]
         ]
         return conclusions[0] and bool(conclusions[0].remarks) or False
     except:

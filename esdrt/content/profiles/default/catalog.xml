@@ -133,5 +133,8 @@
  <column value="observation_finalisation_text_step2" />
  <column value="observation_finalisation_remarks_step1" />
  <column value="observation_finalisation_remarks_step2" />
+ <column value="observation_sent_to_msc" />
+ <column value="observation_sent_to_mse" />
+ <column value="has_closing_remarks" />
  <column value="gas_value" />
 </object>
