@@ -639,4 +639,22 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+        source="64"
+        destination="65"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+        title="[refs #114295] Import catalog"
+        import_steps="catalog"
+        />
+
+      <genericsetup:upgradeStep
+        title="[refs #114295] Index the new indexes."
+        description="observation_sent_to_mse and observation_sent_to_msc"
+        handler=".64_65.upgrade"
+        />
+
+    </genericsetup:upgradeSteps>
+
 </configure>

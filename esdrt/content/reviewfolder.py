@@ -46,6 +46,8 @@ from AccessControl import getSecurityManager
 from eea.cache import cache
 from esdrt.content import ldap_utils
 from esdrt.content.browser.inbox_sections import SECTIONS
+from esdrt.content.constants import ROLE_LR
+from esdrt.content.constants import ROLE_SE
 from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
 from esdrt.content.timeit import timeit
 from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
@@ -75,6 +77,40 @@ LDAP_QUERY_GROUPS = (
     "(cn=extranet-esd-esdreview-reviewexp-*)"
     ")"
 )
+
+
+def filter_for_ms(brains, context):
+    if api.user.is_anonymous():
+        return brains
+
+    user = api.user.get_current()
+    roles = api.user.get_roles(user=user, obj=context)
+
+    # Don't filter the list if user is SE, LR or Manager
+    if set(roles).intersection((ROLE_SE, ROLE_LR, "Manager")):
+        return brains
+
+    is_msa = ReviewFolderMixin.is_member_state_coordinator()
+    is_mse = ReviewFolderMixin.is_member_state_expert()
+
+    result = []
+    for brain in brains:
+        if not any((is_msa, is_mse)):
+            result.append(brain)
+
+        elif is_msa and (
+            brain.observation_sent_to_msc
+            or (
+                brain.has_closing_remarks
+                and brain.review_state.endswith("-closed")
+            )
+        ):
+            result.append(brain)
+
+        elif is_mse and brain.observation_sent_to_mse:
+            result.append(brain)
+
+    return result
 
 
 # Cache helper methods
@@ -125,12 +161,6 @@ class ReviewFolderMixin(BrowserView):
             "sort_order": sort_order,
         }
 
-        if self.is_member_state_coordinator():
-            query["observation_sent_to_msc"] = bool(True)
-
-        if self.is_member_state_expert():
-            query["observation_sent_to_mse"] = bool(True)
-
         if country != "":
             query["Country"] = country
         if status != "":
@@ -165,7 +195,7 @@ class ReviewFolderMixin(BrowserView):
         if crfCode != "":
             query["crf_code"] = crfCode
 
-        return catalog(query)
+        return filter_for_ms(catalog(query), context=self.context)
 
     def can_add_observation(self):
         sm = getSecurityManager()
@@ -281,13 +311,15 @@ class ReviewFolderMixin(BrowserView):
         reasons.extend(to_add)
         return reasons
 
-    def is_member_state_coordinator(self):
+    @staticmethod
+    def is_member_state_coordinator():
         if api.user.is_anonymous():
             raise Unauthorized
         user = api.user.get_current()
         return "extranet-esd-countries-msa" in user.getGroups()
 
-    def is_member_state_expert(self):
+    @staticmethod
+    def is_member_state_expert():
         user = api.user.get_current()
         return "extranet-esd-countries-msexpert" in user.getGroups()
 
@@ -1410,25 +1442,29 @@ class InboxReviewFolderView(BrowserView):
 
         return sectors
 
-    def is_sector_expert_or_review_expert(self):
+    @staticmethod
+    def is_sector_expert_or_review_expert():
         user = api.user.get_current()
         user_groups = user.getGroups()
         is_se = "extranet-esd-ghginv-sr" in user_groups
         is_re = "extranet-esd-esdreview-reviewexp" in user_groups
         return is_se or is_re
 
-    def is_lead_reviewer_or_quality_expert(self):
+    @staticmethod
+    def is_lead_reviewer_or_quality_expert():
         user = api.user.get_current()
         user_groups = user.getGroups()
         is_qe = "extranet-esd-ghginv-qualityexpert" in user_groups
         is_lr = "extranet-esd-esdreview-leadreview" in user_groups
         return is_qe or is_lr
 
-    def is_member_state_coordinator(self):
+    @staticmethod
+    def is_member_state_coordinator():
         user = api.user.get_current()
         return "extranet-esd-countries-msa" in user.getGroups()
 
-    def is_member_state_expert(self):
+    @staticmethod
+    def is_member_state_expert():
         user = api.user.get_current()
         return "extranet-esd-countries-msexpert" in user.getGroups()
 
@@ -1577,25 +1613,29 @@ class FinalisedFolderView(BrowserView):
 
         return sectors
 
-    def is_sector_expert_or_review_expert(self):
+    @staticmethod
+    def is_sector_expert_or_review_expert():
         user = api.user.get_current()
         user_groups = user.getGroups()
         is_se = "extranet-esd-ghginv-sr" in user_groups
         is_re = "extranet-esd-esdreview-reviewexp" in user_groups
         return is_se or is_re
 
-    def is_lead_reviewer_or_quality_expert(self):
+    @staticmethod
+    def is_lead_reviewer_or_quality_expert():
         user = api.user.get_current()
         user_groups = user.getGroups()
         is_qe = "extranet-esd-ghginv-qualityexpert" in user_groups
         is_lr = "extranet-esd-esdreview-leadreview" in user_groups
         return is_qe or is_lr
 
-    def is_member_state_coordinator(self):
+    @staticmethod
+    def is_member_state_coordinator():
         user = api.user.get_current()
         return "extranet-esd-countries-msa" in user.getGroups()
 
-    def is_member_state_expert(self):
+    @staticmethod
+    def is_member_state_expert():
         user = api.user.get_current()
         return "extranet-esd-countries-msexpert" in user.getGroups()
 
