@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.73.0 (2020-03-02)
+-------------------
+- Bug: #114295 - Concluding Remarks in MSC My View
+- Bug: #114394 - Partly resolved filter
+  [batradav]
+
 1.72.0 (2020-01-10)
 -------------------
 - Bug: #103380 - Sector permissions and observation visibility
