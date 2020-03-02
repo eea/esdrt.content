@@ -292,7 +292,7 @@ class ReviewFolderMixin(BrowserView):
                     to_add.append((term_key, term_title))
 
         reasons.extend(to_add)
-        return reasons
+        return list(set(reasons))
 
     @staticmethod
     def is_member_state_coordinator():
@@ -332,7 +332,9 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
 
         return results
 
-    def table(self, context, request, sort_on="modified", sort_order="reverse"):
+    def table(
+        self, context, request, sort_on="modified", sort_order="reverse"
+    ):
         pagesize = int(self.request.get("pagesize", 20))
         url = context.absolute_url()
         view_url = url + "/view"
@@ -586,7 +588,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                             ". ".join(
                                 (str(idx), QUESTION_WORKFLOW_MAP.get(val, val))
                             )
-                            for idx, val in enumerate(observation[key], start=1)
+                            for idx, val in enumerate(
+                                observation[key], start=1
+                            )
                         ]
                     )
                     row.append(
@@ -734,10 +738,14 @@ def decorate(item):
     new_item["crf_code_value"] = item.crf_code_value()
     new_item["modified"] = item.modified()
     new_item["observation_phase"] = item.observation_phase()
-    new_item["observation_question_status"] = item.observation_question_status()
+    new_item[
+        "observation_question_status"
+    ] = item.observation_question_status()
     new_item["last_answer_reply_number"] = item.last_answer_reply_number()
     new_item["get_status"] = item.get_status()
-    new_item["observation_already_replied"] = item.observation_already_replied()
+    new_item[
+        "observation_already_replied"
+    ] = item.observation_already_replied()
     new_item["reply_comments_by_mse"] = item.reply_comments_by_mse()
     new_item[
         "observation_finalisation_reason"
@@ -1384,7 +1392,10 @@ class InboxReviewFolderView(BrowserView):
          Answers that I commented on sent to Sector Expert/Review expert
         """
         return self.get_observations(
-            observation_question_status=["phase1-answered", "phase2-answered",],
+            observation_question_status=[
+                "phase1-answered",
+                "phase2-answered",
+            ],
             reply_comments_by_mse=[api.user.get_current().getId()],
         )
 

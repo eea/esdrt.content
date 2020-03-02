@@ -2,7 +2,7 @@ import logging
 
 from Products.CMFCore.utils import getToolByName
 
-from esdrt.content.upgrades import portal_workflow as upw
+import transaction
 
 LOG = logging.getLogger(__name__)
 
@@ -13,6 +13,7 @@ def upgrade(context):
     len_objects = len(objects)
     for idx, obs in enumerate(objects, start=1):
         if idx % 100 == 0:
+            transaction.savepoint(optimistic=True)
             LOG.info("Done: %s/%s", idx, len_objects)
 
         catalog.reindexObject(
