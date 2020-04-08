@@ -508,8 +508,9 @@ class DeleteLastComment(grok.View):
 
     def render(self):
         catalog = api.portal.get_tool('portal_catalog')
+        answers = [c for c in self.context.values() if c.portal_type == 'CommentAnswer']
         comments = [c for c in self.context.values() if c.portal_type == 'Comment']
-        if comments:
+        if comments and len(comments) > len(answers):
             last_comment = comments[-1]
             question = aq_inner(self.context)
             if len(comments) == 1:
@@ -539,11 +540,12 @@ class DeleteLastAnswer(grok.View):
     def render(self):
         question = aq_inner(self.context)
         url = question.absolute_url()
-        comments = [c for c in self.context.values() if c.portal_type == 'CommentAnswer']
-        if comments:
-            last_comment = comments[-1]
+        answers = [c for c in self.context.values() if c.portal_type == 'CommentAnswer']
+        comments = [c for c in self.context.values() if c.portal_type == 'Comment']
+        if answers and len(answers) == len(comments):
+            last_answer = answers[-1]
             question_state = api.content.get_state(obj=question)
-            self.context.manage_delObjects([last_comment.getId()])
+            self.context.manage_delObjects([last_answer.getId()])
             if question_state == 'phase1-pending-answer-drafting':
                 url += '/content_status_modify?workflow_action=phase1-delete-answer'
             elif question_state == 'phase2-pending-answer-drafting':
