@@ -79,6 +79,44 @@ LDAP_QUERY_GROUPS = (
 )
 
 
+def get_observation_phase(brain):
+    result = ""
+    state = brain["observation_questions_workflow"]
+    state = state and state[-1] or ""
+    obs = brain.getObject() # BBB: slow!
+    question = obs.get_question()
+    qa = question and question.get_questions() or []
+    len_qa = len(qa)
+
+    if state == "SRRE" and len_qa == 0:
+        result = "Opened obs"
+    elif state == "SRRE" and len_qa == 1:
+        result = "Draft 1st question"
+    elif state == "LRQE" and len_qa == 1:
+        result = "Draft 1st question with LR"
+    elif state == "MSC" and len_qa == 1:
+        result = "Sent 1st question"
+    elif state == "answered" and len_qa == 2:
+        result = "MS first answer"
+    elif state == "SRRE" and len_qa > 2:
+        result = "Draft follow up question"
+    elif state == "LRQE" and len_qa > 2:
+        result = "Draft follow up question with LR"
+    elif state == "MSC" and len_qa > 2:
+        result = "Sent follow up question"
+    elif state == "answered" and len_qa > 3:
+        result = "MS follow up answer"
+    elif state == "close-requested":
+        result = "Close request to LR"
+    elif state == "conclusions":
+        result = "Draft conclusions"
+    elif state == "finalised":
+        result = "Finalised"
+
+    return result
+
+
+
 def filter_for_ms(brains, context):
     if api.user.is_anonymous():
         return brains
@@ -431,6 +469,8 @@ EXPORT_FIELDS = OrderedDict(
         ("get_name_re", "Review expert"),
         ("export_date", "Export date"),
         ("export_time", "Export time"),
+        ("phase", "Phase"),
+        ("phase_timestamp", "Phase timestamp"),
     ]
 )
 
@@ -648,6 +688,13 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     row.append(datetime.now().strftime("%d/%m/%Y"))
                 elif key == "export_time":
                     row.append(datetime.now().strftime("%H:%M:%S"))
+                elif key == "phase":
+                    phase = get_observation_phase(observation)
+                    row.append(phase)
+                elif key == "phase_timestamp":
+                    row.append(
+                        observation.getObject()
+                            .myHistory()[-1]["time"].asdatetime().isoformat())
                 else:
                     _val = observation[key]
                     if _val == Missing.Value:

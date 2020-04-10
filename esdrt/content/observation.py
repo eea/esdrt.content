@@ -49,6 +49,8 @@ from docx.shared import Pt
 from eea.cache import cache
 from esdrt.content import MessageFactory as _
 from esdrt.content.constants import ROLE_MSE
+from esdrt.content.constants import ROLE_SE
+from esdrt.content.constants import ROLE_QE
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
@@ -1210,6 +1212,15 @@ class ObservationMixin(grok.View):
     def user_roles(self):
         user = api.user.get_current()
         return api.user.get_roles(username=user.getId(), obj=self.context)
+
+    def is_se(self):
+        return ROLE_SE in self.user_roles
+
+    def is_qe(self):
+        return ROLE_QE in self.user_roles
+
+    def can_view_redraft_reason(self):
+        return self.context.is_secretariat() or self.is_se() or self.is_qe()
 
     def wf_info(self):
         context = aq_inner(self.context)
