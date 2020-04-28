@@ -27,6 +27,13 @@ def run_as_manager(context, func, *args, **kwargs):
 @grok.subscribe(IQuestion, IActionSucceededEvent)
 def question_transition(question, event):
     if event.action in ['phase1-approve-question', 'phase2-approve-question']:
+
+        # clear redraft reason
+        if event.action.startswith('phase1'):
+            question.request_redraft_comments = u''
+        elif event.action.startswith('phase2'):
+            question.request_redraft_comments_phase2 = u''
+
         wf = getToolByName(question, 'portal_workflow')
         comment_id = wf.getInfoFor(question,
             'comments', wf_id='esd-question-review-workflow')

@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.73.3 (2020-04-28)
+-------------------
+- Bug: #116768 - Visibility bug
+  [batradav]
+
 1.73.2 (2020-04-08)
 -------------------
 - Bug: #116765 - Lost Q&A in Observation

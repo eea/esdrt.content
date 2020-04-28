@@ -1146,7 +1146,7 @@
       <tal:last condition="repeat/question/end">
       <tal:redraft define="redraft_comments python:question.request_redraft_comments or question.request_redraft_comments_phase2 or '';
                            que_state python:question.get_state_api()">
-        <div class="redraft-requested" tal:condition="python:redraft_comments and que_state.endswith('-draft') and view.can_view_redraft_reason()">
+        <div class="redraft-requested" tal:condition="python:redraft_comments and (que_state.endswith('draft') or que_state.endswith('drafted')) and view.can_view_redraft_reason()">
           <dl>
             <dt>Request redraft reason</dt>
             <dd tal:content="redraft_comments"></dd>
