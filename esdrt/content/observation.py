@@ -51,6 +51,10 @@ from esdrt.content import MessageFactory as _
 from esdrt.content.constants import ROLE_MSE
 from esdrt.content.constants import ROLE_SE
 from esdrt.content.constants import ROLE_QE
+from esdrt.content.constants import ROLE_LR
+from esdrt.content.constants import ROLE_RP1
+from esdrt.content.constants import ROLE_RP2
+from esdrt.content.constants import ROLE_RE
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
@@ -1220,7 +1224,13 @@ class ObservationMixin(grok.View):
         return ROLE_QE in self.user_roles
 
     def can_view_redraft_reason(self):
-        return self.context.is_secretariat() or self.is_se() or self.is_qe()
+        allowed_roles = (
+            ROLE_LR, ROLE_RP1, ROLE_RP2, ROLE_QE, ROLE_SE, ROLE_RE
+        )
+        return (
+            self.context.is_secretariat()
+            or set(self.user_roles).intersection(allowed_roles)
+        )
 
     def wf_info(self):
         context = aq_inner(self.context)
