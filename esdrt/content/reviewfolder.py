@@ -189,6 +189,7 @@ class ReviewFolderMixin(BrowserView):
         step = self.request.form.get("step", "")
         wfStatus = self.request.form.get("wfStatus", "")
         crfCode = self.request.form.get("crfCode", "")
+        gas = self.request.form.get("gas", "")
 
         catalog = api.portal.get_tool("portal_catalog")
         path = "/".join(self.context.getPhysicalPath())
@@ -232,6 +233,8 @@ class ReviewFolderMixin(BrowserView):
             query["observation_status"] = wfStatus
         if crfCode != "":
             query["crf_code"] = crfCode
+        if gas != "":
+            query["Title"] = gas
 
         return filter_for_ms(catalog(query), context=self.context)
 
@@ -300,6 +303,13 @@ class ReviewFolderMixin(BrowserView):
     def get_crf_categories(self):
         vocab_factory = getUtility(
             IVocabularyFactory, name="esdrt.content.crf_code"
+        )
+        vocabulary = vocab_factory(self.context)
+        return [(x.value, x.title) for x in vocabulary]
+
+    def get_gases(self):
+        vocab_factory = getUtility(
+            IVocabularyFactory, name="esdrt.content.gas"
         )
         vocabulary = vocab_factory(self.context)
         return [(x.value, x.title) for x in vocabulary]
