@@ -11,6 +11,7 @@ from plone import api
 from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.CMFCore.utils import getToolByName
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
+from plone.app.discussion.interfaces import ICommentAddedEvent
 
 
 def run_as_manager(context, func, *args, **kwargs):
@@ -22,6 +23,17 @@ def run_as_manager(context, func, *args, **kwargs):
         func(*args, **kwargs)
     finally:
         api.user.revoke_roles(user=curr_user, obj=context, roles=['Manager'])
+
+
+@grok.subscribe(ICommentAnswer, ICommentAddedEvent)
+def answer_comment_added(answer, event):
+    obs = answer.get_observation()
+    obs.reindexObject()
+
+@grok.subscribe(IComment, ICommentAddedEvent)
+def question_comment_added(comment, event):
+    obs = comment.get_observation()
+    obs.reindexObject()
 
 
 @grok.subscribe(IQuestion, IActionSucceededEvent)
