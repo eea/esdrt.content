@@ -47,6 +47,15 @@
             return $target;
         };
 
+
+        function encodeArrForRequest(param_name, arr){
+          function append_param_name(item) {
+            return param_name + '[]=' + encodeURIComponent(item);
+          }
+          return arr ? arr.map(append_param_name).join('&') : "";
+        };
+
+
         function querystringConvert(){
             var pairs = location.search.slice(1).split('&');
 
@@ -173,6 +182,14 @@
                     filter += "&";
                   }
                   filter += "crfCode=" + $('#crfFilter').val();
+                }
+                if ($('#gasFilter').val() != ""){
+                  if (filter == ""){
+                    filter += "?";
+                  }else{
+                    filter += "&";
+                  }
+                  filter += encodeArrForRequest("gas", $('#gasFilter').val());
                 }
                 window.location.href = window.location.pathname + filter;
 
@@ -306,10 +323,11 @@
           </div>
         </div>
         <div class="row" style="padding-top:30px">
-          <div class="cell position-1 width-3 esdLabel">CRF category code</div>
+          <div class="cell position-1 width-6 esdLabel">CRF category code</div>
+          <div class="cell position-7 width-3 esdLabel">Gas</div>
         </div>
         <div class="row">
-          <div class="cell position-1 width-9 esdLabel">
+          <div class="cell position-1 width-6 esdLabel">
             <select id="crfFilter" class="chosen-select" data-placeholder="Select CRF category code">
               <option></option>
               <tal:block tal:repeat="item view/get_crf_categories">
@@ -318,6 +336,18 @@
                               category request/crfCode | category"
                   tal:attributes="value python:item[0];
                                   selected python:item[0]==category"
+                  tal:content="python:item[1]"></option>
+              </tal:block>
+            </select>
+          </div>
+          <div class="cell position-7 width-3 esdLabel">
+            <select id="gasFilter" multiple="multiple" class="chosen-select" data-placeholder="Select gas">
+              <option></option>
+              <tal:block tal:repeat="item view/get_gases">
+                <option
+                  tal:define="gas python:'';
+                              gas python:request.get('gas[]', [])"
+                  tal:attributes="value python:item[0]; selected python:item[0] in gas"
                   tal:content="python:item[1]"></option>
               </tal:block>
             </select>
