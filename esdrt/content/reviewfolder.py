@@ -151,7 +151,8 @@ class ReviewFolderMixin(BrowserView):
         step = self.request.form.get("step", "")
         wfStatus = self.request.form.get("wfStatus", "")
         crfCode = self.request.form.get("crfCode", "")
-        gas = self.request.form.get("gas", "")
+        gas = self.request.form.get("gas", self.request.form.get("gas[]", []))
+        gas = gas if isinstance(gas, list) else [gas]
 
         catalog = api.portal.get_tool("portal_catalog")
         path = "/".join(self.context.getPhysicalPath())
@@ -196,7 +197,7 @@ class ReviewFolderMixin(BrowserView):
         if crfCode != "":
             query["crf_code"] = crfCode
         if gas != "":
-            query["Title"] = gas
+            query["Title"] = " OR ".join([g.strip() for g in gas])
 
         return filter_for_ms(catalog(query), context=self.context)
 

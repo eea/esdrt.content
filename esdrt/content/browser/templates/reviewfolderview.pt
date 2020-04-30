@@ -47,6 +47,15 @@
             return $target;
         };
 
+
+        function encodeArrForRequest(param_name, arr){
+          function append_param_name(item) {
+            return param_name + '[]=' + encodeURIComponent(item);
+          }
+          return arr ? arr.map(append_param_name).join('&') : "";
+        };
+
+
         function querystringConvert(){
             var pairs = location.search.slice(1).split('&');
 
@@ -180,7 +189,7 @@
                   }else{
                     filter += "&";
                   }
-                  filter += "gas=" + $('#gasFilter').val();
+                  filter += encodeArrForRequest("gas", $('#gasFilter').val());
                 }
                 window.location.href = window.location.pathname + filter;
 
@@ -332,13 +341,13 @@
             </select>
           </div>
           <div class="cell position-7 width-3 esdLabel">
-            <select id="gasFilter" class="chosen-select" data-placeholder="Select gas">
+            <select id="gasFilter" multiple="multiple" class="chosen-select" data-placeholder="Select gas">
               <option></option>
               <tal:block tal:repeat="item view/get_gases">
                 <option
                   tal:define="gas python:'';
-                              gas request/gas | gas"
-                  tal:attributes="value python:item[0]; selected python:item[0] == gas"
+                              gas python:request.get('gas[]', [])"
+                  tal:attributes="value python:item[0]; selected python:item[0] in gas"
                   tal:content="python:item[1]"></option>
               </tal:block>
             </select>
