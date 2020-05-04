@@ -47,7 +47,12 @@ from eea.cache import cache
 from esdrt.content import ldap_utils
 from esdrt.content.browser.inbox_sections import SECTIONS
 from esdrt.content.constants import ROLE_LR
+from esdrt.content.constants import ROLE_RP1
+from esdrt.content.constants import ROLE_RP2
+from esdrt.content.constants import ROLE_QE
 from esdrt.content.constants import ROLE_SE
+from esdrt.content.constants import ROLE_RE
+from esdrt.content.constants import ROLE_CP
 from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
 from esdrt.content.timeit import timeit
 from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
@@ -124,8 +129,13 @@ def filter_for_ms(brains, context):
     user = api.user.get_current()
     roles = api.user.get_roles(user=user, obj=context)
 
-    # Don't filter the list if user is SE, LR or Manager
-    if set(roles).intersection((ROLE_SE, ROLE_LR, "Manager")):
+    # Don't filter the list if user is anything else, aside MS*
+    skip_for = (
+        ROLE_LR, ROLE_RP1, ROLE_RP2,
+        ROLE_QE, ROLE_SE, ROLE_RE,
+        ROLE_CP, "Manager",
+    )
+    if set(roles).intersection(skip_for):
         return brains
 
     is_msa = ReviewFolderMixin.is_member_state_coordinator()
