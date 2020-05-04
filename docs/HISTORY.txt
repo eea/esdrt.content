@@ -1,6 +1,17 @@
 Changelog
 =========
 
+1.73.5 (2020-04-30)
+-------------------
+- Bug: #117135 - MS My View issue
+- Feature: #117164 - Pollutant Filter
+  [batradav]
+
+1.73.4 (2020-04-29)
+-------------------
+- Task: #115036 - Adding a phase logic column to EMRT Extract
+  [batradav]
+
 1.73.3 (2020-04-28)
 -------------------
 - Bug: #116768 - Visibility bug
