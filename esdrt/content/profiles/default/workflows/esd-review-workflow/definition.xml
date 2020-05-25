@@ -405,6 +405,11 @@
   <permission-map name="esdrt.content: View Comment Discussion" acquired="True">
   </permission-map>
   <permission-map name="esdrt.content: View Conclusion Discussion" acquired="True">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
  </state>
  <state state_id="phase2-closed" title="phase2-closed">
