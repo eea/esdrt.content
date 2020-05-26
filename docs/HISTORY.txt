@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.73.7 (2020-05-26)
+-------------------
+- Bug: #118082 - Unable to delete files
+  [batradav]
+
 1.73.6 (2020-05-26)
 -------------------
 - Bug: #118077 - Visibility issue with counterpart comments for conclusion
