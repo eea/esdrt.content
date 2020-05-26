@@ -66,21 +66,27 @@ def question_transition(question, event):
         comment_id = wf.getInfoFor(question,
             'comments', wf_id='esd-question-review-workflow')
         comment = question.get(comment_id, None)
-        if comment is not None:
+        is_question = comment and comment.portal_type == "Comment"
+        if is_question:
             comment_state = api.content.get_state(obj=comment)
             if comment_state in ['public']:
                 api.content.transition(obj=comment, transition='retract')
+        else:
+            raise KeyError
 
     if event.action in ['phase1-answer-to-lr', 'phase2-answer-to-lr']:
         wf = getToolByName(question, 'portal_workflow')
         comment_id = wf.getInfoFor(question,
             'comments', wf_id='esd-question-review-workflow')
         comment = question.get(comment_id, None)
-        if comment is not None:
+        is_answer = comment and comment.portal_type == "CommentAnswer"
+        if is_answer:
             comment_state = api.content.get_state(obj=comment)
             comment.setEffectiveDate(DateTime())
             if comment_state in ['initial']:
                 api.content.transition(obj=comment, transition='publish')
+        else:
+            raise KeyError
 
     if event.action in ['phase1-recall-msa', 'phase2-recall-msa']:
         wf = getToolByName(question, 'portal_workflow')

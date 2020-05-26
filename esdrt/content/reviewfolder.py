@@ -1,3 +1,4 @@
+import logging
 import itertools
 import time
 from datetime import datetime
@@ -57,6 +58,10 @@ from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
 from esdrt.content.timeit import timeit
 from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
 from esdrt.content.utilities.ms_user import IUserIsMS
+
+
+LOG = logging.getLogger(__name__)
+
 
 QUESTION_WORKFLOW_MAP = {
     "SRRE": "Sector Reviewer / Review Expert",
@@ -948,7 +953,21 @@ class InboxReviewFolderView(BrowserView):
         # from logging import getLogger
         # log = getLogger(__name__)
 
-        observations = [b.getObject() for b in catalog.searchResults(query)]
+        observations = []
+        sm = getSecurityManager()
+        for b in catalog.searchResults(query):
+            try:
+                obj = b.getObject()
+                if sm.checkPermission("View", obj):
+                    observations.append(obj)
+                else:
+                    raise Unauthorized
+            except Unauthorized:
+                LOG.warn(
+                    "[get_observations] cannot getObject from %s brain.",
+                    b.getPath()
+                )
+
         if rolecheck is None:
             # log.info('Querying Catalog: %s' % query)
             return observations

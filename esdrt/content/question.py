@@ -195,11 +195,12 @@ class Question(dexterity.Container):
         return True
 
     def one_pending_answer(self):
+        user = api.user.get_current()
+        roles = api.user.get_roles(user=user, obj=self)
+        is_msa = "MSAuthority" in roles
+
         if self.has_answers():
-            answers = [q for q in self.values() if q.portal_type == 'CommentAnswer']
-            answer = answers[-1]
-            user = api.user.get_current()
-            return answer.Creator() == user.getId()
+            return is_msa or "Manager" in roles
         else:
             return False
 
