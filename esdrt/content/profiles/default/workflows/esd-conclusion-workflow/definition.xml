@@ -7,6 +7,7 @@
  </instance-creation-conditions>
  <permission>Access contents information</permission>
  <permission>Delete objects</permission>
+ <permission>Delete portal content</permission>
  <permission>List folder contents</permission>
  <permission>Modify portal content</permission>
  <permission>Reply to item</permission>
@@ -25,6 +26,11 @@
    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+  </permission-map>
+  <permission-map name="Delete portal content" acquired="False">
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
@@ -76,6 +82,12 @@
    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>CounterPart</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+  </permission-map>
+  <permission-map name="Delete portal content" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
@@ -134,6 +146,10 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase1</permission-role>
   </permission-map>
+  <permission-map name="Delete portal content" acquired="False">
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+  </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>QualityExpert</permission-role>
@@ -177,6 +193,9 @@
    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>Manager</permission-role>
+  </permission-map>
+  <permission-map name="Delete portal content" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
