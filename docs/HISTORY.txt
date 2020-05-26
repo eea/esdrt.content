@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.73.6 (2020-05-26)
+-------------------
+- Bug: #118077 - Visibility issue with counterpart comments for conclusion
+- Bug: #118034 - MS coordinator access
+- Bug: #118131 - Unable to see MyView
+  [batradav]
+
 1.73.5 (2020-04-30)
 -------------------
 - Bug: #117135 - MS My View issue
