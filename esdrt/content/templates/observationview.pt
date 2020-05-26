@@ -1268,7 +1268,7 @@
                 </a>
               </tal:block>
             </tal:block>
-            <tal:block tal:condition="python:question and ('send-comment' in action['action'] or 'send-to-lr' in action['action'] or 'approve-question' in action['action'] or 'ask-answer-approval' in action['action'] or 'answer-to-lr' in action['action'] or 'validate-answer-msa' in action['action'])">
+            <tal:block tal:condition="python:question and ('send-comment' in action['action'] or 'send-to-lr' in action['action'] or 'approve-question' in action['action'] or 'ask-answer-approval' in action['action'] or ('answer-to-lr' in action['action'] and question.has_answers()) or 'validate-answer-msa' in action['action'])">
               <a href=""
                 tal:attributes="href string:${action/action}&amp;comment=${question/getId};
                                 title action/description|nothing;"
