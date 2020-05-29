@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.73.8 (2020-05-29)
+-------------------
+- Bug: #117715 - Export to DOCX
+- Bug: #117991 - Incorrect member state observation in sector experts my view
+  [batradav]
+
 1.73.7 (2020-05-26)
 -------------------
 - Bug: #118082 - Unable to delete files
