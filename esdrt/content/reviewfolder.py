@@ -1101,9 +1101,13 @@ class InboxReviewFolderView(BrowserView):
             review_state=["phase2-pending"],
         )
 
-        return (
+        sm = getSecurityManager()
+
+        return [
+            obs for obs in
             answered_phase1 + answered_phase2 + pending_phase1 + pending_phase2
-        )
+            if sm.checkPermission("Modify portal content", obs)
+        ]
 
     @timeit
     def get_approval_questions(self):
