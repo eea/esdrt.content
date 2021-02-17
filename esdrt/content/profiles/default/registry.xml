@@ -47,7 +47,7 @@
       <element key="1A5">sector2|1A5|1A2, 1A4, 1A5 Other energy sector|1A5 Other (fuel combustion activities)</element>
       <element key="1A5a">sector2|1A5a|1A2, 1A4, 1A5 Other energy sector|1A5a Stationary</element>
       <element key="1A5b">sector2|1A5b|1A2, 1A4, 1A5 Other energy sector|1A5b Mobile</element>
-      <element key="1AB">sector13|1AB|1AB Reference approach|1AB Reference approach</element>
+      <element key="1AB">sector12|1AB|1AB Reference approach|1AB Reference approach</element>
       <element key="1B">sector4|1B|1B, 1C Fugitive emissions, CO2 transport and storage|1B Fugitive emissions from fuels</element>
       <element key="1B1">sector4|1B1|1B, 1C Fugitive emissions, CO2 transport and storage|1B1 Fugitive emissions from solid fuels</element>
       <element key="1B2">sector4|1B2|1B, 1C Fugitive emissions, CO2 transport and storage|1B2 Fugitive emissions from oil and natural gas and other emissions from energy production</element>
