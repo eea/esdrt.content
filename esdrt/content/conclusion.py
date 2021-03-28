@@ -1,3 +1,4 @@
+from copy import copy
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -169,6 +170,31 @@ class AddForm(dexterity.AddForm):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
         self.widgets['remarks'].rows = 15
+
+    def update(self):
+        super(AddForm, self).update()
+
+        # grab highlight value from observation
+        widget_highlight = self.widgets['highlight']
+        context_highlight = self.context.highlight or []
+
+        if isinstance(type(widget_highlight).items, property):
+            # newer z3c.form
+            def is_checked(term):
+                return term.value in context_highlight
+
+            # Monkey patch isChecked method since we can't
+            # override .items anymore. It's now a @property.
+            widget_highlight.isChecked = is_checked
+        else:
+            # older z3c.form
+            def set_checked(item):
+                updated_item = copy(item)
+                updated_item['checked'] = (
+                    updated_item['value'] in (self.context.highlight or [])
+                )
+                return updated_item
+        widget_highlight.items = map(set_checked, widget_highlight.items)
 
     def create(self, data={}):
         # import pdb; pdb.set_trace()
