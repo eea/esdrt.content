@@ -220,8 +220,9 @@ class AddForm(dexterity.AddForm):
         adapted.allow_discussion = True
 
         # Edit highlighs
-        highlights = self.request.form.get('form.widgets.highlight')
-        container.highlights = highlights
+        highlight = self.request.form.get('form.widgets.highlight')
+        container.highlight = highlight
+        notify(ObjectModifiedEvent(container))
 
         # Update Observation state
         api.content.transition(
