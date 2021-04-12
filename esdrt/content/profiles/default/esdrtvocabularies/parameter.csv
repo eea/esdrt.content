@@ -2,3 +2,10 @@ efep,Emission factor
 act,Activity data
 emi,Emission
 other,Other
+pool-biomass,Pool (Biomass)
+pool-dead-organic-matter,Pool (Dead organic matter)
+pool-dead-wood,(Pool (Dead wood)
+pool-harvested-wood-products,Pool (Harvested wood products)
+pool-litter,Pool (Litter)
+pool-mineral-soil,Pool (Mineral soil)
+pool-organic-soil,Pool (Organic soil)
