@@ -1,8 +1,13 @@
-ne,'not estimated' (NE)(step 1)
-pgf,gap-filling (step 1)
-psi,potential significant issue (step 1)
-ptc,potential technical correction (step 2)
+ne,Not estimated (NE) (step 1)
+pgf,Gap filling (step 1)
 recalc-prev,Recalculation (compared to previous year submission)
 recalc-same,Recalculation (compared to same year submission)
-unfccc,UNFCCC Recommendation
-ur,Union Recommendation
+unfccc,UNFCCC recommendation
+ur,Union recommendation
+point-of-attention-lulucf-step2,Point of Attention (LULUCF Step 2)
+psi,Potential significant issue (PSI) (step 1)
+ptc,Potential technical correction (PTC) (step 2)
+nsms,Not sent to Member State
+tc,Technical correction (TC) (step 2)
+rev-est,Revised estimate
+recommendation,Recommendation
