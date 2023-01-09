@@ -657,4 +657,16 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+        source="65"
+        destination="66"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+        title="[refs #159092 #159093] Update 'highlight' vocabulary."
+        handler=".65_66.upgrade"
+        />
+
+    </genericsetup:upgradeSteps>
+
 </configure>

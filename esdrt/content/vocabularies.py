@@ -1,6 +1,8 @@
 import itertools
-from five import grok
 from plone import api
+
+from zope.interface import implementer
+
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -11,8 +13,8 @@ def mk_term(key, value):
     return SimpleVocabulary.createTerm(key, key, value)
 
 
+@implementer(IVocabularyFactory)
 class MSVocabulary(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -25,11 +27,9 @@ class MSVocabulary(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(MSVocabulary, name=u"esdrt.content.eea_member_states")
 
-
+@implementer(IVocabularyFactory)
 class GHGSourceCategory(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -42,12 +42,9 @@ class GHGSourceCategory(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(GHGSourceCategory,
-    name=u"esdrt.content.ghg_source_category")
 
-
+@implementer(IVocabularyFactory)
 class GHGSourceSectors(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -60,12 +57,9 @@ class GHGSourceSectors(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(GHGSourceSectors,
-    name=u"esdrt.content.ghg_source_sectors")
 
-
+@implementer(IVocabularyFactory)
 class Gas(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -78,12 +72,9 @@ class Gas(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Gas,
-    name=u"esdrt.content.gas")
 
-
+@implementer(IVocabularyFactory)
 class Fuel(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -96,12 +87,9 @@ class Fuel(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Fuel,
-    name=u"esdrt.content.fuel")
 
-
+@implementer(IVocabularyFactory)
 class Highlight(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -114,12 +102,9 @@ class Highlight(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Highlight,
-    name=u"esdrt.content.highlight")
 
-
+@implementer(IVocabularyFactory)
 class Parameter(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -132,12 +117,9 @@ class Parameter(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Parameter,
-    name=u"esdrt.content.parameter")
 
-
+@implementer(IVocabularyFactory)
 class StatusFlag(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -150,14 +132,11 @@ class StatusFlag(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(StatusFlag,
-    name=u"esdrt.content.status_flag")
-
 
 from .crf_code_matching import crf_codes
 
+@implementer(IVocabularyFactory)
 class CRFCode(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         terms = []
@@ -168,12 +147,9 @@ class CRFCode(object):
             terms.append(SimpleVocabulary.createTerm(key, key, value['title']))
         return SimpleVocabulary(terms)
 
-grok.global_utility(CRFCode,
-    name=u"esdrt.content.crf_code")
 
-
+@implementer(IVocabularyFactory)
 class Conclusions(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -186,12 +162,9 @@ class Conclusions(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Conclusions,
-    name=u"esdrt.content.conclusionreasons")
 
-
+@implementer(IVocabularyFactory)
 class ConclusionsPhase2(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -204,12 +177,9 @@ class ConclusionsPhase2(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(ConclusionsPhase2,
-    name=u"esdrt.content.conclusionphase2reasons")
 
-
+@implementer(IVocabularyFactory)
 class Roles(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         terms = list(itertools.starmap(
@@ -227,5 +197,3 @@ class Roles(object):
 
         return SimpleVocabulary(terms)
 
-
-grok.global_utility(Roles, name=u"esdrt.content.roles")

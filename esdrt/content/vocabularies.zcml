@@ -1,0 +1,65 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  i18n_domain="esdrt.content">
+
+  <utility
+    name="esdrt.content.eea_member_states"
+    factory=".vocabularies.MSVocabulary"
+    />
+
+  <utility
+    name="esdrt.content.ghg_source_category"
+    factory=".vocabularies.GHGSourceCategory"
+    />
+
+  <utility
+    name="esdrt.content.ghg_source_sectors"
+    factory=".vocabularies.GHGSourceSectors"
+    />
+
+  <utility
+    name="esdrt.content.gas"
+    factory=".vocabularies.Gas"
+    />
+
+  <utility
+    name="esdrt.content.fuel"
+    factory=".vocabularies.Fuel"
+    />
+
+  <utility
+    name="esdrt.content.highlight"
+    factory=".vocabularies.Highlight"
+    />
+
+  <utility
+    name="esdrt.content.parameter"
+    factory=".vocabularies.Parameter"
+    />
+
+  <utility
+    name="esdrt.content.status_flag"
+    factory=".vocabularies.StatusFlag"
+    />
+
+  <utility
+    name="esdrt.content.crf_code"
+    factory=".vocabularies.CRFCode"
+    />
+
+  <utility
+    name="esdrt.content.conclusionreasons"
+    factory=".vocabularies.Conclusions"
+    />
+
+  <utility
+    name="esdrt.content.conclusionphase2reasons"
+    factory=".vocabularies.ConclusionsPhase2"
+    />
+
+  <utility
+    name="esdrt.content.roles"
+    factory=".vocabularies.Roles"
+    />
+
+</configure>

@@ -3,11 +3,14 @@ pgf,Gap filling (step 1)
 recalc-prev,Recalculation (compared to previous year submission)
 recalc-same,Recalculation (compared to same year submission)
 unfccc,UNFCCC recommendation
+lulucf-regulation,LULUCF Regulation
+2019-refinement,2019 Refinement
 ur,Union recommendation
-point-of-attention-lulucf-step2,Point of Attention (LULUCF Step 2)
 psi,Potential significant issue (PSI) (step 1)
 ptc,Potential technical correction (PTC) (step 2)
 nsms,Not sent to Member State
 tc,Technical correction (TC) (step 2)
 rev-est,Revised estimate
 recommendation,Recommendation
+point-of-attention-lulucf-step2,Point of Attention (LULUCF Step 2)
+potential-capacity-building,Potential Capacity Building
