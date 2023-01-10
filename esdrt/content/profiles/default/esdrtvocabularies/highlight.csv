@@ -1,5 +1,5 @@
-ne,Not estimated (NE) (step 1)
-pgf,Gap filling (step 1)
+ne,Not estimated (NE)
+pgf,Gap filling
 recalc-prev,Recalculation (compared to previous year submission)
 recalc-same,Recalculation (compared to same year submission)
 unfccc,UNFCCC recommendation
