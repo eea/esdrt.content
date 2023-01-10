@@ -39,6 +39,7 @@ from plone.memoize import ram
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.layout import wrap_form
+from plone.supermodel import model
 
 import Missing
 import tablib
@@ -176,16 +177,37 @@ class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
         value_type=Choice(vocabulary="esdrt.content.roles"),
     )
 
+    model.fieldset(
+        "year_options",
+        label="Year options",
+        fields=[
+            "excluded_highlights",
+            "internal_highlights",
+            "enable_key_category",
+        ]
+    )
+    # [refs #159094]
     excluded_highlights = List(
         title=u"Excluded highlights",
         description=u"Unused highlights but kept for previous years.",
         value_type=Choice(vocabulary="esdrt.content.highlight"),
+        required=False,
     )
 
+    # [refs #159093]
     internal_highlights = List(
         title=u"Mark these highlights as internal",
         description=u"Visible only to SE/QE/LR and Secretariat",
         value_type=Choice(vocabulary="esdrt.content.highlight"),
+        required=False,
+    )
+
+    # [refs #159091]
+    enable_key_category = Bool(
+        title=u"Show 'Key category'",
+        description=u"Show the 'Key category' field.",
+        required=False,
+        default=True,
     )
 
 
@@ -290,8 +312,8 @@ class ReviewFolderMixin(BrowserView):
         # [refs #159093] - only for QA Expert, SE or Secretariat
         return (
             self.is_secretariat()
-            or self.is_sector_expert_or_review_expert()
-            or self.is_lead_reviewer_or_quality_expert()
+            or InboxReviewFolderView.is_sector_expert_or_review_expert()
+            or InboxReviewFolderView.is_lead_reviewer_or_quality_expert()
         )
 
     def get_countries(self):
@@ -309,11 +331,12 @@ class ReviewFolderMixin(BrowserView):
         voc = vtool.getVocabularyByName("highlight")
 
         # [refs #159093]
-        internal_flags = getattr(self, "internal_highlights", [])
+        internal_flags = getattr(self.context, "internal_highlights", []) or []
         can_view_internal_flags = self.can_view_internal_flags()
 
         # [refs #159094]
-        excluded_highlights = getattr(self, "excluded_highlights", [])
+        excluded_highlights = getattr(
+            self.context, "excluded_highlights", []) or []
 
         highlights = []
         voc_terms = voc.getDisplayList(self).items()

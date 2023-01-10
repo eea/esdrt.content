@@ -262,13 +262,13 @@
       <div class="row observation-details" style="display:none;padding-top:15px">
         <div class="cell position-0 width-2 esdLabel">Review Year</div>
         <div class="cell position-2 width-5 esdLabel">Parameter</div>
-        <div class="cell position-7 width-4 esdLabel">Key category</div>
+        <div class="cell position-7 width-4 esdLabel" tal:condition="view/is_key_category_enabled">Key category</div>
         <div class="cell position-11 width-4 esdLabel">Last update</div>
       </div>
       <div class="row observation-details" style="display:none">
         <div class="cell position-0 width-2" tal:content="context/review_year">Year</div>
         <div class="cell position-2 width-5" tal:content="context/parameter_value">Parameter</div>
-        <div class="cell position-7 width-4">
+        <div class="cell position-7 width-4" tal:condition="view/is_key_category_enabled">
           <span tal:condition="here/ms_key_catagory|nothing">
               MS Key category
           </span><br tal:condition="here/ms_key_catagory|nothing"/>

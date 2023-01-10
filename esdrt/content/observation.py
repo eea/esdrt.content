@@ -152,9 +152,17 @@ class IObservation(form.Schema, IImageScaleTraversable):
     #     required=True,
     # )
 
-    ms_key_catagory = schema.Bool(title=u"MS key category",)
+    ms_key_catagory = schema.Bool(
+        title=u"MS key category",
+        required=False,
+        default=False,
+    )
 
-    eu_key_catagory = schema.Bool(title=u"EU key category",)
+    eu_key_catagory = schema.Bool(
+        title=u"EU key category",
+        required=False,
+        default=False,
+    )
 
     form.widget(parameter=CheckBoxFieldWidget)
     parameter = schema.List(
@@ -1198,6 +1206,10 @@ class AddForm(dexterity.AddForm):
         self.groups = [
             g for g in self.groups if g.label == "label_schema_default"
         ]
+        # [refs #159091]
+        if not self.context.enable_key_category:
+            del self.widgets["eu_key_catagory"]
+            del self.widgets["ms_key_catagory"]
 
     def updateActions(self):
         super(AddForm, self).updateActions()
@@ -1211,6 +1223,9 @@ class AddForm(dexterity.AddForm):
 
 class ObservationMixin(grok.View):
     grok.baseclass()
+
+    def is_key_category_enabled(self):
+        return aq_parent(self.context).enable_key_category
 
     @property
     def user_roles(self):
@@ -1997,6 +2012,11 @@ class ModificationForm(dexterity.EditForm):
         super(ModificationForm, self).updateWidgets()
         if "review_year" in self.widgets and not Observation.is_secretariat():
             self.widgets["review_year"].readonly = "readonly"
+
+        # [refs #159091]
+        if not aq_parent(self.context).enable_key_category:
+            del self.widgets["eu_key_catagory"]
+            del self.widgets["ms_key_catagory"]
 
     def updateActions(self):
         super(ModificationForm, self).updateActions()
