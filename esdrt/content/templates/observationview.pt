@@ -242,7 +242,7 @@
         <div class="cell position-8 width-2 esdLabel">Gases</div>
         <div class="cell position-10 width-1 esdLabel">Fuel</div>
         <div class="cell position-11 width-2 esdLabel">Inventory year</div>
-        <div class="cell position-13 width-3">
+        <div class="cell position-13 width-3" tal:condition="python:context.are_steps_enabled()">
           <div tal:attributes="class python:context.observation_phase()">&nbsp;</div>
         </div>
       </div>
@@ -347,7 +347,7 @@
     <li style="width:165px;max-width:165px"
       tal:define="conclusion view/get_conclusion"
       tal:condition="nocall:conclusion"
-      >Conclusions Step 1</li>
+        >Conclusions <tal:step condition="python:context.are_steps_enabled()">Step 1</tal:step></li>
     <li style="width:200px;max-width:200px"
       id="questionChatRoom">Q&amp;A</li>
   </ul>

@@ -26,6 +26,8 @@ from types import TupleType
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
 
+from esdrt.content.utils import exclude_phase2_actions
+
 
 class IConclusion(form.Schema, IImageScaleTraversable):
     """
@@ -115,7 +117,9 @@ class Conclusion(dexterity.Container):
             parent,
             request
             )
+
         menu_items = question_menu_items + observation_menu_items
+        menu_items = exclude_phase2_actions(parent, menu_items)
         return [mitem for mitem in menu_items if not hidden(mitem)]
 
     def get_files(self):

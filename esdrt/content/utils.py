@@ -41,3 +41,14 @@ def request_context(context):
     if IContentish.providedBy(container):
         return container
 
+
+def exclude_phase2_actions(observation, menu_items):
+    # [refs #159096]
+    if not observation.are_steps_enabled():
+        exclude_transitions = ["go-to-phase2", "phase1-send-to-team-2"]
+        menu_items = [
+            mi for mi in menu_items
+            if mi["extra"]["id"].split("workflow-transition-")[-1]
+            not in exclude_transitions
+        ]
+    return menu_items

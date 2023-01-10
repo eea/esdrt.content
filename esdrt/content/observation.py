@@ -58,6 +58,7 @@ from esdrt.content.constants import ROLE_RE
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
+from esdrt.content.utils import exclude_phase2_actions
 from five import grok
 
 from .comment import IComment
@@ -436,6 +437,9 @@ class Observation(dexterity.Container):
             ]
         else:
             return True
+
+    def are_steps_enabled(self):
+        return aq_parent(self).enable_steps
 
     def can_close(self):
         if self.get_status() in ["phase1-pending", "phase2-pending"]:
@@ -1425,6 +1429,8 @@ class ObservationMixin(grok.View):
             )
 
             menu_items = question_menu_items + observation_menu_items
+
+        menu_items = exclude_phase2_actions(self.context, menu_items)
         return [mitem for mitem in menu_items if not hidden(mitem)]
 
     def get_user_name(self, userid, question=None):

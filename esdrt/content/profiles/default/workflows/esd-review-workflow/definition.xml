@@ -704,6 +704,7 @@
   <guard>
    <guard-role>Manager</guard-role>
    <guard-role>ReviewerPhase2</guard-role>
+   <guard-expression>here/are_steps_enabled</guard-expression>
   </guard>
  </transition>
  <transition transition_id="phase1-approve" title="Open" new_state="phase1-pending" trigger="USER" before_script="" after_script="">
@@ -779,6 +780,7 @@
   <action url="%(content_url)s/content_status_modify?workflow_action=phase1-send-to-team-2" category="workflow" icon="">Hand over to Team 2</action>
   <guard>
    <guard-role>QualityExpert</guard-role>
+   <guard-expression>here/are_steps_enabled</guard-expression>
   </guard>
  </transition>
  <transition transition_id="phase2-confirm-finishing-observation" title="Finish Observation" new_state="phase2-closed" trigger="USER" before_script="" after_script="">
