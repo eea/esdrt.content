@@ -1,5 +1,8 @@
 import string
 
+from Products.CMFCore.interfaces._content import IContentish
+from zope.globalrequest import getRequest
+
 
 def reduce_text(text, limit):
     if len(text) <= limit:
@@ -20,3 +23,21 @@ def reduce_text(text, limit):
 
 def format_date(date, fmt='%d %b %Y, %H:%M CET'):
     return date.strftime(fmt)
+
+
+def request_context(context):
+    if context and IContentish.providedBy(context):
+        return context
+
+    req = getRequest()
+    published = req.PUBLISHED
+
+    # https://community.plone.org/t/context-aware-invariant-on-z3c-form-dx-add-form/13234/8
+    try:
+        container = published.context
+    except AttributeError:
+        container = published
+
+    if IContentish.providedBy(container):
+        return container
+

@@ -184,6 +184,7 @@ class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
             "excluded_highlights",
             "internal_highlights",
             "enable_key_category",
+            "enable_steps",
         ]
     )
     # [refs #159094]
@@ -210,6 +211,13 @@ class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
         default=True,
     )
 
+    # [refs #159096]
+    enable_steps = Bool(
+        title=u"Enable step 1, step 2",
+        description=u"Show the observation steps and Step filter.",
+        required=False,
+        default=True,
+    )
 
 
 @implementer(IReviewFolder)
@@ -287,7 +295,8 @@ class ReviewFolderMixin(BrowserView):
         view = self.context.restrictedTraverse("@@tableau_dashboard")
         return view.can_access(self.context)
 
-    def is_secretariat(self):
+    @staticmethod
+    def is_secretariat():
         user = api.user.get_current()
         return "Manager" in user.getRoles()
 
@@ -308,10 +317,11 @@ class ReviewFolderMixin(BrowserView):
 
         return has_roles or has_groups
 
-    def can_view_internal_flags(self):
+    @staticmethod
+    def can_view_internal_flags():
         # [refs #159093] - only for QA Expert, SE or Secretariat
         return (
-            self.is_secretariat()
+            ReviewFolderMixin.is_secretariat()
             or InboxReviewFolderView.is_sector_expert_or_review_expert()
             or InboxReviewFolderView.is_lead_reviewer_or_quality_expert()
         )
@@ -327,30 +337,11 @@ class ReviewFolderMixin(BrowserView):
         return countries
 
     def get_highlights(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("highlight")
-
-        # [refs #159093]
-        internal_flags = getattr(self.context, "internal_highlights", []) or []
-        can_view_internal_flags = self.can_view_internal_flags()
-
-        # [refs #159094]
-        excluded_highlights = getattr(
-            self.context, "excluded_highlights", []) or []
-
-        highlights = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            value, label = term[0], term[1]
-            # [refs #159093]
-            if value in internal_flags and not can_view_internal_flags:
-                continue
-            # [refs #159094]
-            if value in excluded_highlights:
-                continue
-            highlights.append((value, label))
-
-        return highlights
+        vocab_factory = getUtility(
+            IVocabularyFactory, name="esdrt.content.highlight"
+        )
+        vocabulary = vocab_factory(self.context)
+        return [(t.value, t.title) for t in vocabulary]
 
     def get_review_years(self):
         catalog = api.portal.get_tool("portal_catalog")

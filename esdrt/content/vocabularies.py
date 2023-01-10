@@ -7,6 +7,7 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
 import esdrt.content.constants as C
+from esdrt.content.utils import request_context
 
 
 def mk_term(key, value):
@@ -94,12 +95,37 @@ class Highlight(object):
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
         voc = pvoc.getVocabularyByName('highlight')
+
+        # In some cases (such as a form group) the context can be a dict or
+        # something else that's not a true Plone context.
+        # Attempt to get the true context from the request.
+        context = request_context(context)
+
         terms = []
         if voc is not None:
+            from esdrt.content.reviewfolder import ReviewFolderMixin
+
+            # [refs #159093]
+            internal_flags = getattr(context, "internal_highlights", []) or []
+            can_view_internal_flags = (
+                ReviewFolderMixin.can_view_internal_flags()
+            )
+
+            # [refs #159094]
+            excluded_highlights = getattr(
+                context, "excluded_highlights", []) or []
+
             for key, value in voc.getVocabularyLines():
-                # create a term - the arguments are the value, the token, and
-                # the title (optional)
+                # [refs #159093]
+                if key in internal_flags and not can_view_internal_flags:
+                    continue
+
+                # [refs #159094]
+                if key in excluded_highlights:
+                    continue
+
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
+
         return SimpleVocabulary(terms)
 
 
