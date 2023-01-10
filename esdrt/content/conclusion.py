@@ -178,6 +178,9 @@ class AddForm(dexterity.AddForm):
     def update(self):
         super(AddForm, self).update()
 
+        if not self.context.enable_steps:
+            self.label = "Conclusions"
+
         # grab highlight value from observation
         widget_highlight = self.widgets['highlight']
         context_highlight = self.context.highlight or []
@@ -264,6 +267,12 @@ class EditForm(dexterity.EditForm):
             data['closing_reason'] = context.closing_reason
         data['highlight'] = container.highlight
         return data
+
+    def update(self):
+        super(EditForm, self).update()
+
+        if not self.context.enable_steps:
+            self.label = "Conclusions"
 
     def updateFields(self):
         super(EditForm, self).updateFields()

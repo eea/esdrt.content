@@ -88,7 +88,6 @@ class Fuel(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-
 @implementer(IVocabularyFactory)
 class Highlight(object):
 
@@ -124,6 +123,23 @@ class Highlight(object):
                 if key in excluded_highlights:
                     continue
 
+                terms.append(SimpleVocabulary.createTerm(key, key, value))
+
+        return SimpleVocabulary(terms)
+
+
+@implementer(IVocabularyFactory)
+class HighlightSelect(object):
+    """ Clean version of the highlight vocabulary,
+    used to filter the actual highlight vocabulary """
+
+    def __call__(self, context):
+        pvoc = api.portal.get_tool('portal_vocabularies')
+        voc = pvoc.getVocabularyByName('highlight')
+
+        terms = []
+        if voc is not None:
+            for key, value in voc.getVocabularyLines():
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
 
         return SimpleVocabulary(terms)

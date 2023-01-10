@@ -1215,6 +1215,15 @@ class AddForm(dexterity.AddForm):
             del self.widgets["eu_key_catagory"]
             del self.widgets["ms_key_catagory"]
 
+        # [refs #159096]
+        if not self.context.enable_steps:
+            self.widgets["closing_comments_phase2"].mode = (
+                interfaces.HIDDEN_MODE
+            )
+            self.widgets["closing_deny_comments_phase2"].mode = (
+                interfaces.HIDDEN_MODE
+            )
+
     def updateActions(self):
         super(AddForm, self).updateActions()
         self.actions["save"].title = u"Save Observation"
@@ -2023,6 +2032,15 @@ class ModificationForm(dexterity.EditForm):
         if not aq_parent(self.context).enable_key_category:
             del self.widgets["eu_key_catagory"]
             del self.widgets["ms_key_catagory"]
+
+        # [refs #159096]
+        if not aq_parent(self.context).enable_steps:
+            self.widgets["closing_comments_phase2"].mode = (
+                interfaces.HIDDEN_MODE
+            )
+            self.widgets["closing_deny_comments_phase2"].mode = (
+                interfaces.HIDDEN_MODE
+            )
 
     def updateActions(self):
         super(ModificationForm, self).updateActions()

@@ -82,15 +82,23 @@ def _cached_get_vocabulary(context, prefix=''):
     return get_vocabulary
 
 
-def get_constants():
+def get_constants(context):
     XLS_COLS = {}
     XLS_COLS['text'] = partial(_read_row, 0)
     XLS_COLS['country'] = partial(_read_row, 1)
     XLS_COLS['crf_code'] = partial(_read_row, 2)
     next_col = 3
 
+
+    filtered_inventory_cols = INVENTORY_COLS
+    if not context.enable_key_category:
+        filtered_inventory_cols = [
+            v for v in INVENTORY_COLS
+            if "key_catagory" not in v
+        ]
+
     # setup readers
-    for idx, col in enumerate(INVENTORY_COLS, start=next_col):
+    for idx, col in enumerate(filtered_inventory_cols, start=next_col):
         XLS_COLS[col] = partial(_read_row, idx)
 
     # last column always the initial Q&A question
@@ -279,12 +287,13 @@ def _create_observation(entry, context, request, portal_type, obj):
     if errors:
         return None, errors
 
-    for kc in ['ms_key_catagory', 'eu_key_catagory']:
-        # Values must be boolean
-        if fields[kc] == 'True':
-            fields[kc] = True
-        else:
-            fields[kc] = False
+    if context.enable_key_category:
+        for kc in ['ms_key_catagory', 'eu_key_catagory']:
+            # Values must be boolean
+            if fields[kc] == 'True':
+                fields[kc] = True
+            else:
+                fields[kc] = False
 
     content = api.content.create(
         context,
@@ -331,7 +340,7 @@ class ObservationXLSImport(BrowserView):
         # skip the document header
         valid_rows = islice(sheet, 1, max - 1)
 
-        constants = get_constants()
+        constants = get_constants(self.context)
         get_vocabulary = _cached_get_vocabulary(
             self.context, prefix='esdrt.content.')
 

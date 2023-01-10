@@ -7,7 +7,7 @@
 </div>
 
 <div id="observations" tal:condition="view/batch">
-  <table tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime;"
+  <table tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; steps_enabled python:view.request.PUBLISHED.context.enable_steps"
          class="observationList listing"
          id="observations-table"
          tal:attributes="data-sort_on request/sort_on|string:modified;
@@ -33,7 +33,7 @@
         <th id="reviewfolder-status" class="nosort">
           Status
         </th>
-        <th id="reviewfolder-step" class="nosort">
+        <th id="reviewfolder-step" class="nosort" tal:condition="steps_enabled">
           Step
         </th>
         <th id="reviewfolder-workflow" class="nosort">
@@ -82,7 +82,7 @@
           <td>
             <span tal:replace="observation/overview_status">Open</span>
           </td>
-          <td>
+          <td tal:condition="steps_enabled">
             <div tal:attributes="class observation/observation_phase">&nbsp;</div>
           </td>
           <td tal:define="workflow_questions observation/observation_questions_workflow">

@@ -33,6 +33,11 @@
     />
 
   <utility
+    name="esdrt.content.highlight_select"
+    factory=".vocabularies.HighlightSelect"
+    />
+
+  <utility
     name="esdrt.content.parameter"
     factory=".vocabularies.Parameter"
     />

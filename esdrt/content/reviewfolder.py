@@ -191,7 +191,7 @@ class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
     excluded_highlights = List(
         title=u"Excluded highlights",
         description=u"Unused highlights but kept for previous years.",
-        value_type=Choice(vocabulary="esdrt.content.highlight"),
+        value_type=Choice(vocabulary="esdrt.content.highlight_select"),
         required=False,
     )
 
@@ -199,7 +199,7 @@ class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
     internal_highlights = List(
         title=u"Mark these highlights as internal",
         description=u"Visible only to SE/QE/LR and Secretariat",
-        value_type=Choice(vocabulary="esdrt.content.highlight"),
+        value_type=Choice(vocabulary="esdrt.content.highlight_select"),
         required=False,
     )
 
@@ -540,6 +540,17 @@ EXPORT_FIELDS = OrderedDict(
     ]
 )
 
+# [refs #159096] Relabel/exclude fields if steps are disabled.
+EXPORT_FIELDS_NO_STEPS = {
+    "observation_phase": False,
+    "observation_finalisation_reason_step1": "Conclusion",
+    "observation_finalisation_text_step1": "Conclusion note",
+    "observation_finalisation_remarks_step1": "Conclusion remark",
+    "observation_finalisation_reason_step2": False,
+    "observation_finalisation_text_step2": False,
+    "observation_finalisation_remarks_step2": False,
+}
+
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
     "observation_finalisation_text_step1",
@@ -549,11 +560,25 @@ EXCLUDE_FIELDS_FOR_MS = (
 )
 
 
+def get_export_fields(context):
+    # [refs #159096] Relabel/exclude fields if steps are disabled.
+    result = OrderedDict(EXPORT_FIELDS)
+
+    if not context.enable_steps:
+        for key, value in EXPORT_FIELDS_NO_STEPS.items():
+            if value is False:
+                del result[key]
+            else:
+                result[key] = value
+
+    return result
+
+
 @provider(IContextSourceBinder)
 def fields_vocabulary_factory(context):
     terms = []
     user_is_ms = getUtility(IUserIsMS)(context)
-    for key, value in EXPORT_FIELDS.items():
+    for key, value in get_export_fields(context).items():
         if user_is_ms and key in EXCLUDE_FIELDS_FOR_MS:
             continue
         terms.append(SimpleVocabulary.createTerm(key, key, value))
@@ -791,7 +816,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             dataset.append(row)
 
         headers = ["Observation"]
-        headers.extend([EXPORT_FIELDS[k] for k in fields_to_export])
+        filtered_export_fields = get_export_fields(self.context)
+        headers.extend([filtered_export_fields[k] for k in fields_to_export])
         headers.extend(["Q&A"] * qa_len)
         dataset.headers = headers
         return dataset

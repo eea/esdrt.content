@@ -45,6 +45,12 @@ class GetSampleXLS(BrowserView):
         get_title = attrgetter('title')
 
         header = XLS_SAMPLE_HEADER
+
+        enable_key_category = self.context.enable_key_category
+
+        if not enable_key_category:
+            header = [v for v in header if "key category" not in v]
+
         fuel_voc = get_vocabulary('esdrt.content.fuel')
         # not a mandatory field, value can be none
         fuels = cycle(map(get_title, fuel_voc) + [None])
@@ -71,12 +77,25 @@ class GetSampleXLS(BrowserView):
             eu_key_cat = next(eu_key_categ)
             desc_fl = next(description_flags)
             fuel = next(fuels)
-            row = [
-                DESC, country, CFR_CODE, INVENTORY_YEAR, gas,
-                REVIEW_YEAR, fuel, ms_key_cat, eu_key_cat,
-                parameter, desc_fl,
-                QUESTION_TEXT
+            row_0 = [
+                DESC,
+                country,
+                CFR_CODE,
+                INVENTORY_YEAR, gas,
+                REVIEW_YEAR,
+                fuel,
             ]
+            row_key_categ = [ms_key_cat, eu_key_cat]
+            row_1 = [
+                parameter,
+                desc_fl,
+                QUESTION_TEXT,
+            ]
+
+            if enable_key_category:
+                row = row_0 + row_key_categ + row_1
+            else:
+                row = row_0 + row_1
 
             sheet.append(row)
 
