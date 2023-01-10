@@ -379,11 +379,11 @@
           </div>
         </div>
         <div class="row" style="padding-top:20px">
-          <div class="cell position-1 width-3 esdLabel">Step</div>
+          <div class="cell position-1 width-3 esdLabel" tal:condition="here/enable_steps">Step</div>
           <div class="cell position-4 width-6 esdLabel">Workflow</div>
         </div>
         <div class="row">
-          <div class="cell position-1 width-3">
+          <div class="cell position-1 width-3" tal:condition="here/enable_steps">
             <select id="stepFilter"  class="chosen-select" data-placeholder="Select step"
                 tal:define="step python:'';
                             step request/step | step">
