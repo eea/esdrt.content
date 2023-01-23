@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.74.1 (2023-01-23)
+-------------------
+- Bug: #160446 - Unable to create new observations as sector expert
+  [batradav]
+
 1.74.0 (2023-01-11)
 -------------------
 - Feature: #159091 - Hide EU Key Category and MS Key Category Tickboxes
