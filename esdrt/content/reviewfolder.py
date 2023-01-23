@@ -321,9 +321,11 @@ class ReviewFolderMixin(BrowserView):
     def can_view_internal_flags():
         # [refs #159093] - only for QA Expert, SE or Secretariat
         return (
-            ReviewFolderMixin.is_secretariat()
-            or InboxReviewFolderView.is_sector_expert_or_review_expert()
-            or InboxReviewFolderView.is_lead_reviewer_or_quality_expert()
+            not api.user.is_anonymous() and (
+                ReviewFolderMixin.is_secretariat()
+                or InboxReviewFolderView.is_sector_expert_or_review_expert()
+                or InboxReviewFolderView.is_lead_reviewer_or_quality_expert()
+            )
         )
 
     def get_countries(self):

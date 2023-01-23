@@ -1217,12 +1217,14 @@ class AddForm(dexterity.AddForm):
 
         # [refs #159096]
         if not self.context.enable_steps:
-            self.widgets["closing_comments_phase2"].mode = (
-                interfaces.HIDDEN_MODE
-            )
-            self.widgets["closing_deny_comments_phase2"].mode = (
-                interfaces.HIDDEN_MODE
-            )
+            wids = [
+                "closing_comments_phase2",
+                "closing_deny_comments_phase2",
+            ]
+            for wid in wids:
+                widget = self.widgets.get(wid)
+                if widget:
+                    widget.mode = interfaces.HIDDEN_MODE
 
     def updateActions(self):
         super(AddForm, self).updateActions()
@@ -2035,12 +2037,14 @@ class ModificationForm(dexterity.EditForm):
 
         # [refs #159096]
         if not aq_parent(self.context).enable_steps:
-            self.widgets["closing_comments_phase2"].mode = (
-                interfaces.HIDDEN_MODE
-            )
-            self.widgets["closing_deny_comments_phase2"].mode = (
-                interfaces.HIDDEN_MODE
-            )
+            wids = [
+                "closing_comments_phase2",
+                "closing_deny_comments_phase2",
+            ]
+            for wid in wids:
+                widget = self.widgets.get(wid)
+                if widget:
+                    widget.mode = interfaces.HIDDEN_MODE
 
     def updateActions(self):
         super(ModificationForm, self).updateActions()
