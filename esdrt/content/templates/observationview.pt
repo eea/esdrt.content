@@ -285,7 +285,7 @@
         <div class="cell position-0 width-16" tal:content="context/highlight_value">Status flag</div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px" tal:condition="view/show_description">
-        <div class="cell position-0 width-4 esdLabel">Short description by expert/reviewer</div>
+        <div class="cell position-0 width-4 esdLabel">Observation title by expert</div>
       </div>
       <div class="row observation-details" style="display:none" tal:condition="view/show_description">
         <div class="cell position-0 width-16">

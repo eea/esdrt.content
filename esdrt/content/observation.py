@@ -92,14 +92,13 @@ class IObservation(form.Schema, IImageScaleTraversable):
     """
 
     text = schema.Text(
-        title=u"Short description by expert/reviewer",
+        title=u"Observation title by expert",
         required=True,
-        description=u"Describe the issue identified. Keep it short, you "
-        u"cannot change this description once you have sent it "
-        u"to the QE/LR. MS can only see the question once it "
-        u"has been approved and sent by the QE/LR. The "
-        u"question to the MS should be asked in the Q&A "
-        u"tab, not here.",
+        description=u"Provide a title for the issue identified. "
+        u"Keep it short, you cannot change this title once you have sent it "
+        u"to the QE. MS can only see the question once it has been approved "
+        u"and sent by the QE. The question to the MS should be asked in the "
+        u"Q&A tab, not here.",
     )
 
     country = schema.Choice(
@@ -177,9 +176,8 @@ class IObservation(form.Schema, IImageScaleTraversable):
     form.widget(highlight=CheckBoxFieldWidget)
     highlight = schema.List(
         title=u"Description flags",
-        description=u"Description flags highlight important information "
-        u"that is closely related to the main purpose of "
-        u"'initial checks' and ESD review",
+        description=u"Description flags highlight important information that "
+        u"is closely related to the main purpose of 'initial checks'",
         value_type=schema.Choice(vocabulary="esdrt.content.highlight",),
         required=False,
         default=[],
@@ -1830,7 +1828,7 @@ class ExportAsDocView(ObservationMixin):
         p = document.add_paragraph("Description flags", style="Label Bold")
         p = document.add_paragraph(self.context.highlight_value())
         p = document.add_paragraph(
-            "Short description by expert/reviewer", style="Label Bold"
+            "Observation title by expert", style="Label Bold"
         )
         p = document.add_paragraph(self.context.text)
 
