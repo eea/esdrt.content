@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.74.2 (2023-02-02)
+-------------------
+- Feature: #159093 - Introduction of New Internal Flag
+- Feature: #159096 - Removal of the Display Showing The Step an Observation is in
+- Task: #160943 - Update to text in create new observation window
+- Task: #160945 - Update to text on My View
+  [batradav]
+
 1.74.1 (2023-01-23)
 -------------------
 - Bug: #160446 - Unable to create new observations as sector expert
