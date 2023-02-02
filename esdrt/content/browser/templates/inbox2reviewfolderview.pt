@@ -1292,7 +1292,7 @@
           <div class="my-actions inboxSection">
             <div class="row">
               <div>
-                Questions from Sector expert / Review expert to be answered
+                Questions from Sector expert to be answered
               </div>
             </div>
             <table class="observationList listing my-actions" tal:condition="view/get_questions_to_be_answered">
@@ -1534,7 +1534,7 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="se-re-actions">
               <div>
-                Sector expert / Review expert actions
+                Sector expert actions
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -1542,7 +1542,7 @@
           <div class="se-re-actions inboxSection">
             <div class="row">
               <div>
-                Answers sent to Sector expert / Review expert
+                Answers sent to Sector expert
               </div>
             </div>
             <table class="observationList listing se-re-actions" tal:condition="view/get_answers_sent_to_se_re">
@@ -1795,7 +1795,7 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="sr-re-actions">
               <div>
-                Sector expert/review expert actions
+                Sector expert actions
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -1803,7 +1803,7 @@
           <div class="sr-re-actions inboxSection">
             <div class="row">
               <div>
-                Answers that I commented on sent to Sector expert/Review expert
+                Answers that I commented on sent to Sector expert
               </div>
             </div>
             <table class="observationList listing sr-re-actions" tal:condition="view/get_observations_with_my_comments_sent_to_se_re">

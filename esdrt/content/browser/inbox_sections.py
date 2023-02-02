@@ -116,7 +116,7 @@ SEC_LR_MS = (
 
 SEC_MSC_ME = (
     dict(
-        title="Questions from Sector Expert / Review expert to be answered",
+        title="Questions from Sector expert to be answered",
         slug="msc-que-se-ans",
         getter=methodcaller("get_questions_to_be_answered"),
     ),
@@ -144,7 +144,7 @@ SEC_MSC_MSE = (
 
 SEC_MSC_SE = (
     dict(
-        title="Answers sent to Sector expert / Review expert",
+        title="Answers sent to Sector expert",
         slug="msc-ans-se",
         getter=methodcaller("get_answers_sent_to_se_re"),
     ),
@@ -178,7 +178,7 @@ SEC_MSE_MSC = (
 SEC_MSE_SE = (
     dict(
         title=(
-            "Answers that I commented on sent to Sector expert / Review expert"
+            "Answers that I commented on sent to Sector expert"
         ),
         slug="mse-ans-com-se",
         getter=methodcaller("get_observations_with_my_comments_sent_to_se_re"),
@@ -188,7 +188,7 @@ SEC_MSE_SE = (
 
 SECTIONS = (
     dict(
-        title="Sector expert / Review expert",
+        title="Sector expert",
         check=methodcaller("is_sector_expert_or_review_expert"),
         actions=(
             dict(title="My actions", sec=SEC_SE_ME),
@@ -196,7 +196,7 @@ SECTIONS = (
         ),
     ),
     dict(
-        title="Lead reviewer / Quality expert",
+        title="Quality expert",
         check=methodcaller("is_lead_reviewer_or_quality_expert"),
         actions=(
             dict(title="My actions", sec=SEC_LR_ME),
@@ -210,7 +210,7 @@ SECTIONS = (
         actions=(
             dict(title="My actions", sec=SEC_MSC_ME),
             dict(title="MS experts actions", sec=SEC_MSC_MSE),
-            dict(title="Sector expert / Review expert actions", sec=SEC_MSC_SE),
+            dict(title="Sector expert actions", sec=SEC_MSC_SE),
         ),
     ),
     dict(
@@ -219,7 +219,7 @@ SECTIONS = (
         actions=(
             dict(title="My actions", sec=SEC_MSE_ME),
             dict(title="MSC actions", sec=SEC_MSE_MSC),
-            dict(title="Sector expert / Review expert actions", sec=SEC_MSE_SE),
+            dict(title="Sector expert actions", sec=SEC_MSE_SE),
         ),
     ),
 )
