@@ -1,5 +1,6 @@
 <metal:obslist define-macro="observationlist"
                tal:define="self python:here.restrictedTraverse('@@macros');
+               steps_enabled python:context.enable_steps;
                extra_classes extra_classes|nothing;
                default_bsize default_bsize|nothing;
                b_size python:request.get('b_size', default_bsize or 10);
@@ -17,7 +18,7 @@
         <th style="width:45%">In short</th>
         <th>CRF code</th>
         <th style="width:80px">Modification date</th>
-        <th>Step</th>
+        <th tal:condition="steps_enabled">Step</th>
       </tr>
     </thead>
     <tbody>
@@ -42,7 +43,7 @@
             <td class="observationText" tal:content="python:self.reduce_text(observation.text)"></td>
             <td tal:content="observation/crf_code_value"></td>
             <td data-sorter="python:observation.modified()" tal:content="python:self.format_date(observation.modified())"></td>
-            <td>
+            <td tal:condition="steps_enabled">
               <div tal:attributes="class observation/observation_phase">&nbsp;</div>
             </td>
           </tr>
