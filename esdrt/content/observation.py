@@ -1191,6 +1191,23 @@ class Observation(dexterity.Container):
 grok.templatedir("templates")
 
 
+def exclude_terms_from_widget_vocabulary(widget, to_exclude):
+    if not to_exclude:
+        return
+
+    zvocab = widget.terms.terms
+    zvocab._terms = [
+        t for t in zvocab._terms
+        if t.value not in to_exclude
+    ]
+
+    for key in to_exclude:
+        del zvocab.by_token[key]
+        del zvocab.by_value[key]
+
+    widget.update()
+
+
 class AddForm(dexterity.AddForm):
     grok.name("esdrt.content.observation")
     grok.context(IObservation)
@@ -1210,6 +1227,14 @@ class AddForm(dexterity.AddForm):
         self.groups = [
             g for g in self.groups if g.label == "label_schema_default"
         ]
+
+        # [refs #159093] - hide internal flags on add
+        highlight = self.fields["highlight"]
+        exclude_terms_from_widget_vocabulary(
+            self.widgets["highlight"],
+            getattr(self.context, "internal_highlights") or [],
+        )
+
         # [refs #159091]
         if not self.context.enable_key_category:
             del self.widgets["eu_key_catagory"]
