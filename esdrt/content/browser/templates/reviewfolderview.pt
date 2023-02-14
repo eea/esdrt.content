@@ -159,7 +159,7 @@
                   }
                   filter += "highlights=" + highlights;
                 }
-                if ($('#stepFilter').val() != ""){
+                if ($('#stepFilter').length && $('#stepFilter').val() != ""){
                   if (filter == ""){
                     filter += "?";
                   }else{
