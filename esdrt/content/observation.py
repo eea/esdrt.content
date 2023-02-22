@@ -809,7 +809,7 @@ class Observation(dexterity.Container):
                 observation_wf.append(item)
 
         history = list(observation_wf)
-        questions = self.get_values_cat()
+        questions = self.get_values_cat("Question")
 
         if questions:
             question = questions[0]
