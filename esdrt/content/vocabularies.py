@@ -14,6 +14,21 @@ def mk_term(key, value):
     return SimpleVocabulary.createTerm(key, key, value)
 
 
+def permissions_to_dict(text):
+    result = {}
+
+    text = text.strip()
+
+    if text:
+        for entry in [x.strip() for x in text.split("\n")]:
+            try:
+                highlight_id, role_string = [x.strip() for x in entry.split(" ", 1)]
+                result[highlight_id] = [x.strip() for x in role_string.split(",")]
+            except ValueError:
+                continue
+
+    return result
+
 @implementer(IVocabularyFactory)
 class MSVocabulary(object):
 
@@ -113,6 +128,10 @@ class Highlight(object):
             # [refs #159094]
             excluded_highlights = getattr(
                 context, "excluded_highlights", []) or []
+            
+            # [refs #261305 #261306]
+            highlights_access_roles = permissions_to_dict(getattr(context, "highlights_access_roles", "") or "")
+            user_roles = api.user.get_roles(obj=context)
 
             for key, value in voc.getVocabularyLines():
                 # [refs #159093]
@@ -121,6 +140,10 @@ class Highlight(object):
 
                 # [refs #159094]
                 if key in excluded_highlights:
+                    continue
+
+                # [refs #261305 #261306]
+                if highlights_access_roles.get(key) and not set(highlights_access_roles[key]).intersection(user_roles):
                     continue
 
                 terms.append(SimpleVocabulary.createTerm(key, key, value))

@@ -183,6 +183,7 @@ class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
         fields=[
             "excluded_highlights",
             "internal_highlights",
+            "highlights_access_roles",
             "enable_key_category",
             "enable_steps",
         ]
@@ -200,6 +201,14 @@ class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
         title=u"Mark these highlights as internal",
         description=u"Visible only to SE/QE/LR and Secretariat",
         value_type=Choice(vocabulary="esdrt.content.highlight_select"),
+        required=False,
+    )
+
+    # [refs #261305 #261306]
+    highlights_access_roles = Text(
+        title=u"Protect highlights with required role",
+        description=u"One per line, space separated between highlight id and roles, roles are comma separated.",
+        default=u"",
         required=False,
     )
 
@@ -653,10 +662,22 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             return super(ExportReviewFolderForm, self).render()
 
     def translate_highlights(self, highlights):
-        return [
-            self._vocabulary_value("esdrt.content.highlight", highlight)
+        values = [
+            self._highlight_vocabulary_value("esdrt.content.highlight", highlight)
             for highlight in highlights
         ]
+        return [v for v in values if v]
+
+    def _highlight_vocabulary_value(self, vocabulary, term):
+        vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
+        vocabulary = vocab_factory(self)
+        if not term:
+            return u""
+        try:
+            value = vocabulary.getTerm(term)
+            return value.title
+        except LookupError:
+            return None
 
     def _vocabulary_value(self, vocabulary, term):
         vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)

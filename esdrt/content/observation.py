@@ -393,7 +393,7 @@ class Observation(dexterity.Container):
                 self._vocabulary_value("esdrt.content.highlight", h)
                 for h in self.highlight
             ]
-            return u", ".join(highlight)
+            return u", ".join([x for x in highlight if x])
         return u""
 
     def finish_reason_value(self):
