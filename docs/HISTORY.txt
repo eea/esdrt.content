@@ -1,10 +1,16 @@
 Changelog
 =========
 
-1.74.3 (2024-01-05)
+1.74.4 (2024-01-05)
 -------------------
 - Feature: #261306 - Create new conclusion flag
 - Feature: #261305 - Create new description flag
+  [batradav]
+
+1.74.3 (2023-02-22)
+-------------------
+- BAD RELEASE
+- Bug #241804 - Observation history timeline not displaying all actions
   [batradav]
 
 1.74.2 (2023-02-02)
