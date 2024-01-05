@@ -1,0 +1,43 @@
+
+/* [refs #261306] BEGIN */
+/* Hide LULUCF Recommendation from MS Expert and MS Coordinator, show for everyone else. */
+input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: none; }
+input[value="lulucf-recommendation"] { display: none; }
+input[value="lulucf-recommendation"] + label { display: none; }
+
+body.userrole-manager input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-manager input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-manager input[value="lulucf-recommendation"] + label { display: unset; }
+
+body.userrole-counterpart input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-counterpart input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-counterpart input[value="lulucf-recommendation"] + label { display: unset; }
+
+body.userrole-sectorexpert input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-sectorexpert input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-sectorexpert input[value="lulucf-recommendation"] + label { display: unset; }
+
+body.userrole-qualityexpert input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-qualityexpert input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-qualityexpert input[value="lulucf-recommendation"] + label { display: unset; }
+
+body.userrole-reviewexpert input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-reviewexpert input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-reviewexpert input[value="lulucf-recommendation"] + label { display: unset; }
+
+body.userrole-leadreviewer input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-leadreviewer input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-leadreviewer input[value="lulucf-recommendation"] + label { display: unset; }
+
+body.userrole-reviewerphase1 input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-reviewerphase1 input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-reviewerphase1 input[value="lulucf-recommendation"] + label { display: unset; }
+
+body.userrole-reviewerphase2 input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-reviewerphase2 input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-reviewerphase2 input[value="lulucf-recommendation"] + label { display: unset; }
+
+body.userrole-auditor input#lulucf-recommendation, label[for="lulucf-recommendation"] { display: unset; }
+body.userrole-auditor input[value="lulucf-recommendation"] { display: unset; }
+body.userrole-auditor input[value="lulucf-recommendation"] + label { display: unset; }
+/* [refs #261306] END */

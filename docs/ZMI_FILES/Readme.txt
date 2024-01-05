@@ -1,0 +1,2 @@
+These are files that are created TTW in the ZMI in order to avoid having to release a new docker version due to everything being out of date.
+They are placed here for future reference, this folder is not sourced anywhere.
