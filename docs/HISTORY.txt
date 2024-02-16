@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.74.5 (2024-02-16)
+-------------------
+- Task: #265134 - Adding flags to the export function
+  [batradav]
+
 1.74.4 (2024-01-05)
 -------------------
 - Feature: #261306 - Create new conclusion flag
