@@ -528,7 +528,7 @@ EXPORT_FIELDS = OrderedDict(
         ("review_year", "Review Year"),
         ("year", "Inventory year"),
         ("gas_value", "GAS"),
-        ("get_highlight", "Highlight"),
+        ("get_highlight", "Description flags"),
         ("overview_status", "Status"),
         ("observation_phase", "Step"),
         ("observation_finalisation_reason_step1", "Conclusion step 1"),
