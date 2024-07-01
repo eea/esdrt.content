@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.74.6 (2024-07-01)
+-------------------
+- Task: #272010 - ESD EMRT extract error
+  [batradav]
+
 1.74.5 (2024-02-16)
 -------------------
 - Task: #265134 - Adding flags to the export function
