@@ -3,6 +3,24 @@ import string
 from Products.CMFCore.interfaces._content import IContentish
 from zope.globalrequest import getRequest
 
+import plone.api as api
+
+
+def get_userid_name(userid):
+    result = userid
+
+    user = api.user.get(userid)
+    if (user):
+        result = user.getProperty("fullname", userid)
+
+    return result
+
+
+def get_indexed_values_for_index(index_name):
+    catalog = api.portal.get_tool("portal_catalog")
+    indexes = catalog._catalog.indexes
+    return sorted(set(indexes[index_name]._unindex.itervalues()))
+
 
 def reduce_text(text, limit):
     if len(text) <= limit:

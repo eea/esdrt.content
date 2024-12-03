@@ -175,6 +175,16 @@
                   }
                   filter += "wfStatus=" + $('#wfStatusFilter').val();
                 }
+                // Commented so that empty value cand be used to show all available if desired.
+                // This is handled in reviewfolder.py by checking if obsAuthorFilter is None.
+                // if ($('#obsAuthorFilter').val() != ""){
+                  if (filter == ""){
+                    filter += "?";
+                  }else{
+                    filter += "&";
+                  }
+                  filter += "obsAuthor=" + $('#obsAuthorFilter').val();
+                // }
                 if ($('#crfFilter').val() != ""){
                   if (filter == ""){
                     filter += "?";
@@ -380,7 +390,8 @@
         </div>
         <div class="row" style="padding-top:20px">
           <div class="cell position-1 width-3 esdLabel" tal:condition="here/enable_steps">Step</div>
-          <div class="cell position-4 width-6 esdLabel">Workflow</div>
+          <div class="cell position-4 width-3 esdLabel">Workflow</div>
+          <div class="cell position-7 width-3 esdLabel">Author</div>
         </div>
         <div class="row">
           <div class="cell position-1 width-3" tal:condition="here/enable_steps">
@@ -394,7 +405,7 @@
                 value="step2">Step2</option>
             </select>
           </div>
-          <div class="cell position-4 width-6">
+          <div class="cell position-4 width-3">
             <select id="wfStatusFilter"  class="chosen-select" data-placeholder="Select status"
                 tal:define="wfStatus python:'';
                             wfStatus request/wfStatus | wfStatus">
@@ -413,6 +424,18 @@
                 value="close-requested">Close requested</option>
               <option tal:attributes="selected python:'finalised'==wfStatus"
                 value="finalised">Finalised</option>
+            </select>
+          </div>
+          <div class="cell position-7 width-3">
+           <select id="obsAuthorFilter"  class="chosen-select" data-placeholder="Select author"
+                tal:define="obsAuthor python:'';
+                            obsAuthor request/obsAuthor | obsAuthor">
+              <option></option>
+              <tal:option repeat="author python:view.get_indexed_authors()">
+                <option
+                  tal:attributes="value python:author[0]; selected python:author[0] == obsAuthor"
+                  tal:content="python:author[1]"></option>
+              </tal:option>
             </select>
           </div>
         </div>

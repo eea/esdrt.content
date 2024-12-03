@@ -20,7 +20,7 @@ class StatisticsView(grok.View):
     grok.require('cmf.ManagePortal')
 
     def update(self):
-        
+
         self.observations = self.get_all_observations()
         self.questions = self.get_all_questions()
 
@@ -74,7 +74,7 @@ class StatisticsView(grok.View):
         return step
 
     def _generic_getter(self, objs, key, value, columns=[], filter_fun=None):
-        
+
         """
          Generic function to get items for later rendering.
          Parameters:
@@ -258,7 +258,7 @@ class DownloadStatisticsView(grok.View):
         return step
 
     def _generic_getter(self, objs, key, value, columns=[], filter_fun=None):
-        
+
         """
          Generic function to get items for later rendering.
          Parameters:
@@ -359,15 +359,15 @@ class DownloadStatisticsView(grok.View):
             columns=['SRRE', 'LRQE', 'MSC', 'answered', 'conclusions', 'finalised']
         )
         for observation in observations:
-            data.append([observation['country'], 
+            data.append([observation['country'],
                 observation['SRRE'],
                 observation['LRQE'],
                 observation['MSC'],
-                observation['answered'], 
-                observation['conclusions'], 
-                observation['finalised'], 
+                observation['answered'],
+                observation['conclusions'],
+                observation['finalised'],
                 observation['sum']])
-        data.headers = ['Country', 'SR/RE', 'LR/QE', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']  
+        data.headers = ['Country', 'SR/RE', 'LR/QE', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']
 
         return data
 
@@ -379,19 +379,19 @@ class DownloadStatisticsView(grok.View):
             key='sector',
             value='status',
             columns=['SRRE', 'LRQE', 'MSC', 'answered', 'conclusions', 'finalised']
-        ) 
+        )
         for observation in observations:
-            data.append([observation['sector'], 
+            data.append([observation['sector'],
                 observation['SRRE'],
                 observation['LRQE'],
                 observation['MSC'],
-                observation['answered'], 
-                observation['conclusions'], 
-                observation['finalised'], 
+                observation['answered'],
+                observation['conclusions'],
+                observation['finalised'],
                 observation['sum']])
-        data.headers = ['Sector', 'SR/RE', 'LR/QE', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']  
+        data.headers = ['Sector', 'SR/RE', 'LR/QE', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']
 
-        return data   
+        return data
 
     def finalised_reason_per_country(self):
         data = tablib.Dataset()
@@ -401,19 +401,19 @@ class DownloadStatisticsView(grok.View):
             key='country',
             value='finalisation_reason',
             columns=['no-conclusion-yet', 'no-response-needed', 'partly-resolved', 'resolved', 'unresolved', 'significant-issue']
-        ) 
+        )
         for observation in observations:
-            data.append([observation['country'], 
+            data.append([observation['country'],
                 observation['no-conclusion-yet'],
                 observation['no-response-needed'],
                 observation['partly-resolved'],
-                observation['resolved'], 
+                observation['resolved'],
                 observation['unresolved'],
                 observation['significant-issue'],
                 observation['sum']])
-        data.headers = ['Country', 'No conclusion yet', 'No response needed', 'Party resolved', 'Resolved', 'Unresolved', 'Significant issue', 'Sum']  
+        data.headers = ['Country', 'No conclusion yet', 'No response needed', 'Party resolved', 'Resolved', 'Unresolved', 'Significant issue', 'Sum']
 
-        return data 
+        return data
 
     def finalised_reason_per_sector(self):
         data = tablib.Dataset()
@@ -425,17 +425,17 @@ class DownloadStatisticsView(grok.View):
             columns=['no-conclusion-yet', 'no-response-needed', 'partly-resolved', 'resolved', 'unresolved', 'significant-issue']
         )
         for observation in observations:
-            data.append([observation['sector'], 
+            data.append([observation['sector'],
                 observation['no-conclusion-yet'],
                 observation['no-response-needed'],
                 observation['partly-resolved'],
-                observation['resolved'], 
+                observation['resolved'],
                 observation['unresolved'],
                 observation['significant-issue'],
                 observation['sum']])
-        data.headers = ['Sector', 'No conclusion yet', 'No response needed', 'Party resolved', 'Resolved', 'Unresolved', 'Significant issue', 'Sum']  
+        data.headers = ['Sector', 'No conclusion yet', 'No response needed', 'Party resolved', 'Resolved', 'Unresolved', 'Significant issue', 'Sum']
 
-        return data                 
+        return data
 
 
     def observation_highlights_pgf(self):

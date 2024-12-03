@@ -1,4 +1,5 @@
 import logging
+import operator
 import itertools
 import time
 from datetime import datetime
@@ -54,6 +55,7 @@ from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
 from esdrt.content.timeit import timeit
 from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
 from esdrt.content.utilities.ms_user import IUserIsMS
+from esdrt.content.utils import get_userid_name
 
 
 LOG = logging.getLogger(__name__)
@@ -83,6 +85,22 @@ LDAP_QUERY_GROUPS = (
     "(cn=extranet-esd-esdreview-reviewexp-*)"
     ")"
 )
+
+
+def get_indexed_authors(context):
+    catalog = api.portal.get_tool("portal_catalog")
+    path = "/".join(context.getPhysicalPath())
+    query = {
+        "path": path,
+        "portal_type": "Observation",
+    }
+    authors = set([b.Creator for b in catalog.searchResults(query)])
+    return authors
+
+
+def get_indexed_authors_with_names(context):
+    authors = get_indexed_authors(context)
+    return [(v, get_userid_name(v)) for v in authors]
 
 
 def get_observation_phase(brain):
@@ -235,6 +253,22 @@ class ReviewFolder(Container):
 
 
 class ReviewFolderMixin(BrowserView):
+
+    def get_current_user_id(self):
+        result = ""
+        user = api.user.get_current()
+        if user:
+            result = user.getId()
+        return result
+
+    def get_indexed_authors(self):
+        authors_with_names = get_indexed_authors_with_names(self.context)
+        user = api.user.get_current()
+        if (user):
+            userId = user.getId()
+            authors_with_names = [(uid, "Me ({})".format(uname)) if uid == userId else (uid, uname) for uid, uname in authors_with_names]
+        return sorted(authors_with_names, key=lambda x: float("-inf") if x[1][:2] == "Me" else x[1])
+
     @memoize
     def get_questions(self, sort_on="modified", sort_order="reverse"):
         country = self.request.form.get("country", "")
@@ -245,6 +279,7 @@ class ReviewFolderMixin(BrowserView):
         freeText = self.request.form.get("freeText", "")
         step = self.request.form.get("step", "")
         wfStatus = self.request.form.get("wfStatus", "")
+        obsAuthor = self.request.form.get("obsAuthor", "")
         crfCode = self.request.form.get("crfCode", "")
         gas = self.request.form.get("gas", self.request.form.get("gas[]", []))
         gas = gas if isinstance(gas, list) else [gas]
@@ -289,6 +324,8 @@ class ReviewFolderMixin(BrowserView):
             query["observation_step"] = step
         if wfStatus != "":
             query["observation_status"] = wfStatus
+        if obsAuthor != "":
+            query["Creator"] = obsAuthor
         if crfCode != "":
             query["crf_code"] = crfCode
         if gas != "":
@@ -503,6 +540,17 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
         return table.render(table)
 
     def render(self):
+        obsAuthor = self.request.get("obsAuthor", None)
+        if obsAuthor is None and not self.is_secretariat():
+            user = api.user.get_current()
+            if user:
+                user_id = user.getId()
+                if user_id in get_indexed_authors(self.context):
+                    return self.request.response.redirect(
+                        "%s?%s&obsAuthor=%s"
+                        % (self.context.absolute_url(), self.request["QUERY_STRING"], user_id)
+                    )
+
         sort_on = self.request.get("sort_on", "modified")
         sort_order = self.request.get("sort_order", "reverse")
         pagenumber = self.request.get("pagenumber", "1")
