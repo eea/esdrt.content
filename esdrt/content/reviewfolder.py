@@ -103,6 +103,15 @@ def get_indexed_authors_with_names(context):
     return [(v, get_userid_name(v)) for v in authors]
 
 
+def get_indexed_authors_for_select(context):
+    authors_with_names = get_indexed_authors_with_names(context)
+    user = api.user.get_current()
+    if (user):
+        userId = user.getId()
+        authors_with_names = [(uid, "Me ({})".format(uname)) if uid == userId else (uid, uname) for uid, uname in authors_with_names]
+    return sorted(authors_with_names, key=lambda x: float("-inf") if x[1][:2] == "Me" else x[1])
+
+
 def get_observation_phase(brain):
     result = ""
     state = brain["observation_questions_workflow"]
@@ -178,6 +187,22 @@ def filter_for_ms(brains, context):
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
+
+
+def redirect_for_author(context, request):
+    obsAuthor = request.get("obsAuthor", None)
+    missing_author_filter = obsAuthor is None
+    user = api.user.get_current()
+    is_user = not api.user.is_anonymous() and "Manager" not in user.getRoles()
+    if missing_author_filter and is_user:
+        user_id = user.getId()
+        if user_id in get_indexed_authors(context):
+            new_url = "%s?%s&obsAuthor=%s" % (
+                request["ACTUAL_URL"],
+                request["QUERY_STRING"],
+                user_id,
+            )
+            return request.response.redirect(new_url)
 
 
 class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
@@ -262,12 +287,7 @@ class ReviewFolderMixin(BrowserView):
         return result
 
     def get_indexed_authors(self):
-        authors_with_names = get_indexed_authors_with_names(self.context)
-        user = api.user.get_current()
-        if (user):
-            userId = user.getId()
-            authors_with_names = [(uid, "Me ({})".format(uname)) if uid == userId else (uid, uname) for uid, uname in authors_with_names]
-        return sorted(authors_with_names, key=lambda x: float("-inf") if x[1][:2] == "Me" else x[1])
+        return get_indexed_authors_for_select(self.context)
 
     @memoize
     def get_questions(self, sort_on="modified", sort_order="reverse"):
@@ -540,17 +560,7 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
         return table.render(table)
 
     def render(self):
-        obsAuthor = self.request.get("obsAuthor", None)
-        if obsAuthor is None and not self.is_secretariat():
-            user = api.user.get_current()
-            if user:
-                user_id = user.getId()
-                if user_id in get_indexed_authors(self.context):
-                    return self.request.response.redirect(
-                        "%s?%s&obsAuthor=%s"
-                        % (self.context.absolute_url(), self.request["QUERY_STRING"], user_id)
-                    )
-
+        redirect_for_author(self.context, self.request)
         sort_on = self.request.get("sort_on", "modified")
         sort_order = self.request.get("sort_order", "reverse")
         pagenumber = self.request.get("pagenumber", "1")
@@ -1036,6 +1046,9 @@ class InboxReviewFolderView(BrowserView):
     def get_current_user(self):
         return api.user.get_current()
 
+    def get_indexed_authors(self):
+        return get_indexed_authors_for_select(self.context)
+
     def get_sections(self):
         is_sec = self.is_secretariat()
         viewable = [sec for sec in SECTIONS if is_sec or sec["check"](self)]
@@ -1063,6 +1076,7 @@ class InboxReviewFolderView(BrowserView):
 
     def __call__(self):
         self.rolemap_observations = {}
+        redirect_for_author(self.context, self.request)
         return super(InboxReviewFolderView, self).__call__()
 
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
@@ -1075,6 +1089,7 @@ class InboxReviewFolderView(BrowserView):
 
     def get_observations(self, rolecheck=None, **kw):
         freeText = self.request.form.get("freeText", "")
+        obsAuthor = self.request.form.get("obsAuthor", "")
         catalog = api.portal.get_tool("portal_catalog")
         path = "/".join(self.context.getPhysicalPath())
         query = {
@@ -1085,6 +1100,8 @@ class InboxReviewFolderView(BrowserView):
         }
         if freeText:
             query["SearchableText"] = freeText
+        if obsAuthor != "":
+            query["Creator"] = obsAuthor
 
         query.update(kw)
         # from logging import getLogger

@@ -8,6 +8,12 @@
   <tal:block metal:fill-slot="javascript_head_slot">
     <script tal:attributes="src string:${portal_url}/++resource++esdrt.content/cookies.js"></script>
     <script tal:attributes="src string:${portal_url}/++resource++esdrt.content/inbox_view.js"></script>
+    <script type="text/javascript" src="++resource++orderedselect_input.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $(".chosen-select").chosen({width: "100%", allow_single_deselect: true});
+      })
+    </script>
   </tal:block>
   <tal:block metal:fill-slot="style_slot">
     <link rel="stylesheet" type="text/css" tal:attributes="href string:${portal_url}/++resource++esdrt.content/inbox_view.css" />
@@ -49,15 +55,28 @@
 
   <div id="filters">
     <div class="row" style="padding-top:30px">
-      <div class="cell position-1 width-3 esdLabel">Free text</div>
+      <div class="cell position-1 width-9 esdLabel">Free text</div>
+      <div class="cell position-10 width-3 esdLabel">Author</div>
     </div>
     <div class="row">
       <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
-        <div class="cell position-1 width-12 esdLabel">
-          <tal:params repeat="req_param python:[x for x in req_params if x[0] != 'freeText']">
+        <div class="cell position-1 width-9">
+          <tal:params repeat="req_param python:[x for x in req_params if x[0] not in ['freeText', 'obsAuthor']]">
             <input type="hidden" tal:attributes="name python:req_param[0]; value python:req_param[1]" />
           </tal:params>
           <input type="text" style="width:100%;border-radius:5px;height:21px" name="freeText" tal:attributes="value freeText" />
+        </div>
+        <div class="cell position-10 width-3 esdLabel">
+           <select id="obsAuthorFilter" name="obsAuthor" class="chosen-select" data-placeholder="Select author"
+                tal:define="obsAuthor python:'';
+                            obsAuthor request/obsAuthor | obsAuthor">
+              <option></option>
+              <tal:option repeat="author python:view.get_indexed_authors()">
+                <option
+                  tal:attributes="value python:author[0]; selected python:author[0] == obsAuthor"
+                  tal:content="python:author[1]"></option>
+              </tal:option>
+            </select>
         </div>
         <div class="cell position-14 width-1">
           <input type="submit" class="standardButton" id="btnFilter" value="Search" />
