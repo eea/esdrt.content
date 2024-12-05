@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.75.0 (2024-12-05)
+-------------------
+- Task: #277396 - Only notify author SE.
+  [batradav]
+
 1.74.6 (2024-07-01)
 -------------------
 - Task: #272010 - ESD EMRT extract error
