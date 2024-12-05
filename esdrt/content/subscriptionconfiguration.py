@@ -32,6 +32,7 @@ NOTIFICATIONS_PER_ROLE = {
         'observation_finalised': True,
         'question_answered': True,
         'question_to_ms': True,
+        'config_only_where_author': True,
     },
     'ReviewerPhase2': {
         'observation_finalisation_denied': True,
@@ -39,6 +40,7 @@ NOTIFICATIONS_PER_ROLE = {
         'observation_to_phase2': True,
         'question_answered': True,
         'question_to_ms': True,
+        'config_only_where_author': True,
     },
     'QualityExpert': {
         'conclusion_to_comment': True,
@@ -76,6 +78,7 @@ NOTIFICATION_NAMES = {
         'observation_finalised': 'Observation finalised by QE',
         'question_answered': 'Question answered by MS',
         'question_to_ms': 'Question sent to MS by QE',
+        'config_only_where_author': 'Only notify me about observations I authored',
     },
     'ReviewerPhase2': {
         'observation_finalisation_denied': 'Observation finalisation denied by LR',
@@ -83,6 +86,7 @@ NOTIFICATION_NAMES = {
         'observation_to_phase2': 'Observation handed over to step 2',
         'question_answered': 'Question answered by MS',
         'question_to_ms': 'Question sent to MS by LR',
+        'config_only_where_author': 'Only notify me about observations I authored',
     },
     'QualityExpert': {
         'conclusion_to_comment': 'Conclusion to comment by you as QE',
@@ -212,6 +216,8 @@ class SaveSubscriptionsReview(SubscriptionConfigurationMixin):
     grok.context(IReviewFolder)
     grok.require('zope2.View')
     grok.name('save-subscriptions')
+
+
 
     def render(self):
         user_roles = []

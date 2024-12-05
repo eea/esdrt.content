@@ -98,12 +98,20 @@ def get_users_in_context(observation, role, notification_name):
 
 
 def exclude_user_from_notification(observation, user, role, notification):
+    user_id = user.getId()
     adapted = INotificationUnsubscriptions(observation)
-    data = adapted.get_user_data(user.getId())
+    data = adapted.get_user_data(user_id)
     if not data:
         area = aq_parent(aq_inner(observation))
         if IReviewFolder.providedBy(area):
             adapted = INotificationUnsubscriptions(area)
-            data = adapted.get_user_data(user.getId())
+            data = adapted.get_user_data(user_id)
     excluded_notifications = data.get(role, [])
-    return notification in excluded_notifications
+    exclude_based_on_notification = notification in excluded_notifications
+    if exclude_based_on_notification:
+        return exclude_based_on_notification
+
+    if role in ["ReviewerPhase1", "ReviewerPhase2"] and "config_only_where_author" not in excluded_notifications:
+        owner = observation.getOwner()
+        return user_id != owner.getId() if owner else False
+

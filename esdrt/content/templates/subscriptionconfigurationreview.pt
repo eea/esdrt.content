@@ -66,33 +66,40 @@
         <input type="hidden" name="subscription_data.name:records"
           tal:attributes="value python:item[0]" />
 
-        <table class="listing">
-          <thead>
-            <tr>
-              <th>
-                Notification
-              </th>
-              <th>
-                Enabled?
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr tal:repeat="notification python:item[1].items()">
-              <td>
-                <span tal:replace="python:view.notification_name(item[0], notification[0])" />
-              </td>
-              <td>
-                <input type="checkbox"
-                  tal:attributes="checked python:notification[1];
-                                  name python:'subscription_data.' + notification[0] + ':records';
-                  " />
-              </td>
-            </tr>
-          </tbody>
+        <tal:block define="notifications python:[x for x in item[1].items() if not x[0].startswith('config_')]; settings python:[x for x in item[1].items() if x[0].startswith('config_')]">
+          <table class="listing">
+            <thead>
+              <tr>
+                <th>
+                  Notification
+                </th>
+                <th>
+                  Enabled?
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr tal:repeat="notification notifications">
+                <td>
+                  <span tal:replace="python:view.notification_name(item[0], notification[0])" />
+                </td>
+                <td>
+                  <input type="checkbox"
+                    tal:attributes="checked python:notification[1];
+                                    name python:'subscription_data.' + notification[0] + ':records'" />
+                </td>
+              </tr>
+            </tbody>
 
-        </table>
+          </table>
 
+          <div tal:repeat="setting settings">
+            <input type="checkbox" tal:attributes="id python:setting[0]; name python:'subscription_data.{}:records'.format(setting[0]); checked python:setting[1]" />
+            <label tal:attributes="for python:setting[0]" tal:content="python:view.notification_name(item[0], setting[0])"></label>
+          </div>
+
+          <br />
+        </tal:block>
       </div>
 
       <div class="subscription-actions">
