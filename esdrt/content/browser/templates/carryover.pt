@@ -13,6 +13,7 @@
                 <strong>Please note that the first row of the XLS file will be ignored.</strong>
               </li>
               <li>The <strong>userid</strong> column needs to be a valid EIONET user id. It used for the Obsevation History.</li>
+              <li>The <strong>Author override</strong> column needs to be a valid EIONET user id. <strong>If given</strong>, it will override the observation author, thus reassigning ownership of the observation.</li>
             </ul>
         </div>
     </div>
@@ -24,14 +25,27 @@
                 Observations are copied as-is, the ID will be preserved.
                 If provided, the conclusion text will replace the existing conclusion text.
             </p>
-            <table class="listing">
-              <thead><tr><th>Source observation</th><th>Conclusion text</th><th>userid</th></tr></thead>
-                <tbody><tr>
-                    <td><tal:url replace="portal_url"/>/2018/AT-1A-2018-0000</td>
-                    <td>Conclusion text that will replace the existing one.</td>
-                    <td>someuserid</td>
-                </tr></tbody>
-            </table>
+          <table class="listing">
+            <thead>
+            <tr>
+              <th>Source observation</th>
+              <th>Conclusion text</th>
+              <th>userid</th>
+              <th>Author override (userid)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>
+                <tal:url replace="portal_url"/>
+                /2018/AT-1A-2018-0000
+              </td>
+              <td>Conclusion text that will replace the existing one.</td>
+              <td>someuserid</td>
+              <td>someuserid</td>
+            </tr>
+            </tbody>
+          </table>
 
         </div>
 
@@ -46,15 +60,32 @@
                 </ul>
                 If provided, the conclusion text will replace the existing conclusion text.
             </div>
-            <table class="listing">
-                <thead><tr><th>Source observation</th><th>Older source</th><th>Conclusion text</th><th>userid</th></tr></thead>
-                <tbody><tr>
-                    <td><tal:url replace="portal_url"/>/2018/AT-1A-2018-0000</td>
-                    <td><tal:url replace="portal_url"/>/2018/AT-1A-2017-0000</td>
-                    <td>Conclusion text that will replace the existing one.</td>
-                    <td>someuserid</td>
-                </tr></tbody>
-            </table>
+          <table class="listing">
+            <thead>
+            <tr>
+              <th>Source observation</th>
+              <th>Older source</th>
+              <th>Conclusion text</th>
+              <th>userid</th>
+              <th>Author override (userid)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>
+                <tal:url replace="portal_url"/>
+                /2018/AT-1A-2018-0000
+              </td>
+              <td>
+                <tal:url replace="portal_url"/>
+                /2018/AT-1A-2017-0000
+              </td>
+              <td>Conclusion text that will replace the existing one.</td>
+              <td>someuserid</td>
+              <td>someuserid</td>
+            </tr>
+            </tbody>
+          </table>
 
         </div>
 

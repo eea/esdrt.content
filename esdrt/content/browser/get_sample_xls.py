@@ -15,6 +15,7 @@ XLS_SAMPLE_HEADER = (
     'Inventory year', 'Gas', 'Review year', 'Fuel',
     'MS key category', 'EU key category',
     'Parameter', 'Description flags', 'Initial question text',
+    'Author override',
 )
 
 DESC = 'Description of the observation'

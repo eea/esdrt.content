@@ -13,6 +13,7 @@ from Products.CMFCore.utils import getToolByName
 import openpyxl
 from DateTime import DateTime
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
+import plone.api as api
 
 LOG = getLogger("esdrt.content.carryover")
 
@@ -140,14 +141,24 @@ def reopen_with_qa(workflows, obj, actor):
     if conclusion:
         add_to_wh(wf_conclusion, conclusion, "redraft", "draft", actor)
 
+def override_owner(obj, owner):
+    if owner:
+        user = api.user.get(owner)
+        if user:
+            userid = user.getId()
+            obj.changeOwnership(user)
+            obj.setCreators([userid])
+            obj.manage_setLocalRoles(userid, ["Owner", ])
 
 def copy_direct(context, catalog, workflows, obj_from_url, row):
     source = _read_col(row, 0)
     conclusion_text = _read_col(row, 1)
     actor = _read_col(row, 2)
+    owner = _read_col(row, 3)
 
     obj = obj_from_url(source)
     ob = _copy_and_flag(context, obj)
+    override_owner(ob, owner)
 
     replace_conclusion_text(workflows, ob, conclusion_text)
     clear_and_grant_roles(ob)
@@ -161,11 +172,13 @@ def copy_complex(context, catalog, workflows, obj_from_url, row):
     older_source = _read_col(row, 1)
     conclusion_text = _read_col(row, 2)
     actor = _read_col(row, 3)
+    owner = _read_col(row, 4)
 
     obj = obj_from_url(source)
     older_obj = obj_from_url(older_source)
 
     ob = _copy_and_flag(context, obj, older_obj.getId())
+    override_owner(ob, owner)
 
     replace_conclusion_text(workflows, ob, conclusion_text)
     prepend_qa(ob, older_obj)

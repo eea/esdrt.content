@@ -9,9 +9,12 @@
       if your observation has multiple values, please write them one per line, as in the sample import file.
       <br/> The "Fuel" and 'Description Flags' fields can be left empty as they are not mandatory fields.
       <tal:key_categ condition="here/enable_key_category">
-      <br /> The MS/EU Key Category field can be set to 'True' if the observation belongs to this category
+      <br /> The MS/EU Key Category field can be set to 'True' if the observation belongs to this category,
       or it can be left empty if it doesn't.
       </tal:key_categ>
+      <br />
+      The last column is the <strong>Author override</strong> and requires a valid EIONET userid.
+      You can leave it empty, in which case the default is to assign yourself as the Author.
     </p>
     <p>You can download a sample import file by clicking <a href="./get_sample_xls">here</a>.</p>
 

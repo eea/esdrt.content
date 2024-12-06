@@ -1,7 +1,6 @@
 import re
 from functools import partial
 from itertools import islice
-from itertools import chain
 from operator import itemgetter
 
 from zope.component import getUtility
@@ -17,6 +16,7 @@ from plone import api
 
 import openpyxl
 
+from esdrt.content.browser.carryover import override_owner
 from esdrt.content.observation import create_comment
 from esdrt.content.question import create_question
 
@@ -26,6 +26,7 @@ PORTAL_TYPE = 'Observation'
 UNUSED_FIELDS = (
     'closing_comments', 'closing_deny_comments',
     'closing_comments_phase2', 'closing_deny_comments_phase2',
+    'author',
 )
 
 UNCOMPLETED_ERR = (
@@ -101,8 +102,13 @@ def get_constants(context):
     for idx, col in enumerate(filtered_inventory_cols, start=next_col):
         XLS_COLS[col] = partial(_read_row, idx)
 
-    # last column always the initial Q&A question
-    XLS_COLS['question'] = partial(_read_row, idx + 1)
+    # 2nd to last column always the initial Q&A question
+    idx_qa_text = idx + 1
+    XLS_COLS['question'] = partial(_read_row, idx_qa_text)
+
+    # last column is the Author override (optional)
+    idx_author = idx_qa_text + 1
+    XLS_COLS['author'] = partial(_read_row, idx_author)
 
     return XLS_COLS
 
@@ -256,6 +262,11 @@ class Entry(object):
         if val is not None:
             return val.strip()
 
+    @property
+    def author(self):
+        value = self.constants['author'](self.row)
+        return value if value else None
+
     def get_fields(self):
         fields = self.constants.keys()
         return {
@@ -301,6 +312,9 @@ def _create_observation(entry, context, request, portal_type, obj):
         title=getattr(entry, 'title'),
         **fields
     )
+
+    # change ownership if given
+    override_owner(content, entry.author)
 
     question_text = entry.question
     if question_text:
