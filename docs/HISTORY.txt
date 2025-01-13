@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.75.2 (2025-01-13)
+-------------------
+- Task: #277396 - Allow SE to export Q&A, fix carryover.
+  [batradav]
+
 1.75.1 (2024-12-06)
 -------------------
 - Task: #277396 - Author support in carryover and bulk import.
