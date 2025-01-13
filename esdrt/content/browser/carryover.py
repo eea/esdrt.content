@@ -120,7 +120,7 @@ def reopen_with_qa(workflows, obj, actor):
         new_state_obj = "phase1-pending"
         new_state_question = "phase1-draft"
 
-    add_to_wh(workflows["observation"], obj, action_obj, "pending", actor)
+    add_to_wh(workflows["observation"], obj, action_obj, new_state_obj, actor)
     question = obj.get_question()
     if question:
         add_to_wh(
@@ -150,6 +150,13 @@ def override_owner(obj, owner):
             obj.setCreators([userid])
             obj.manage_setLocalRoles(userid, ["Owner", ])
 
+
+def catalog_with_children(catalog, obj):
+    catalog.catalog_object(obj)
+    for child in obj.objectValues():
+        catalog_with_children(catalog, child)
+
+
 def copy_direct(context, catalog, workflows, obj_from_url, row):
     source = _read_col(row, 0)
     conclusion_text = _read_col(row, 1)
@@ -164,7 +171,7 @@ def copy_direct(context, catalog, workflows, obj_from_url, row):
     clear_and_grant_roles(ob)
     reopen_with_qa(workflows, ob, actor)
 
-    catalog.catalog_object(ob)
+    catalog_with_children(catalog, ob)
 
 
 def copy_complex(context, catalog, workflows, obj_from_url, row):
@@ -185,7 +192,7 @@ def copy_complex(context, catalog, workflows, obj_from_url, row):
     clear_and_grant_roles(ob)
     reopen_with_qa(workflows, ob, actor)
 
-    catalog.catalog_object(ob)
+    catalog_with_children(catalog, ob)
 
 
 class CarryOverView(BrowserView):

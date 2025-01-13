@@ -372,7 +372,16 @@ class ReviewFolderMixin(BrowserView):
         user_roles = user.getRolesInContext(self.context)
         user_groups = user.getGroups()
 
-        allowed_roles = ["Manager", "MSExpert", "MSAuthority"]
+        allowed_roles = [
+            "Manager",
+            "MSExpert",
+            "MSAuthority",
+            "SectorExpert",
+            "ReviewerPhase1",
+            "ReviewerPhase2",
+            "LeadReviewer",
+            "QualityExpert",
+        ]
         allowed_groups = [
             "extranet-esd-countries-msexpert",
             "extranet-esd-countries-msa",

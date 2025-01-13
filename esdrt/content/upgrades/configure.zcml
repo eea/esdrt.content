@@ -669,4 +669,16 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+      source="66"
+      destination="67"
+      profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+        title="[refs #277396] Fix bad 'pending' observations."
+        handler=".66_67.upgrade"
+      />
+
+    </genericsetup:upgradeSteps>
+
 </configure>

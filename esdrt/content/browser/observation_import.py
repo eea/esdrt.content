@@ -318,10 +318,11 @@ def _create_observation(entry, context, request, portal_type, obj):
 
     question_text = entry.question
     if question_text:
-        question = create_question(content)
-        question.id = 'question-1'
-        content[question.id] = question
-        create_comment(question_text, content[question.id])
+        with api.env.adopt_roles(["Manager", "ReviewerPhase1"]):
+            question = create_question(content)
+            question.id = 'question-1'
+            content[question.id] = question
+            create_comment(question_text, content[question.id])
 
     obj.num_entries += 1
 

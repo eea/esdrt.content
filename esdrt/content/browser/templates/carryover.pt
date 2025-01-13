@@ -12,7 +12,7 @@
                 You need to upload an XLS file with a specific format, depending on the selected action.
                 <strong>Please note that the first row of the XLS file will be ignored.</strong>
               </li>
-              <li>The <strong>userid</strong> column needs to be a valid EIONET user id. It used for the Obsevation History.</li>
+              <li>The <strong>userid</strong> column needs to be a valid EIONET user id. It is used for the Obsevation History.</li>
               <li>The <strong>Author override</strong> column needs to be a valid EIONET user id. <strong>If given</strong>, it will override the observation author, thus reassigning ownership of the observation.</li>
             </ul>
         </div>
