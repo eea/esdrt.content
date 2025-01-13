@@ -9,6 +9,11 @@ PROFILE_ID = 'profile-esdrt.content:default'
 LOGGER = getLogger('esdrt.content.upgrades.66_67')
 
 
+def recursive_reindex(catalog, obj):
+    catalog.reindexObject(obj)
+    for child in obj.objectValues():
+        recursive_reindex(catalog, child)
+
 def upgrade(_):
     catalog = api.portal.get_tool("portal_catalog")
     brains = catalog(portal_type="Observation", review_state="pending",
@@ -32,7 +37,7 @@ def upgrade(_):
 
         wf.updateRoleMappingsFor(observation)
 
-        observation.reindexObject()
+        recursive_reindex(catalog, observation)
 
         # log progress
         if a_tenth and idx % a_tenth == 0:
