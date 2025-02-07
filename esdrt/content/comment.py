@@ -1,21 +1,23 @@
+from time import time
+
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
-from esdrt.content import MessageFactory as _
 from five import grok
 from plone import api
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
-from time import time
 from z3c.form import field
 from zope import schema
 from zope.app.container.interfaces import IObjectAddedEvent
 from zope.component import createObject
 from zope.component import getUtility
+
+from esdrt.content import MessageFactory as _
 
 
 # Interface class; used to define content-type schema.
@@ -31,7 +33,8 @@ class IComment(form.Schema, IImageScaleTraversable):
     text = schema.Text(
         title=_(u'Text'),
         required=True,
-        )
+    )
+
 
 # Custom content-type class; objects created for this content type will
 # be instances of this class. Use this class to add content-type specific
@@ -39,6 +42,7 @@ class IComment(form.Schema, IImageScaleTraversable):
 # in separate view classes.
 class Comment(dexterity.Container):
     grok.implements(IComment)
+
     # Add your class methods and properties here
 
     def can_edit(self):
@@ -94,7 +98,8 @@ class AddForm(dexterity.AddForm):
     def updateFields(self):
         super(AddForm, self).updateFields()
         self.fields = field.Fields(IComment).select('text')
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+        self.groups = [g for g in self.groups if
+                       g.label == 'label_schema_default']
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
@@ -137,7 +142,8 @@ class EditForm(dexterity.EditForm):
     def updateFields(self):
         super(EditForm, self).updateFields()
         self.fields = field.Fields(IComment).select('text')
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+        self.groups = [g for g in self.groups if
+                       g.label == 'label_schema_default']
 
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
@@ -157,6 +163,8 @@ def add_question(context, event):
     question = aq_parent(context)
     observation = aq_parent(question)
     with api.env.adopt_roles(roles=['Manager']):
+        # XXX: This is actually broken. The "reopen" transition and the
+        # referenced states do not exist.
         if api.content.get_state(obj=question) == 'closed' and \
             api.content.get_state(obj=observation) == 'close-requested':
             api.content.transition(obj=observation, transition='reopen')
@@ -166,6 +174,8 @@ def add_question(context, event):
             api.content.transition(obj=observation, transition='phase2-open')
 
         if api.content.get_state(observation).startswith('phase1-'):
-            context.manage_addProperty('creator_role', 'Sector Expert', 'string')
+            context.manage_addProperty('creator_role', 'Sector Expert',
+                                       'string')
         else:
-            context.manage_addProperty('creator_role', 'Review Expert', 'string')
+            context.manage_addProperty('creator_role', 'Review Expert',
+                                       'string')

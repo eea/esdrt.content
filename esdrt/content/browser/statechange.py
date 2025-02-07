@@ -217,9 +217,9 @@ class AssignAnswererForm(BrowserView):
                     roles=['MSExpert'],
                     obj=target)
 
-            if api.content.get_state(self.context) in [u'phase1-pending', u'phase1-pending-answer-drafting']:
+            if api.content.get_state(self.context) in [u'phase1-pending', u'phase1-carried-over', u'phase1-pending-answer-drafting']:
                 wf_action = 'phase1-assign-answerer'
-            elif api.content.get_state(self.context) in [u'phase2-pending', u'phase2-pending-answer-drafting']:
+            elif api.content.get_state(self.context) in [u'phase2-pending', u'phase2-carried-over', u'phase2-pending-answer-drafting']:
                 wf_action = 'phase2-assign-answerer'
             else:
                 status = IStatusMessage(self.request)

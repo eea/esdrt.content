@@ -7,8 +7,27 @@ import re
 from itertools import chain
 from time import time
 
+from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+from Products.CMFCore.utils import getToolByName
+from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
+from Products.CMFPlone.utils import safe_unicode
+from Products.statusmessages.interfaces import IStatusMessage
+from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
+from docx.shared import Pt
+from eea.cache import cache
+from five import grok
+from plone import api
+from plone.app.contentlisting.interfaces import IContentListing
+from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.app.discussion.interfaces import IConversation
+from plone.directives import dexterity
+from plone.directives import form
+from plone.directives.form import default_value
+from plone.namedfile.interfaces import IImageScaleTraversable
+from plone.z3cform.interfaces import IWrappedForm
 from z3c.form import button
 from z3c.form import field
 from z3c.form import interfaces
@@ -25,42 +44,18 @@ from zope.lifecycleevent.interfaces import IObjectAddedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
 
-from Products.statusmessages.interfaces import IStatusMessage
-
-from Products.CMFCore.utils import getToolByName
-from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
-from Products.CMFPlone.utils import safe_unicode
-
-from plone import api
-from plone.app.contentlisting.interfaces import IContentListing
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
-from plone.app.discussion.interfaces import IConversation
-from plone.directives import dexterity
-from plone.directives import form
-from plone.directives.form import default_value
-from plone.memoize import instance
-from plone.namedfile.interfaces import IImageScaleTraversable
-from plone.z3cform.interfaces import IWrappedForm
-
-from AccessControl import getSecurityManager
-from docx import Document
-from docx.enum.style import WD_STYLE_TYPE
-from docx.shared import Pt
-from eea.cache import cache
 from esdrt.content import MessageFactory as _
-from esdrt.content.constants import ROLE_MSE
-from esdrt.content.constants import ROLE_SE
-from esdrt.content.constants import ROLE_QE
 from esdrt.content.constants import ROLE_LR
+from esdrt.content.constants import ROLE_MSE
+from esdrt.content.constants import ROLE_QE
+from esdrt.content.constants import ROLE_RE
 from esdrt.content.constants import ROLE_RP1
 from esdrt.content.constants import ROLE_RP2
-from esdrt.content.constants import ROLE_RE
+from esdrt.content.constants import ROLE_SE
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
 from esdrt.content.utils import exclude_phase2_actions
-from five import grok
-
 from .comment import IComment
 from .commentanswer import ICommentAnswer
 from .conclusion import IConclusion
@@ -95,10 +90,10 @@ class IObservation(form.Schema, IImageScaleTraversable):
         title=u"Observation title by expert",
         required=True,
         description=u"Provide a title for the issue identified. "
-        u"Keep it short, you cannot change this title once you have sent it "
-        u"to the QE. MS can only see the question once it has been approved "
-        u"and sent by the QE. The question to the MS should be asked in the "
-        u"Q&A tab, not here.",
+                    u"Keep it short, you cannot change this title once you have sent it "
+                    u"to the QE. MS can only see the question once it has been approved "
+                    u"and sent by the QE. The question to the MS should be asked in the "
+                    u"Q&A tab, not here.",
     )
 
     country = schema.Choice(
@@ -116,23 +111,23 @@ class IObservation(form.Schema, IImageScaleTraversable):
     year = schema.TextLine(
         title=u"Inventory year",
         description=u"Inventory year is the year, a range or a list "
-        u"of years or a (e.g. '2012', '2009-2012', "
-        u"'2009, 2012, 2013') when the emissions had "
-        u"occured for which an issue was observed in the review.",
+                    u"of years or a (e.g. '2012', '2009-2012', "
+                    u"'2009, 2012, 2013') when the emissions had "
+                    u"occured for which an issue was observed in the review.",
         required=True,
     )
 
     form.widget(gas=CheckBoxFieldWidget)
     gas = schema.List(
         title=u"Gas",
-        value_type=schema.Choice(vocabulary="esdrt.content.gas",),
+        value_type=schema.Choice(vocabulary="esdrt.content.gas", ),
         required=True,
     )
 
     review_year = schema.Int(
         title=u"Review year",
         description=u"Review year is the year in which the inventory was "
-        u"submitted and the review was carried out",
+                    u"submitted and the review was carried out",
         required=True,
     )
 
@@ -177,8 +172,8 @@ class IObservation(form.Schema, IImageScaleTraversable):
     highlight = schema.List(
         title=u"Description flags",
         description=u"Description flags highlight important information that "
-        u"is closely related to the main purpose of 'initial checks'",
-        value_type=schema.Choice(vocabulary="esdrt.content.highlight",),
+                    u"is closely related to the main purpose of 'initial checks'",
+        value_type=schema.Choice(vocabulary="esdrt.content.highlight", ),
         required=False,
         default=[],
     )
@@ -325,6 +320,7 @@ def add_observation(context, event):
 
 class Observation(dexterity.Container):
     grok.implements(IObservation)
+
     # Add your class methods and properties here
 
     def get_values(self):
@@ -440,7 +436,8 @@ class Observation(dexterity.Container):
         return aq_parent(self).enable_steps
 
     def can_close(self):
-        if self.get_status() in ["phase1-pending", "phase2-pending"]:
+        if self.get_status() in ["phase1-pending", "phase2-pending",
+                                 "phase1-carried-over", "phase2-carried-over"]:
             questions = self.get_values_cat("Question")
             if len(questions) > 0:
                 for q in questions:
@@ -495,10 +492,12 @@ class Observation(dexterity.Container):
                     return "Lead reviewer"
                 elif state in [
                     "phase1-pending",
+                    "phase1-carried-over",
                     "phase1-answered",
                     "phase1-pending-answer-drafting",
                     "phase1-recalled-msa",
                     "phase2-pending",
+                    "phase2-carried-over",
                     "phase2-answered",
                     "phase2-pending-answer-drafting",
                     "phase2-recalled-msa",
@@ -548,9 +547,11 @@ class Observation(dexterity.Container):
                     return ["Pending question", "questionIcon"]
                 elif state in [
                     "phase1-pending",
+                    "phase1-carried-over",
                     "phase1-pending-answer-drafting",
                     "phase1-recalled-msa",
                     "phase2-pending",
+                    "phase2-carried-over",
                     "phase2-pending-answer-drafting",
                     "phase2-recalled-msa",
                 ]:
@@ -597,6 +598,8 @@ class Observation(dexterity.Container):
         elif status in [
             "phase1-pending",
             "phase2-pending",
+            "phase1-carried-over",
+            "phase2-carried-over",
             "phase1-pending-answer-drafting",
             "phase2-pending-answer-drafting",
             "phase1-expert-comments",
@@ -696,13 +699,15 @@ class Observation(dexterity.Container):
                     item["role"] = "Review expert"
                 observation_wf.append(item)
             elif (
-                item["review_state"] == "phase1-pending"
+                item["review_state"] in ["phase1-pending",
+                                         "phase1-carried-over"]
                 and item["action"] == "phase1-approve"
             ):
                 item["state"] = "Pending"
                 # Do not add
             elif (
-                item["review_state"] == "phase1-pending"
+                item["review_state"] in ["phase1-pending",
+                                         "phase1-carried-over"]
                 and item["action"] == "phase1-reopen"
             ):
                 item["state"] = "Observation reopened"
@@ -860,7 +865,8 @@ class Observation(dexterity.Container):
                     item["role"] = "Quality expert"
                     question_wf.append(item)
                 elif (
-                    item["review_state"] == "phase1-pending"
+                    item["review_state"] in ["phase1-pending",
+                                             "phase1-carried-over"]
                     and item["action"] == "phase1-approve-question"
                 ):
                     item[
@@ -1010,8 +1016,9 @@ class Observation(dexterity.Container):
     def observation_question_status(self):
         questions = self.get_values_cat("Question")
         if (
-            self.get_status() != "phase1-pending"
-            and self.get_status() != "phase2-pending"
+            self.get_status() not in ["phase1-pending", "phase2-pending",
+                                      "phase1-carried-over",
+                                      "phase2-carried-over"]
         ):
             if self.get_status() in [
                 "phase2-conclusions",
@@ -1322,6 +1329,8 @@ class ObservationMixin(grok.View):
         is_draft = self.context.get_status() in [
             "phase1-pending",
             "phase2-pending",
+            "phase1-carried-over",
+            "phase2-carried-over",
         ]
         questions = len(self.context.get_values_cat("Question"))
         # If observation has conclusion cannot be deleted (Ticket #26992)
@@ -1570,19 +1579,6 @@ class ObservationMixin(grok.View):
             "phase2-conclusion-discussion",
             "phase2-close-requested",
         ]
-        MS_OBSERVATION = [
-            "phase1-pending",
-            "phase2-pending",
-        ]
-
-        MS_QUESTION = [
-            "phase1-pending",
-            "phase1-pending-answer-drafting",
-            "phase1-expert-comments",
-            "phase2-pending",
-            "phase2-pending-answer-drafting",
-            "phase2-expert-comments",
-        ]
         state = self.context.get_status()
         if state in CONCLUSIONS_PHASE_1:
             return self.context.get_conclusion()
@@ -1692,8 +1688,10 @@ class ObservationMixin(grok.View):
         if status in [
             "phase1-draft",
             "phase1-pending",
+            "phase1-carried-over",
             "phase2-draft",
             "phase2-pending",
+            "phase2-carried-over",
         ]:
             return True
         else:
@@ -1965,7 +1963,6 @@ class ExportAsDocView(ObservationMixin):
 
 
 class AddQuestionForm(Form):
-
     ignoreContext = True
     fields = field.Fields(IComment).select("text")
 
@@ -1986,7 +1983,7 @@ class AddQuestionForm(Form):
             question = context.get(q_id)
 
         id = str(int(time()))
-        item_id = question.invokeFactory(type_name="Comment", id=id,)
+        item_id = question.invokeFactory(type_name="Comment", id=id, )
         comment = question.get(item_id)
         comment.text = text
 
@@ -2020,16 +2017,16 @@ class ModificationForm(dexterity.EditForm):
                 f
                 for f in field.Fields(IObservation)
                 if f
-                not in [
-                    "country",
-                    "crf_code",
-                    "review_year",
-                    "technical_corrections",
-                    "closing_comments",
-                    "closing_deny_comments",
-                    "closing_comments_phase2",
-                    "closing_deny_comments_phase2",
-                ]
+                   not in [
+                       "country",
+                       "crf_code",
+                       "review_year",
+                       "technical_corrections",
+                       "closing_comments",
+                       "closing_deny_comments",
+                       "closing_comments_phase2",
+                       "closing_deny_comments_phase2",
+                   ]
             ]
         elif "QualityExpert" in roles or "LeadReviewer" in roles:
             fields = ["text", "highlight"]
@@ -2080,7 +2077,6 @@ class EditForm(ModificationForm):
 
 
 class AddAnswerForm(Form):
-
     ignoreContext = True
     fields = field.Fields(ICommentAnswer).select("text")
 
@@ -2104,7 +2100,7 @@ class AddAnswerForm(Form):
             )
 
         id = str(int(time()))
-        item_id = context.invokeFactory(type_name="CommentAnswer", id=id,)
+        item_id = context.invokeFactory(type_name="CommentAnswer", id=id, )
         comment = context.get(item_id)
         comment.text = text
         if context.get_state_api().startswith("phase1-"):
@@ -2159,7 +2155,7 @@ class AddAnswerAndRequestComments(grok.View):
         text = u"For MS coordinator: please draft, edit and finalise your consolidated reply here."
 
         id = str(int(time()))
-        item_id = context.invokeFactory(type_name="CommentAnswer", id=id,)
+        item_id = context.invokeFactory(type_name="CommentAnswer", id=id, )
         comment = context.get(item_id)
         comment.text = text
         if context.get_state_api().startswith("phase1-"):
@@ -2177,7 +2173,6 @@ class AddAnswerAndRequestComments(grok.View):
 
 
 class AddCommentForm(Form):
-
     ignoreContext = True
     fields = field.Fields(IComment).select("text")
 
@@ -2215,7 +2210,7 @@ class AddConclusionForm(Form):
     def create_conclusion(self, action):
         context = aq_inner(self.context)
         id = str(int(time()))
-        item_id = context.invokeFactory(type_name="Conclusion", id=id,)
+        item_id = context.invokeFactory(type_name="Conclusion", id=id, )
         text = self.request.form.get("form.widgets.text", "")
         comment = context.get(item_id)
         comment.text = text

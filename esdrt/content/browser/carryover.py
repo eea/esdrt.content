@@ -112,12 +112,12 @@ def reopen_with_qa(workflows, obj, actor):
     if in_phase2:
         action_obj = "phase2-reopen-qa-chat"
         action_question = "phase2-reopen"
-        new_state_obj = "phase2-pending"
+        new_state_obj = "phase2-carried-over"
         new_state_question = "phase2-draft"
     else:
         action_obj = "phase1-reopen"
         action_question = "phase1-reopen"
-        new_state_obj = "phase1-pending"
+        new_state_obj = "phase1-carried-over"
         new_state_question = "phase1-draft"
 
     add_to_wh(workflows["observation"], obj, action_obj, new_state_obj, actor)

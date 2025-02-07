@@ -51,6 +51,7 @@ class IQuestion(form.Schema, IImageScaleTraversable):
 PENDING_STATUS_NAMES = ['answered']
 OPEN_STATUS_NAMES = [
     'phase1-pending',
+    'phase1-carried-over',
     'phase1-pending-answer',
     'phase1-pending-answer-validation',
     'phase1-validate-answer',
@@ -188,7 +189,10 @@ class Question(dexterity.Container):
 
     def observation_not_closed(self):
         observation = self.get_observation()
-        return api.content.get_state(observation) in ['phase1-pending', 'phase2-pending']
+        return api.content.get_state(observation) in [
+            'phase1-pending', 'phase2-pending',
+            'phase1-carried-over', 'phase2-carried-over',
+        ]
 
     def already_commented_by_counterpart(self):
         # XXXX

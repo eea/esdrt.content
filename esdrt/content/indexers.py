@@ -181,8 +181,9 @@ def to_unicode(value):
 def question_status(context):
     questions = [c for c in context.values() if c.portal_type == "Question"]
     if (
-        context.get_status() != "phase1-pending"
-        and context.get_status() != "phase2-pending"
+        context.get_status() not in ["phase1-pending", "phase2-pending",
+                                     "phase1-carried-over",
+                                     "phase2-carried-over"]
     ):
         if context.get_status() in [
             "phase2-conclusions",

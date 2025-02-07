@@ -681,4 +681,21 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+      source="67"
+      destination="68"
+      profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+        title="Import workflows"
+        import_steps="workflow"
+      />
+
+      <genericsetup:upgradeStep
+        title="[refs #284079] Set special phase[1,2]-carried-over states for qualifying 2025 observations."
+        handler=".67_68.upgrade"
+      />
+
+    </genericsetup:upgradeSteps>
+
 </configure>

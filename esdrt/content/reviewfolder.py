@@ -322,6 +322,8 @@ class ReviewFolderMixin(BrowserView):
                 query["review_state"] = [
                     "phase1-pending",
                     "phase2-pending",
+                    "phase1-carried-over",
+                    "phase2-carried-over",
                     "phase1-close-requested",
                     "phase2-close-requested",
                     "phase1-draft",
@@ -1265,13 +1267,13 @@ class InboxReviewFolderView(BrowserView):
         pending_phase1 = self.get_observations(
             rolecheck="SectorExpert",
             observation_question_status=["phase1-closed"],
-            review_state=["phase1-pending"],
+            review_state=["phase1-pending", "phase1-carried-over"],
         )
 
         pending_phase2 = self.get_observations(
             rolecheck="ReviewExpert",
             observation_question_status=["phase2-closed"],
-            review_state=["phase2-pending"],
+            review_state=["phase2-pending", "phase2-carried-over"],
         )
 
         sm = getSecurityManager()
@@ -1318,6 +1320,7 @@ class InboxReviewFolderView(BrowserView):
         """
         statuses_phase1 = [
             "phase1-pending",
+            "phase1-carried-over",
             "phase1-recalled-msa",
             "phase1-expert-comments",
             "phase1-pending-answer-drafting",
@@ -1325,6 +1328,7 @@ class InboxReviewFolderView(BrowserView):
 
         statuses_phase2 = [
             "phase2-pending",
+            "phase2-carried-over",
             "phase2-recalled-msa",
             "phase2-expert-comments",
             "phase2-pending-answer-drafting",
@@ -1507,6 +1511,7 @@ class InboxReviewFolderView(BrowserView):
             rolecheck="QualityExpert",
             observation_question_status=[
                 "phase1-pending",
+                "phase1-carried-over",
                 "phase1-recalled-msa",
                 "phase1-expert-comments",
                 "phase1-pending-answer-drafting",
@@ -1517,6 +1522,7 @@ class InboxReviewFolderView(BrowserView):
             rolecheck="LeadReviewer",
             observation_question_status=[
                 "phase2-pending",
+                "phase2-carried-over",
                 "phase2-recalled-msa",
                 "phase2-expert-comments",
                 "phase2-pending-answer-drafting",
@@ -1540,6 +1546,8 @@ class InboxReviewFolderView(BrowserView):
             observation_question_status=[
                 "phase1-pending",
                 "phase2-pending",
+                "phase1-carried-over",
+                "phase2-carried-over",
                 "phase1-recalled-msa",
                 "phase2-recalled-msa",
                 "phase1-pending-answer-drafting",

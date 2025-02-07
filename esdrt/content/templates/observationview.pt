@@ -1318,7 +1318,7 @@
           <tal:block tal:condition="python:question and 'edit-highlights' in action['action']"
                     tal:define="question view/question;
                                 cond1 python: (question and question.get_state_api() in ['phase1-drafted', 'phase2-drafted']) and ('ReviewerPhase1' in view.user_roles);
-                                cond2 python: (question and question.get_state_api() in ['phase1-draft', 'phase1-pending', 'phase2-draft', 'phase2-pending']) and ('QualityExpert' in view.user_roles)">
+                                cond2 python: (question and question.get_state_api() in ['phase1-draft', 'phase1-pending', 'phase1-carried-over', 'phase2-draft', 'phase2-pending', 'phase2-carried-over']) and ('QualityExpert' in view.user_roles)">
             <tal:block condition="python: not (cond1 or cond2)">
               <a href=""
                 tal:attributes="href string:${action/action};

@@ -1,9 +1,35 @@
+import plone.api as api
 from Acquisition import aq_parent
-from esdrt.content.question import IQuestion
-from five import grok
 from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from five import grok
+
+from esdrt.content.question import IQuestion
 from utils import notify
+
+
+def make_sure_observation_is_pending(observation):
+    """
+    Replace carried-over state with pending, so that MS can view the new question.
+    """
+    if api.content.get_state(obj=observation) in ["phase1-carried-over",
+                                                  "phase2-carried-over"]:
+        wft = api.portal.get_tool("portal_workflow")
+        wf = wft.getWorkflowById(wft.getChainFor("Observation")[0])
+        wf_id = wf.getId()
+        wh = observation.workflow_history
+        current_state = wh[wf_id][-1]["review_state"]
+        if current_state == "phase1-carried-over":
+            wh[wf_id][-1]["review_state"] = "phase1-pending"
+        elif current_state == "phase2-carried-over":
+            wh[wf_id][-1]["review_state"] = "phase2-pending"
+
+        # Very important! We are updating a dict inside a tuple inside a
+        # PersistentMapping. The mapping needs to be notified of this.
+        wh._p_changed = 1
+
+        wf.updateRoleMappingsFor(observation)
+        observation.reindexObjectSecurity()
 
 
 @grok.subscribe(IQuestion, IActionSucceededEvent)
@@ -16,6 +42,7 @@ def notification_ms(context, event):
 
     if event.action in ['phase1-approve-question', 'phase2-approve-question']:
         observation = aq_parent(context)
+        make_sure_observation_is_pending(observation)
         subject = u'New question for your country'
         notify(
             observation,
