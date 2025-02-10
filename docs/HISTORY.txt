@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.76.0 (2025-02-10)
+-------------------
+- Task: #284079 - Don't allow MS access to carried-over observations until a new question is sent.
+  [batradav]
+
 1.75.2 (2025-01-13)
 -------------------
 - Task: #277396 - Allow SE to export Q&A, fix carryover.
