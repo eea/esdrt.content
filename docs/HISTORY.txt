@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.76.1 (2025-02-25)
+-------------------
+- Task: #284821 - Quality expert cannot approve questions that have been bulk uploaded.
+  [batradav]
+
 1.76.0 (2025-02-10)
 -------------------
 - Task: #284079 - Don't allow MS access to carried-over observations until a new question is sent.
