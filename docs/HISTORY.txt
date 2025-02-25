@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.76.2 (2025-02-25)
+-------------------
+- Task: #284821 - Fix upgrade step.
+  [batradav]
+
 1.76.1 (2025-02-25)
 -------------------
 - Task: #284821 - Quality expert cannot approve questions that have been bulk uploaded.
