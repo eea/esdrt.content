@@ -13,6 +13,7 @@ from Products.CMFCore.utils import getToolByName
 import openpyxl
 from DateTime import DateTime
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
+
 import plone.api as api
 
 LOG = getLogger("esdrt.content.carryover")
@@ -141,9 +142,10 @@ def reopen_with_qa(workflows, obj, actor):
     if conclusion:
         add_to_wh(wf_conclusion, conclusion, "redraft", "draft", actor)
 
+
 def override_owner(obj, owner):
     if owner:
-        user = api.user.get(owner)
+        user = api.portal.get_tool("acl_users").getUserById(owner)
         if user:
             userid = user.getId()
             obj.changeOwnership(user)
@@ -196,7 +198,6 @@ def copy_complex(context, catalog, workflows, obj_from_url, row):
 
 
 class CarryOverView(BrowserView):
-
     index = ViewPageTemplateFile("templates/carryover.pt")
 
     def __call__(self):

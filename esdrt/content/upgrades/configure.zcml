@@ -698,4 +698,16 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+      source="68"
+      destination="69"
+      profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+        title="[refs #284821] Fix ownership check in notifications."
+        handler=".68_69.upgrade"
+      />
+
+    </genericsetup:upgradeSteps>
+
 </configure>
