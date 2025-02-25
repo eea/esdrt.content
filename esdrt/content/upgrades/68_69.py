@@ -21,12 +21,11 @@ def upgrade(_):
     acl_users = api.portal.get_tool("acl_users")
 
     for idx, observation in enumerate(observations, start=1):
-        if getattr(observation, "carryover_from", None):
-            owner_info = observation.owner_info()
-            if owner_info and owner_info["explicit"] and "acl_users" not in \
-                owner_info["path"]:
-                observation.changeOwnership(
-                    acl_users.getUserById(owner_info["id"]))
+        owner_info = observation.owner_info()
+        if owner_info and owner_info["explicit"] and "acl_users" not in \
+            owner_info["path"]:
+            observation.changeOwnership(
+                acl_users.getUserById(owner_info["id"]))
 
         # log progress
         if a_tenth and idx % a_tenth == 0:

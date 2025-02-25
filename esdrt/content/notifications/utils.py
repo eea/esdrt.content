@@ -112,6 +112,6 @@ def exclude_user_from_notification(observation, user, role, notification):
         return exclude_based_on_notification
 
     if role in ["ReviewerPhase1", "ReviewerPhase2"] and "config_only_where_author" not in excluded_notifications:
-        owner = observation.getOwner()
-        return user_id != owner.getId() if owner else False
-
+        owner_info = observation.owner_info()
+        return user_id != owner_info["id"] if owner_info and owner_info[
+            "explicit"] else False
