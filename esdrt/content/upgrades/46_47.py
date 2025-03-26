@@ -32,7 +32,7 @@ def compare_vocabs(pv_vocab, reg_vocab, logger):
 
     are_the_same = True
 
-    for key, value in pv_dict.items():
+    for key, value in list(pv_dict.items()):
         try:
             term = reg_vocab.getTerm(key)
         except LookupError:

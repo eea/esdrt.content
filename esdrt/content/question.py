@@ -33,13 +33,13 @@ class IQuestion(form.Schema, IImageScaleTraversable):
 
     form.write_permission(request_redraft_comments='cmf.ManagePortal')
     request_redraft_comments = schema.Text(
-        title=u'Request redraft reasons',
+        title='Request redraft reasons',
         required=False,
     )
 
     form.write_permission(request_redraft_comments_phase2='cmf.ManagePortal')
     request_redraft_comments_phase2 = schema.Text(
-        title=u'Request redraft reasons for phase 2',
+        title='Request redraft reasons for phase 2',
         required=False,
     )
 
@@ -83,7 +83,7 @@ def create_question(context):
     if IAcquirer.providedBy(content):
         content = content.__of__(container)
 
-    ids = [id for id in context.keys() if id.startswith('question-')]
+    ids = [id for id in list(context.keys()) if id.startswith('question-')]
     id = len(ids) + 1
     content.title = 'Question %d' % id
 
@@ -98,11 +98,11 @@ class Question(dexterity.Container):
 
     def get_questions(self):
         sm = getSecurityManager()
-        values = [v for v in self.values() if sm.checkPermission('View', v)]
+        values = [v for v in list(self.values()) if sm.checkPermission('View', v)]
         return IContentListing(values)
 
     def getFirstComment(self):
-        comments = [v for v in self.values() if v.portal_type == 'Comment']
+        comments = [v for v in list(self.values()) if v.portal_type == 'Comment']
         comments.sort(lambda x, y: cmp(x.created(), y.created()))
         if comments:
             return comments[-1]
@@ -133,14 +133,14 @@ class Question(dexterity.Container):
         return aq_parent(aq_inner(self))
 
     def has_answers(self):
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
         return len(questions) == len(answers)
 
     def can_be_sent_to_lr(self):
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
@@ -151,7 +151,7 @@ class Question(dexterity.Container):
         return False
 
     def can_be_deleted(self):
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
@@ -170,7 +170,7 @@ class Question(dexterity.Container):
         return False
 
     def unanswered_questions(self):
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
@@ -181,7 +181,7 @@ class Question(dexterity.Container):
         Check if this question can be closed:
             - There has been at least, one question-answer.
         """
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
@@ -265,7 +265,7 @@ class AddForm(dexterity.AddForm):
         if IAcquirer.providedBy(content):
             content = content.__of__(container)
         context = self.context
-        ids = [id for id in context.keys() if id.startswith('question-')]
+        ids = [id for id in list(context.keys()) if id.startswith('question-')]
         id = len(ids) + 1
         content.title = 'Question %d' % id
 
@@ -320,7 +320,7 @@ class AddCommentForm(Form):
         context = aq_inner(self.context)
         text = self.request.form.get('form.widgets.text', '')
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Question text is empty"))
+            raise ActionExecutionError(Invalid("Question text is empty"))
 
         id = str(int(time()))
         item_id = context.invokeFactory(
@@ -338,7 +338,7 @@ class AddCommentForm(Form):
 
     def updateActions(self):
         super(AddCommentForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -355,7 +355,7 @@ class AddAnswerForm(Form):
         context = aq_inner(self.context)
         text = self.request.form.get('form.widgets.text', '')
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Answer text is empty"))
+            raise ActionExecutionError(Invalid("Answer text is empty"))
 
         id = str(int(time()))
         item_id = context.invokeFactory(
@@ -373,7 +373,7 @@ class AddAnswerForm(Form):
 
     def updateActions(self):
         super(AddAnswerForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -387,9 +387,9 @@ class EditAndCloseComments(grok.View):
         waction = self.request.get('workflow_action')
         comment = self.request.get('comment')
         if waction not in ['phase1-send-comments', 'phase2-send-comments'] and \
-            comment not in self.context.keys():
+            comment not in list(self.context.keys()):
                 status = IStatusMessage(self.request)
-                msg = _(u'There was an error, try again please')
+                msg = _('There was an error, try again please')
                 status.addStatusMessage(msg, "error")
         else:
             self.comment = comment
@@ -407,7 +407,7 @@ class EditAndCloseComments(grok.View):
                 transition='phase2-send-comments'
             )
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         url = '%s/%s/edit' % (self.context.absolute_url(), self.comment)
         return self.request.response.redirect(url)
@@ -423,9 +423,9 @@ class EditAnswerAndCloseComments(grok.View):
         waction = self.request.get('workflow_action')
         comment = self.request.get('comment')
         if waction not in ['phase1-ask-answer-approval', 'phase2-ask-answer-aproval'] and \
-            comment not in self.context.keys():
+            comment not in list(self.context.keys()):
             status = IStatusMessage(self.request)
-            msg = _(u'There was an error, try again please')
+            msg = _('There was an error, try again please')
             status.addStatusMessage(msg, "error")
             return
         else:
@@ -444,7 +444,7 @@ class EditAnswerAndCloseComments(grok.View):
                 transition='phase2-ask-answer-aproval'
             )
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         url = '%s/%s/edit' % (self.context.absolute_url(), self.comment)
         return self.request.response.redirect(url)
@@ -465,7 +465,7 @@ class AddFollowUpQuestion(grok.View):
                 obj=self.context,
                 transition='phase2-reopen')
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         url = '%s/++add++Comment' % self.context.absolute_url()
         return self.request.response.redirect(url)
@@ -501,7 +501,7 @@ class AddConclusions(grok.View):
 
             url = '%s/edit' % conclusionsphase2.absolute_url()
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         return self.request.response.redirect(url)
 
@@ -513,8 +513,8 @@ class DeleteLastComment(grok.View):
 
     def render(self):
         catalog = api.portal.get_tool('portal_catalog')
-        answers = [c for c in self.context.values() if c.portal_type == 'CommentAnswer']
-        comments = [c for c in self.context.values() if c.portal_type == 'Comment']
+        answers = [c for c in list(self.context.values()) if c.portal_type == 'CommentAnswer']
+        comments = [c for c in list(self.context.values()) if c.portal_type == 'Comment']
         if comments and len(comments) > len(answers):
             last_comment = comments[-1]
             question = aq_inner(self.context)
@@ -545,8 +545,8 @@ class DeleteLastAnswer(grok.View):
     def render(self):
         question = aq_inner(self.context)
         url = question.absolute_url()
-        answers = [c for c in self.context.values() if c.portal_type == 'CommentAnswer']
-        comments = [c for c in self.context.values() if c.portal_type == 'Comment']
+        answers = [c for c in list(self.context.values()) if c.portal_type == 'CommentAnswer']
+        comments = [c for c in list(self.context.values()) if c.portal_type == 'Comment']
         if answers and len(answers) == len(comments):
             last_answer = answers[-1]
             question_state = api.content.get_state(obj=question)

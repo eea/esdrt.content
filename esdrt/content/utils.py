@@ -19,7 +19,7 @@ def get_userid_name(userid):
 def get_indexed_values_for_index(index_name):
     catalog = api.portal.get_tool("portal_catalog")
     indexes = catalog._catalog.indexes
-    return sorted(set(indexes[index_name]._unindex.itervalues()))
+    return sorted(set(indexes[index_name]._unindex.values()))
 
 
 def reduce_text(text, limit):
@@ -33,10 +33,10 @@ def reduce_text(text, limit):
     if clean_text[-1] in string.punctuation:
         clean_text = clean_text[:-1]
 
-    if isinstance(clean_text, unicode):
-        return u'{0}...'.format(clean_text)
+    if isinstance(clean_text, str):
+        return '{0}...'.format(clean_text)
     else:
-        return u'{0}...'.format(clean_text.decode('utf-8'))
+        return '{0}...'.format(clean_text.decode('utf-8'))
 
 
 def format_date(date, fmt='%d %b %Y, %H:%M CET'):

@@ -143,7 +143,7 @@ class SubscriptionConfigurationMixin(grok.View):
                 if translated is not None:
                     roles.append(translated)
             else:
-                if role in ROLE_TRANSLATOR.keys():
+                if role in list(ROLE_TRANSLATOR.keys()):
                     roles.append(role)
         return roles
 

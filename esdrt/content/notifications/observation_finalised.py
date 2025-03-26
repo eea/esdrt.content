@@ -2,7 +2,7 @@ from esdrt.content.observation import IObservation
 from five import grok
 from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 
 
 @grok.subscribe(IObservation, IActionSucceededEvent)
@@ -14,8 +14,8 @@ def notification_ms(context, event):
     _temp = PageTemplateFile('observation_finalised.pt')
     _temp_remarks = PageTemplateFile('observation_finalised_ms_remarks.pt')
 
-    _subj = u'An observation for your country was finalised'
-    _subj_remarks = u'Observation finalised with a concluding remark'
+    _subj = 'An observation for your country was finalised'
+    _subj_remarks = 'Observation finalised with a concluding remark'
 
     _act_ph1 = 'phase1-close'
     _act_ph2 = 'phase2-confirm-finishing-observation'
@@ -56,7 +56,7 @@ def notification_rev_ph1(context, event):
     _temp = PageTemplateFile('observation_finalised_rev_msg.pt')
     if event.action in ['phase1-close']:
         observation = context
-        subject = u'Your observation was finalised'
+        subject = 'Your observation was finalised'
         notify(
             observation,
             _temp,
@@ -75,7 +75,7 @@ def notification_rev_ph2(context, event):
     _temp = PageTemplateFile('observation_finalised_rev_msg.pt')
     if event.action in ['phase2-confirm-finishing-observation']:
         observation = context
-        subject = u'Your observation was finalised'
+        subject = 'Your observation was finalised'
         notify(
             observation,
             _temp,

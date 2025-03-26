@@ -33,7 +33,7 @@ from zope.event import notify
 from z3c.form import interfaces
 
 
-DEFAULTCONCLUSIONTEXT = u"""For category x and gases a, b, c for year[s]... the TERT noted that...
+DEFAULTCONCLUSIONTEXT = """For category x and gases a, b, c for year[s]... the TERT noted that...
 In response to a question raised during the review, [the Member State] explained that... [the Member State provided [a] revised estimate[s] for year[s] [and stated that it will be included in the next submission.]]
 The TERT [disagreed][agreed][party agreed] with the [explanation] [revised estimate] provided by [the Member State].
 [The TERT decided to calculate a technical correction.][The TERT noted that the issue is below the threshold of significance for technical correction.]
@@ -43,14 +43,14 @@ The TERT recommends that... [[the Member State] include the revised estimate in 
 
 class ITableRowSchema(form.Schema):
 
-    line_title = schema.TextLine(title=_(u'Title'), required=True)
-    co2 = schema.Float(title=_(u'CO\u2082'), required=False)
-    ch4 = schema.Float(title=_(u'CH\u2084'), required=False)
-    n2o = schema.Float(title=_(u'N\u2082O'), required=False)
-    nox = schema.Float(title=_(u'NO\u2093'), required=False)
-    co = schema.Float(title=_(u'CO'), required=False)
-    nmvoc = schema.Float(title=_(u'NMVOC'), required=False)
-    so2 = schema.Float(title=_(u'SO\u2082'), required=False)
+    line_title = schema.TextLine(title=_('Title'), required=True)
+    co2 = schema.Float(title=_('CO\\u2082'), required=False)
+    ch4 = schema.Float(title=_('CH\\u2084'), required=False)
+    n2o = schema.Float(title=_('N\\u2082O'), required=False)
+    nox = schema.Float(title=_('NO\\u2093'), required=False)
+    co = schema.Float(title=_('CO'), required=False)
+    nmvoc = schema.Float(title=_('NMVOC'), required=False)
+    so2 = schema.Float(title=_('SO\\u2082'), required=False)
 
 
 class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
@@ -59,28 +59,28 @@ class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
     """
 
     closing_reason = schema.Choice(
-        title=_(u'Final Status of Observation'),
+        title=_('Final Status of Observation'),
         vocabulary='esdrt.content.conclusionphase2reasons',
         required=True,
     )
 
     text = schema.Text(
-        title=_(u'Recommendation for Draft Review Report (not visible to MS)'),
+        title=_('Recommendation for Draft Review Report (not visible to MS)'),
         required=True,
         default=DEFAULTCONCLUSIONTEXT,
     )
 
     remarks = schema.Text(
-        title=_(u'Concluding remark'),
-        description=_(u'(visible to MS when observation finalised)'),
+        title=_('Concluding remark'),
+        description=_('(visible to MS when observation finalised)'),
         required=False,
         )
 
 
     form.widget(ghg_estimations=DataGridFieldFactory)
     ghg_estimations = schema.List(
-        title=_(u'GHG estimates [Gg CO2 eq.]'),
-        value_type=DictRow(title=u"tablerow", schema=ITableRowSchema),
+        title=_('GHG estimates [Gg CO2 eq.]'),
+        value_type=DictRow(title="tablerow", schema=ITableRowSchema),
         default=[
             {'line_title': 'Original estimate', 'co2': 0, 'ch4': 0, 'n2o': 0, 'nox': 0, 'co': 0, 'nmvoc': 0, 'so2': 0},
             {'line_title': 'Technical correction proposed by  TERT', 'co2': 0, 'ch4': 0, 'n2o': 0, 'nox': 0, 'co': 0, 'nmvoc': 0, 'so2': 0},
@@ -94,9 +94,9 @@ class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
 @form.validator(field=IConclusionsPhase2['ghg_estimations'])
 def check_ghg_estimations(value):
     for item in value:
-        for val in item.values():
+        for val in list(item.values()):
             if type(val) is FloatType and val < 0:
-                raise Invalid(u'Estimation values must be positive numbers')
+                raise Invalid('Estimation values must be positive numbers')
 
 
 # Custom content-type class; objects created for this content type will
@@ -116,7 +116,7 @@ class ConclusionsPhase2(dexterity.Container):
         vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
         vocabulary = vocab_factory(self)
         if not term:
-            return u''
+            return ''
         try:
             value = vocabulary.getTerm(term)
             return value.title
@@ -152,7 +152,7 @@ class ConclusionsPhase2(dexterity.Container):
         return [mitem for mitem in menu_items if not hidden(mitem)]
 
     def get_files(self):
-        items = self.values()
+        items = list(self.values())
         mtool = api.portal.get_tool('portal_membership')
         return [item for item in items if mtool.checkPermission('View', item)]
 
@@ -207,7 +207,7 @@ class AddForm(dexterity.AddForm):
 
     def updateActions(self):
         super(AddForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -270,7 +270,7 @@ class EditForm(dexterity.EditForm):
 
     def updateActions(self):
         super(EditForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
     def applyChanges(self, data):

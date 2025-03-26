@@ -1,7 +1,7 @@
 from functools import partial
 from itertools import chain
 from itertools import product
-from itertools import ifilter as filter
+
 
 from zope.component.hooks import getSite
 from zope.component import getUtility
@@ -56,11 +56,11 @@ def setup_reviewfolder_roles(folder):
     groups = [r[1]['cn'][0] for r in q_groups]
 
     grant = chain(
-        product([ROLE_RP1], filter(f_start_sr, groups)),
-        product([ROLE_QE], filter(f_start_qe, groups)),
-        product([ROLE_RP2], filter(f_start_re, groups)),
-        product([ROLE_LR], filter(f_start_lr, groups)),
-        product([ROLE_MSA], filter(f_start_msa, groups)),
+        product([ROLE_RP1], list(filter(f_start_sr, groups))),
+        product([ROLE_QE], list(filter(f_start_qe, groups))),
+        product([ROLE_RP2], list(filter(f_start_re, groups))),
+        product([ROLE_LR], list(filter(f_start_lr, groups))),
+        product([ROLE_MSA], list(filter(f_start_msa, groups))),
     )
 
     for role, g_name in grant:

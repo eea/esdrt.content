@@ -14,8 +14,8 @@ from plone.app.discussion.interfaces import IConversation
 from plone.app.textfield.interfaces import IRichTextValue
 from plone.indexer import indexer
 
-from conclusion import IConclusion
-from conclusionsphase2 import IConclusionsPhase2
+from .conclusion import IConclusion
+from .conclusionsphase2 import IConclusionsPhase2
 from esdrt.content.comment import IComment
 from esdrt.content.commentanswer import ICommentAnswer
 
@@ -135,7 +135,7 @@ def SearchableText(context):
             index_fields(getFieldsInOrder(IConclusionsPhase2), conclusion)
         )
 
-    return u" ".join(items)
+    return " ".join(items)
 
 
 def index_fields(fields, context):
@@ -155,7 +155,7 @@ def index_fields(fields, context):
         if IRichTextValue.providedBy(value):
             html = value.output
             transforms = api.portal.get_tool("portal_transforms")
-            if isinstance(html, unicode):
+            if isinstance(html, str):
                 html = html.encode("utf-8")
             value = (
                 transforms.convertTo("text/plain", html, mimetype="text/html")
@@ -179,7 +179,7 @@ def to_unicode(value):
 
 
 def question_status(context):
-    questions = [c for c in context.values() if c.portal_type == "Question"]
+    questions = [c for c in list(context.values()) if c.portal_type == "Question"]
     if (
         context.get_status() not in ["phase1-pending", "phase2-pending",
                                      "phase1-carried-over",
@@ -300,13 +300,13 @@ def observation_finalisation_reason(context):
         status = context.get_status()
         if status == "phase1-closed":
             conclusions = [
-                c for c in context.values() if c.portal_type == "Conclusion"
+                c for c in list(context.values()) if c.portal_type == "Conclusion"
             ]
             return conclusions[0] and conclusions[0].closing_reason or " "
         elif status == "phase2-closed":
             conclusions = [
                 c
-                for c in context.values()
+                for c in list(context.values())
                 if c.portal_type == "ConclusionsPhase2"
             ]
             return conclusions[0] and conclusions[0].closing_reason or " "
@@ -320,7 +320,7 @@ def observation_finalisation_reason(context):
 def observation_finalisation_reason_step1(context):
     try:
         conclusions = [
-            c for c in context.values() if c.portal_type == "Conclusion"
+            c for c in list(context.values()) if c.portal_type == "Conclusion"
         ]
         return conclusions[0] and conclusions[0].closing_reason or " "
     except:
@@ -331,7 +331,7 @@ def observation_finalisation_reason_step1(context):
 def observation_finalisation_reason_step2(context):
     try:
         conclusions = [
-            c for c in context.values() if c.portal_type == "ConclusionsPhase2"
+            c for c in list(context.values()) if c.portal_type == "ConclusionsPhase2"
         ]
         return conclusions[0] and conclusions[0].closing_reason or " "
     except:
@@ -342,7 +342,7 @@ def observation_finalisation_reason_step2(context):
 def observation_finalisation_text_step1(context):
     try:
         conclusions = [
-            c for c in context.values() if c.portal_type == "Conclusion"
+            c for c in list(context.values()) if c.portal_type == "Conclusion"
         ]
         return conclusions[0] and conclusions[0].text or ""
     except:
@@ -353,7 +353,7 @@ def observation_finalisation_text_step1(context):
 def observation_finalisation_text_step2(context):
     try:
         conclusions = [
-            c for c in context.values() if c.portal_type == "ConclusionsPhase2"
+            c for c in list(context.values()) if c.portal_type == "ConclusionsPhase2"
         ]
         return conclusions[0] and conclusions[0].text or ""
     except:
@@ -364,7 +364,7 @@ def observation_finalisation_text_step2(context):
 def observation_finalisation_remarks_step1(context):
     try:
         conclusions = [
-            c for c in context.values() if c.portal_type == "Conclusion"
+            c for c in list(context.values()) if c.portal_type == "Conclusion"
         ]
         return conclusions[0] and conclusions[0].remarks or ""
     except:
@@ -375,7 +375,7 @@ def observation_finalisation_remarks_step1(context):
 def observation_finalisation_remarks_step2(context):
     try:
         conclusions = [
-            c for c in context.values() if c.portal_type == "ConclusionsPhase2"
+            c for c in list(context.values()) if c.portal_type == "ConclusionsPhase2"
         ]
         return conclusions[0] and conclusions[0].remarks or ""
     except:
@@ -387,7 +387,7 @@ def has_closing_remarks(context):
     try:
         conclusions = [
             c
-            for c in context.values()
+            for c in list(context.values())
             if c.portal_type in ["Conclusion", "ConclusionsPhase2"]
         ]
         return conclusions[0] and bool(conclusions[0].remarks) or False

@@ -5,7 +5,7 @@ from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from five import grok
 
 from esdrt.content.question import IQuestion
-from utils import notify
+from .utils import notify
 
 
 def make_sure_observation_is_pending(observation):
@@ -43,7 +43,7 @@ def notification_ms(context, event):
     if event.action in ['phase1-approve-question', 'phase2-approve-question']:
         observation = aq_parent(context)
         make_sure_observation_is_pending(observation)
-        subject = u'New question for your country'
+        subject = 'New question for your country'
         notify(
             observation,
             _temp,
@@ -63,7 +63,7 @@ def notification_rev_ph1(context, event):
 
     if event.action in ['phase1-approve-question']:
         observation = aq_parent(context)
-        subject = u'Your observation was sent to MS'
+        subject = 'Your observation was sent to MS'
         notify(
             observation,
             _temp,
@@ -83,7 +83,7 @@ def notification_rev_ph2(context, event):
 
     if event.action in ['phase2-approve-question']:
         observation = aq_parent(context)
-        subject = u'Your observation was sent to MS'
+        subject = 'Your observation was sent to MS'
         notify(
             observation,
             _temp,

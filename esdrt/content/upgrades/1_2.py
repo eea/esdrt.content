@@ -26,8 +26,8 @@ def upgrade_diff_tool(context, logger):
 
 def enable_atd_spellchecker(context, logger):
     tinymce = getToolByName(context, 'portal_tinymce')
-    tinymce.libraries_spellchecker_choice = u'AtD'
-    tinymce.libraries_atd_service_url = u'service.afterthedeadline.com'
+    tinymce.libraries_spellchecker_choice = 'AtD'
+    tinymce.libraries_atd_service_url = 'service.afterthedeadline.com'
     logger.info('Enable AtD spellcheking plugin')
 
 

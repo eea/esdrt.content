@@ -35,7 +35,7 @@ def upgradeObservations(context, logger):
 
     brains = context.portal_catalog.unrestrictedSearchResults(
         portal_type='Observation',
-        Country=COUNTRIES.keys(),
+        Country=list(COUNTRIES.keys()),
     )
     for brain in brains:
         observation = brain.getObject()

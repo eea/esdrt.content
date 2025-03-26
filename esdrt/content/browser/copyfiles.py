@@ -15,7 +15,7 @@ class CopyFileToAnswer(grok.View):
         answer = aq_parent(conversation)
         file = getattr(context, 'attachment', None)
         candidate_id = file.filename
-        while candidate_id in answer.keys():
+        while candidate_id in list(answer.keys()):
             candidate_id += '-1'
 
         filename = answer.invokeFactory(

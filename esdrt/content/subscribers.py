@@ -42,9 +42,9 @@ def question_transition(question, event):
 
         # clear redraft reason
         if event.action.startswith('phase1'):
-            question.request_redraft_comments = u''
+            question.request_redraft_comments = ''
         elif event.action.startswith('phase2'):
-            question.request_redraft_comments_phase2 = u''
+            question.request_redraft_comments_phase2 = ''
 
         wf = getToolByName(question, 'portal_workflow')
         comment_id = wf.getInfoFor(question,
@@ -131,21 +131,21 @@ def question_transition(question, event):
 def observation_transition(observation, event):
     if event.action == 'phase1-reopen':
         with api.env.adopt_roles(roles=['Manager']):
-            qs = [q for q in observation.values() if q.portal_type == 'Question']
+            qs = [q for q in list(observation.values()) if q.portal_type == 'Question']
             if qs:
                 q = qs[0]
                 api.content.transition(obj=q, transition='phase1-reopen')
 
     elif event.action == 'phase2-reopen-qa-chat':
         with api.env.adopt_roles(roles=['Manager']):
-            qs = [q for q in observation.values() if q.portal_type == 'Question']
+            qs = [q for q in list(observation.values()) if q.portal_type == 'Question']
             if qs:
                 q = qs[0]
                 api.content.transition(obj=q, transition='phase2-reopen')
 
     elif event.action in ['phase1-request-comments']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -153,7 +153,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase1-finish-comments']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -161,7 +161,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase1-request-close']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -169,7 +169,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase1-deny-closure']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -177,7 +177,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase1-close']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -185,7 +185,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase2-request-comments']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'ConclusionsPhase2']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'ConclusionsPhase2']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -193,7 +193,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase2-finish-comments']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'ConclusionsPhase2']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'ConclusionsPhase2']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -201,7 +201,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase2-finish-observation']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'ConclusionsPhase2']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'ConclusionsPhase2']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -209,7 +209,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase2-confirm-finishing-observation']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'ConclusionsPhase2']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'ConclusionsPhase2']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -217,7 +217,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['phase2-deny-finishing-observation']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'ConclusionsPhase2']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'ConclusionsPhase2']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -225,7 +225,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'phase1-draft-conclusions':
         with api.env.adopt_roles(roles=['Manager']):
-            questions = [c for c in observation.values() if c.portal_type == 'Question']
+            questions = [c for c in list(observation.values()) if c.portal_type == 'Question']
             if questions:
                 question = questions[0]
                 if api.content.get_state(question) == 'phase1-draft':
@@ -237,7 +237,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'phase2-draft-conclusions':
         with api.env.adopt_roles(roles=['Manager']):
-            questions = [c for c in observation.values() if c.portal_type == 'Question']
+            questions = [c for c in list(observation.values()) if c.portal_type == 'Question']
             if questions:
                 question = questions[0]
                 if api.content.get_state(question) == 'phase2-draft':
@@ -249,7 +249,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'phase1-send-to-team-2':
         with api.env.adopt_roles(roles=['Manager']):
-            questions = [c for c in observation.values() if c.portal_type == 'Question']
+            questions = [c for c in list(observation.values()) if c.portal_type == 'Question']
             if questions:
                 question = questions[0]
                 api.content.transition(
@@ -266,7 +266,7 @@ def observation_transition(observation, event):
                 )
 
 
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(
@@ -276,7 +276,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'recall-from-phase2':
         with api.env.adopt_roles(roles=['Manager']):
-            questions = [c for c in observation.values() if c.portal_type == 'Question']
+            questions = [c for c in list(observation.values()) if c.portal_type == 'Question']
             if questions:
                 question = questions[0]
                 api.content.transition(
@@ -284,7 +284,7 @@ def observation_transition(observation, event):
                     transition='phase2-recall'
                 )
 
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(
@@ -294,7 +294,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'phase1-reopen-closed-observation':
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusion']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(
@@ -304,7 +304,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'phase2-reopen-closed-observation':
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'ConclusionsPhase2']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'ConclusionsPhase2']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(

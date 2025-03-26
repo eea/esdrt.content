@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment
 from operator import attrgetter
 from Products.Five.browser import BrowserView
-from StringIO import StringIO
+from io import StringIO
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -54,14 +54,14 @@ class GetSampleXLS(BrowserView):
 
         fuel_voc = get_vocabulary('esdrt.content.fuel')
         # not a mandatory field, value can be none
-        fuels = cycle(map(get_title, fuel_voc) + [None])
+        fuels = cycle(list(map(get_title, fuel_voc)) + [None])
 
         country_voc = get_vocabulary('esdrt.content.eea_member_states')
         gas_voc = get_vocabulary('esdrt.content.gas')
         parameter_voc = get_vocabulary('esdrt.content.parameter')
         description_flags_voc = get_vocabulary('esdrt.content.highlight')
 
-        countries = map(get_title, country_voc)
+        countries = list(map(get_title, country_voc))
 
         ms_key_categ = cycle(['True', None])
         eu_key_categ = cycle(['True', None])

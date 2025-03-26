@@ -206,7 +206,7 @@ class CRFCode(object):
     def __call__(self, context):
         terms = []
         crfcodes = crf_codes()
-        for key, value in crfcodes.items():
+        for key, value in list(crfcodes.items()):
             # create a term - the arguments are the value, the token, and
             # the title (optional)
             terms.append(SimpleVocabulary.createTerm(key, key, value['title']))

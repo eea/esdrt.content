@@ -40,7 +40,7 @@ class ReferenceNumberCreator(NormalizingNameChooser):
         items.append(str(object.review_year))
         prename = '-'.join(items)
         number = 1
-        observations = [k for k in parent.keys() if k.startswith(prename)]
+        observations = [k for k in list(parent.keys()) if k.startswith(prename)]
         if observations:
             observations.sort()
             last_observation = observations[-1]

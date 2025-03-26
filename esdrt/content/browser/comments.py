@@ -10,8 +10,8 @@ class CommentForm(BaseForm):
 
     def updateActions(self):
         super(CommentForm, self).updateActions()
-        self.actions['comment'].title = u'Save Comment'
-        for k in self.actions.keys():
+        self.actions['comment'].title = 'Save Comment'
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
             self.actions[k].addClass('defaultWFButton')
 

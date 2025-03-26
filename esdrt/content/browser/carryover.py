@@ -82,7 +82,7 @@ def prepend_qa(target, source):
     target_qa = target.get_question()
 
     if source_qa and target_qa:
-        for comment in source_qa.values():
+        for comment in list(source_qa.values()):
             _copy_obj(target_qa, comment)
 
         ordering = target_qa.getOrdering()

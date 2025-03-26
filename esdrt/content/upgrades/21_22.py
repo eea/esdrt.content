@@ -38,7 +38,7 @@ def install_workflow(context, logger):
         'esd-reviewtool-folder-workflow',
         'esd-review-workflow',
         ])
-    if 'esd-conclusion-phase2-workflow' in wtool.keys():
+    if 'esd-conclusion-phase2-workflow' in list(wtool.keys()):
         wtool.manage_delObjects(['esd-conclusion-phase2-workflow'])
 
     setup.runImportStepFromProfile(PROFILE_ID, 'rolemap')

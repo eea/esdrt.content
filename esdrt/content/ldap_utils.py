@@ -29,7 +29,7 @@ def query_group_members(portal, query):
             q_ldap.query_groups(query, ('uniqueMember', ))
         )
 
-        unique_users = [v for v in set(chain(*res_groups.values())) if v]
+        unique_users = [v for v in set(chain(*list(res_groups.values()))) if v]
         user_names = format_users(
             'cn',
             q_ldap.query_users(
@@ -39,5 +39,5 @@ def query_group_members(portal, query):
 
         return {
             gname: [user_names[muid] for muid in muids if muid]
-            for gname, muids in res_groups.items()
+            for gname, muids in list(res_groups.items())
         }

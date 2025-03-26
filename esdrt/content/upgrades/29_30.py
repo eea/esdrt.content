@@ -49,18 +49,18 @@ def install_workflow(context, logger):
 VERSION_POLICIES = [
     dict(id="off",
          policy=(),
-         title=_PMF(u"versioning_off",
-                 default=u"No versioning")),
+         title=_PMF("versioning_off",
+                 default="No versioning")),
 
     dict(id="manual",
          policy=("version_on_revert",),
-         title=_PMF(u"versioning_manual",
-                 default=u"Manual")),
+         title=_PMF("versioning_manual",
+                 default="Manual")),
 
     dict(id="automatic",
          policy=("at_edit_autoversion", "version_on_revert"),
-         title=_PMF(u"versioning_automatic",
-                 default=u"Automatic")),
+         title=_PMF("versioning_automatic",
+                 default="Automatic")),
 ]
 
 

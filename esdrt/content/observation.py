@@ -1,7 +1,7 @@
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 import datetime
 import re
 from itertools import chain
@@ -87,52 +87,52 @@ class IObservation(form.Schema, IImageScaleTraversable):
     """
 
     text = schema.Text(
-        title=u"Observation title by expert",
+        title="Observation title by expert",
         required=True,
-        description=u"Provide a title for the issue identified. "
-                    u"Keep it short, you cannot change this title once you have sent it "
-                    u"to the QE. MS can only see the question once it has been approved "
-                    u"and sent by the QE. The question to the MS should be asked in the "
-                    u"Q&A tab, not here.",
+        description="Provide a title for the issue identified. "
+                    "Keep it short, you cannot change this title once you have sent it "
+                    "to the QE. MS can only see the question once it has been approved "
+                    "and sent by the QE. The question to the MS should be asked in the "
+                    "Q&A tab, not here.",
     )
 
     country = schema.Choice(
-        title=u"Country",
+        title="Country",
         vocabulary="esdrt.content.eea_member_states",
         required=True,
     )
 
     crf_code = schema.Choice(
-        title=u"CRF category codes",
+        title="CRF category codes",
         vocabulary="esdrt.content.crf_code",
         required=True,
     )
 
     year = schema.TextLine(
-        title=u"Inventory year",
-        description=u"Inventory year is the year, a range or a list "
-                    u"of years or a (e.g. '2012', '2009-2012', "
-                    u"'2009, 2012, 2013') when the emissions had "
-                    u"occured for which an issue was observed in the review.",
+        title="Inventory year",
+        description="Inventory year is the year, a range or a list "
+                    "of years or a (e.g. '2012', '2009-2012', "
+                    "'2009, 2012, 2013') when the emissions had "
+                    "occured for which an issue was observed in the review.",
         required=True,
     )
 
     form.widget(gas=CheckBoxFieldWidget)
     gas = schema.List(
-        title=u"Gas",
+        title="Gas",
         value_type=schema.Choice(vocabulary="esdrt.content.gas", ),
         required=True,
     )
 
     review_year = schema.Int(
-        title=u"Review year",
-        description=u"Review year is the year in which the inventory was "
-                    u"submitted and the review was carried out",
+        title="Review year",
+        description="Review year is the year in which the inventory was "
+                    "submitted and the review was carried out",
         required=True,
     )
 
     fuel = schema.Choice(
-        title=u"Fuel", vocabulary="esdrt.content.fuel", required=False,
+        title="Fuel", vocabulary="esdrt.content.fuel", required=False,
     )
 
     # ghg_source_category = schema.Choice(
@@ -148,20 +148,20 @@ class IObservation(form.Schema, IImageScaleTraversable):
     # )
 
     ms_key_catagory = schema.Bool(
-        title=u"MS key category",
+        title="MS key category",
         required=False,
         default=False,
     )
 
     eu_key_catagory = schema.Bool(
-        title=u"EU key category",
+        title="EU key category",
         required=False,
         default=False,
     )
 
     form.widget(parameter=CheckBoxFieldWidget)
     parameter = schema.List(
-        title=u"Parameter",
+        title="Parameter",
         value_type=schema.Choice(
             vocabulary="esdrt.content.parameter", required=True,
         ),
@@ -170,9 +170,9 @@ class IObservation(form.Schema, IImageScaleTraversable):
 
     form.widget(highlight=CheckBoxFieldWidget)
     highlight = schema.List(
-        title=u"Description flags",
-        description=u"Description flags highlight important information that "
-                    u"is closely related to the main purpose of 'initial checks'",
+        title="Description flags",
+        description="Description flags highlight important information that "
+                    "is closely related to the main purpose of 'initial checks'",
         value_type=schema.Choice(vocabulary="esdrt.content.highlight", ),
         required=False,
         default=[],
@@ -180,35 +180,35 @@ class IObservation(form.Schema, IImageScaleTraversable):
 
     form.write_permission(closing_comments="cmf.ManagePortal")
     closing_comments = schema.Text(
-        title=u"Finish request comments", required=False,
+        title="Finish request comments", required=False,
     )
 
     form.write_permission(closing_deny_comments="cmf.ManagePortal")
     closing_deny_comments = schema.Text(
-        title=u"Finish deny comments", required=False,
+        title="Finish deny comments", required=False,
     )
 
     form.write_permission(closing_comments_phase2="cmf.ManagePortal")
     closing_comments_phase2 = schema.Text(
-        title=u"Finish request comments for phase 2", required=False,
+        title="Finish request comments for phase 2", required=False,
     )
 
     form.write_permission(closing_deny_comments_phase2="cmf.ManagePortal")
     closing_deny_comments_phase2 = schema.Text(
-        title=u"Finish deny comments for phase 2", required=False,
+        title="Finish deny comments for phase 2", required=False,
     )
 
 
 @form.validator(field=IObservation["parameter"])
 def check_parameter(value):
     if len(value) == 0:
-        raise Invalid(u"You need to select at least one parameter")
+        raise Invalid("You need to select at least one parameter")
 
 
 @form.validator(field=IObservation["gas"])
 def check_gas(value):
     if len(value) == 0:
-        raise Invalid(u"You need to select at least one gas")
+        raise Invalid("You need to select at least one gas")
 
 
 @form.validator(field=IObservation["crf_code"])
@@ -228,7 +228,7 @@ def check_crf_code(value):
 
     if not valid:
         raise Invalid(
-            u"You are not allowed to add observations for this sector category"
+            "You are not allowed to add observations for this sector category"
         )
 
 
@@ -249,7 +249,7 @@ def check_country(value):
 
     if not valid:
         raise Invalid(
-            u"You are not allowed to add observations for this country"
+            "You are not allowed to add observations for this country"
         )
 
 
@@ -284,7 +284,7 @@ def inventory_year(value):
             valid = string_analyzer(value, ";")
 
     if not valid:
-        raise Invalid(u"Inventory year format is not correct. ")
+        raise Invalid("Inventory year format is not correct. ")
 
 
 @default_value(field=IObservation["review_year"])
@@ -299,7 +299,7 @@ def set_title_to_observation(object, event):
     gas = safe_unicode(object.gas_value())
     inventory_year = safe_unicode(str(object.year))
     parameter = safe_unicode(object.parameter_value())
-    object.title = u" ".join([sector, gas, inventory_year, parameter])
+    object.title = " ".join([sector, gas, inventory_year, parameter])
     grant_local_roles(object)
 
 
@@ -327,7 +327,7 @@ class Observation(dexterity.Container):
         """
         Memoized version of values, to speed-up
         """
-        return self.values()
+        return list(self.values())
 
     def get_values_cat(self, portal_type=None):
         if portal_type is not None:
@@ -374,14 +374,14 @@ class Observation(dexterity.Container):
             self._vocabulary_value("esdrt.content.parameter", p)
             for p in self.parameter
         ]
-        return u", ".join(parameters)
+        return ", ".join(parameters)
 
     def gas_value(self):
         gases = [
             self._vocabulary_value("esdrt.content.gas", g) for g in self.gas
         ]
 
-        return u", ".join(gases)
+        return ", ".join(gases)
 
     def highlight_value(self):
         if self.highlight:
@@ -389,8 +389,8 @@ class Observation(dexterity.Container):
                 self._vocabulary_value("esdrt.content.highlight", h)
                 for h in self.highlight
             ]
-            return u", ".join([x for x in highlight if x])
-        return u""
+            return ", ".join([x for x in highlight if x])
+        return ""
 
     def finish_reason_value(self):
         return self._vocabulary_value(
@@ -410,7 +410,7 @@ class Observation(dexterity.Container):
             value = vocabulary.getTerm(term)
             return value.title
         except LookupError:
-            return u""
+            return ""
 
     def get_status(self):
         return api.content.get_state(self)
@@ -1048,7 +1048,7 @@ class Observation(dexterity.Container):
         # there is always only one question.
         question = questions[0]
 
-        items = question.values()
+        items = list(question.values())
 
         comments = [i for i in items if i.portal_type == "Comment"]
         answers = [i for i in items if i.portal_type == "CommentAnswer"]
@@ -1109,7 +1109,7 @@ class Observation(dexterity.Container):
         replynum = 0
         if questions:
             comments = [
-                c for c in questions[-1].values() if c.portal_type == "Comment"
+                c for c in list(questions[-1].values()) if c.portal_type == "Comment"
             ]
             if comments:
                 last = comments[-1]
@@ -1124,7 +1124,7 @@ class Observation(dexterity.Container):
         if questions:
             comments = [
                 c
-                for c in questions[-1].values()
+                for c in list(questions[-1].values())
                 if c.portal_type == "CommentAnswer"
             ]
             if comments:
@@ -1143,7 +1143,7 @@ class Observation(dexterity.Container):
                     chain.from_iterable(
                         [
                             IConversation(c).commentators
-                            for c in question.values()
+                            for c in list(question.values())
                         ]
                     )
                 )
@@ -1258,11 +1258,11 @@ class AddForm(dexterity.AddForm):
 
     def updateActions(self):
         super(AddForm, self).updateActions()
-        self.actions["save"].title = u"Save Observation"
+        self.actions["save"].title = "Save Observation"
         self.actions["save"].addClass("defaultWFButton")
-        self.actions["cancel"].title = u"Delete Observation"
+        self.actions["cancel"].title = "Delete Observation"
 
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
 
@@ -1451,7 +1451,7 @@ class ObservationMixin(grok.View):
         question = self.question()
         if question:
             values = [
-                v for v in question.values() if sm.checkPermission("View", v)
+                v for v in list(question.values()) if sm.checkPermission("View", v)
             ]
             # return question.values()
             return values
@@ -1499,10 +1499,10 @@ class ObservationMixin(grok.View):
                 "esdrt.content: Add Comment", question
             )
             questions = [
-                q for q in question.values() if q.portal_type == "Comment"
+                q for q in list(question.values()) if q.portal_type == "Comment"
             ]
             answers = [
-                q for q in question.values() if q.portal_type == "CommentAnswer"
+                q for q in list(question.values()) if q.portal_type == "CommentAnswer"
             ]
             obs_state = self.context.get_status()
             return (
@@ -1521,10 +1521,10 @@ class ObservationMixin(grok.View):
                 "esdrt.content: Add CommentAnswer", question
             )
             questions = [
-                q for q in question.values() if q.portal_type == "Comment"
+                q for q in list(question.values()) if q.portal_type == "Comment"
             ]
             answers = [
-                q for q in question.values() if q.portal_type == "CommentAnswer"
+                q for q in list(question.values()) if q.portal_type == "CommentAnswer"
             ]
             return permission and len(questions) > len(answers)
         else:
@@ -1608,7 +1608,7 @@ class ObservationMixin(grok.View):
                     getId = history_metadata.getVersionId
                     history = self.history = []
                     # Count backwards from most recent to least recent
-                    for i in xrange(
+                    for i in range(
                         history_metadata.getLength(countPurged=False) - 1,
                         -1,
                         -1,
@@ -1679,7 +1679,7 @@ class ObservationMixin(grok.View):
         version_name = self.versionName(version)
 
         return translate(
-            _CMFE(u"version ${version}", mapping=dict(version=version_name)),
+            _CMFE("version ${version}", mapping=dict(version=version_name)),
             context=self.request,
         )
 
@@ -1966,12 +1966,12 @@ class AddQuestionForm(Form):
     ignoreContext = True
     fields = field.Fields(IComment).select("text")
 
-    @button.buttonAndHandler(u"Save question")
+    @button.buttonAndHandler("Save question")
     def create_question(self, action):
         context = aq_inner(self.context)
         text = self.request.form.get("form.widgets.text", "")
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Question text is empty"))
+            raise ActionExecutionError(Invalid("Question text is empty"))
 
         qs = self.context.get_values_cat("Question")
         if qs:
@@ -1995,7 +1995,7 @@ class AddQuestionForm(Form):
 
     def updateActions(self):
         super(AddQuestionForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
             self.actions[k].addClass("defaultWFButton")
 
@@ -2068,7 +2068,7 @@ class ModificationForm(dexterity.EditForm):
 
     def updateActions(self):
         super(ModificationForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
 
@@ -2080,23 +2080,23 @@ class AddAnswerForm(Form):
     ignoreContext = True
     fields = field.Fields(ICommentAnswer).select("text")
 
-    @button.buttonAndHandler(u"Save answer")
+    @button.buttonAndHandler("Save answer")
     def add_answer(self, action):
         text = self.request.form.get("form.widgets.text", "")
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Answer text is empty"))
+            raise ActionExecutionError(Invalid("Answer text is empty"))
         observation = aq_inner(self.context)
         questions = [
-            q for q in observation.values() if q.portal_type == "Question"
+            q for q in list(observation.values()) if q.portal_type == "Question"
         ]
         if questions:
             context = questions[0]
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         if context.has_answers():
             raise ActionExecutionError(
-                Invalid(u"Question is already answered!")
+                Invalid("Question is already answered!")
             )
 
         id = str(int(time()))
@@ -2108,7 +2108,7 @@ class AddAnswerForm(Form):
         elif context.get_state_api().startswith("phase2-"):
             action = "phase2-add-answer"
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         api.content.transition(obj=context, transition=action)
 
@@ -2120,7 +2120,7 @@ class AddAnswerForm(Form):
 
     def updateActions(self):
         super(AddAnswerForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
 
@@ -2132,27 +2132,27 @@ class AddAnswerAndRequestComments(grok.View):
     def render(self):
         observation = aq_inner(self.context)
         questions = [
-            q for q in observation.values() if q.portal_type == "Question"
+            q for q in list(observation.values()) if q.portal_type == "Question"
         ]
         if questions:
             context = questions[0]
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
-        comments = [q for q in context.values() if q.portal_type == "Comment"]
+        comments = [q for q in list(context.values()) if q.portal_type == "Comment"]
         answers = [
-            q for q in context.values() if q.portal_type == "CommentAnswer"
+            q for q in list(context.values()) if q.portal_type == "CommentAnswer"
         ]
 
         if len(comments) == len(answers):
             status = IStatusMessage(self.request)
-            msg = _(u"There is a draft answer created for the question.")
+            msg = _("There is a draft answer created for the question.")
             status.addStatusMessage(msg, "error")
             return self.request.response.redirect(observation.absolute_url())
 
         context = questions[0]
 
-        text = u"For MS coordinator: please draft, edit and finalise your consolidated reply here."
+        text = "For MS coordinator: please draft, edit and finalise your consolidated reply here."
 
         id = str(int(time()))
         item_id = context.invokeFactory(type_name="CommentAnswer", id=id, )
@@ -2163,7 +2163,7 @@ class AddAnswerAndRequestComments(grok.View):
         elif api.content.get_state(context).startswith("phase2-"):
             action = "phase2-assign-answerer"
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
         url = "%s/assign_answerer_form?workflow_action=%s&comment=%s" % (
             context.absolute_url(),
             action,
@@ -2176,11 +2176,11 @@ class AddCommentForm(Form):
     ignoreContext = True
     fields = field.Fields(IComment).select("text")
 
-    @button.buttonAndHandler(u"Add question")
+    @button.buttonAndHandler("Add question")
     def create_question(self, action):
         observation = aq_inner(self.context)
         questions = [
-            q for q in observation.values() if q.portal_type == "Question"
+            q for q in list(observation.values()) if q.portal_type == "Question"
         ]
         if questions:
             context = questions[0]
@@ -2198,7 +2198,7 @@ class AddCommentForm(Form):
 
     def updateActions(self):
         super(AddCommentForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
 
@@ -2206,7 +2206,7 @@ class AddConclusionForm(Form):
     ignoreContext = True
     fields = field.Fields(IConclusion).select("text", "closing_reason")
 
-    @button.buttonAndHandler(u"Add conclusion")
+    @button.buttonAndHandler("Add conclusion")
     def create_conclusion(self, action):
         context = aq_inner(self.context)
         id = str(int(time()))
@@ -2227,7 +2227,7 @@ class AddConclusionForm(Form):
 
     def updateActions(self):
         super(AddConclusionForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
 
@@ -2241,7 +2241,7 @@ class EditConclusionAndCloseComments(grok.View):
         waction = self.request.get("workflow_action")
         if waction != "phase1-finish-comments":
             status = IStatusMessage(self.request)
-            msg = u"There was an error, try again please"
+            msg = "There was an error, try again please"
             status.addStatusMessage(msg, "error")
 
     def render(self):
@@ -2265,7 +2265,7 @@ class EditConclusionP2AndCloseComments(grok.View):
         waction = self.request.get("workflow_action")
         if waction != "phase2-finish-comments":
             status = IStatusMessage(self.request)
-            msg = u"There was an error, try again please"
+            msg = "There was an error, try again please"
             status.addStatusMessage(msg, "error")
 
     def render(self):
@@ -2318,7 +2318,7 @@ class AddConclusions(grok.View):
                 else:
                     # with api.env.adopt_roles(['ReviewerPhase1']):
                     id = context.invokeFactory(
-                        id=str(int(time())), type_name="Conclusion", text=u""
+                        id=str(int(time())), type_name="Conclusion", text=""
                     )
                     cs = self.context.get_values_cat("Conclusion")
                     conclusion = cs[0]
@@ -2332,7 +2332,7 @@ class AddConclusions(grok.View):
                 else:
                     # with api.env.adopt_roles(['ReviewerPhase1']):
                     id = context.invokeFactory(
-                        id=str(int(time())), type_name="Conclusion", text=u""
+                        id=str(int(time())), type_name="Conclusion", text=""
                     )
                     cs = self.context.get_values_cat("Conclusion")
                     conclusion = cs[0]
@@ -2358,7 +2358,7 @@ class AddConclusions(grok.View):
                     id = context.invokeFactory(
                         id=str(int(time())),
                         type_name="ConclusionsPhase2",
-                        text=u"",
+                        text="",
                     )
                     cs = self.context.get_values_cat("ConclusionsPhase2")
                     conclusion = cs[0]
@@ -2376,7 +2376,7 @@ class AddConclusions(grok.View):
                     id = context.invokeFactory(
                         id=str(int(time())),
                         type_name="ConclusionsPhase2",
-                        text=u"",
+                        text="",
                     )
                     cs = self.context.get_values_cat("ConclusionsPhase2")
                     conclusion = cs[0]
@@ -2387,7 +2387,7 @@ class AddConclusions(grok.View):
                     obj=context, transition="phase2-draft-conclusions"
                 )
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         self.context.reindexObject()
         return self.request.response.redirect(url)

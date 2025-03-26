@@ -19,7 +19,7 @@ def format_or(prefix, items):
         if prefix else
         '({})'.format
     )
-    with_parens = map(formatter, items)
+    with_parens = list(map(formatter, items))
     return '(|{})'.format(''.join(with_parens))
 
 

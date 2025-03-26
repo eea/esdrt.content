@@ -11,7 +11,7 @@ log.info('Patching difftool excluded fields to add ghg_estimations')
 
 
 def _cachekey_lookupuserbyattr(meth, self, *args, **kwargs):
-    return (meth.__name__, self.__name__, args, kwargs.items())
+    return (meth.__name__, self.__name__, args, list(kwargs.items()))
 
 
 @cache(_cachekey_lookupuserbyattr)
@@ -34,7 +34,7 @@ def _lookupuserbyattr(self, *args, **kwargs):
 
 
 def _cachekey_LDAPDelegate_search(meth, self, *args, **kwargs):
-    kw = tuple([(k, v) for k, v in kwargs.items() if k != 'bind_pwd'])
+    kw = tuple([(k, v) for k, v in list(kwargs.items()) if k != 'bind_pwd'])
     return (meth.__name__, self.__name__, args, kw)
 
 

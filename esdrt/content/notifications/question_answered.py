@@ -3,7 +3,7 @@ from esdrt.content.question import IQuestion
 from five import grok
 from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 
 
 @grok.subscribe(IQuestion, IActionSucceededEvent)
@@ -16,7 +16,7 @@ def notification_qe(context, event):
 
     if event.action in ['phase1-answer-to-lr']:
         observation = aq_parent(context)
-        subject = u'New answer from country'
+        subject = 'New answer from country'
         notify(
             observation,
             _temp,
@@ -36,7 +36,7 @@ def notification_lr(context, event):
 
     if event.action in ['phase2-answer-to-lr']:
         observation = aq_parent(context)
-        subject = u'New answer from country'
+        subject = 'New answer from country'
         notify(
             observation,
             _temp,
@@ -56,7 +56,7 @@ def notification_rev_ph1(context, event):
 
     if event.action in ['phase1-answer-to-lr']:
         observation = aq_parent(context)
-        subject = u'New answer from country'
+        subject = 'New answer from country'
         notify(
             observation,
             _temp,
@@ -76,7 +76,7 @@ def notification_rev_ph2(context, event):
 
     if event.action in ['phase2-answer-to-lr']:
         observation = aq_parent(context)
-        subject = u'New answer from country'
+        subject = 'New answer from country'
         notify(
             observation,
             _temp,
@@ -96,7 +96,7 @@ def notification_rev_msexperts(context, event):
 
     if event.action in ['phase1-answer-to-lr', 'phase2-answer-to-lr']:
         observation = aq_parent(context)
-        subject = u'New answer from country'
+        subject = 'New answer from country'
         notify(
             observation,
             _temp,

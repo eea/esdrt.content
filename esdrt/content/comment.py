@@ -31,7 +31,7 @@ class IComment(form.Schema, IImageScaleTraversable):
     # models/comment.xml to define the content type
     # and add directives here as necessary.
     text = schema.Text(
-        title=_(u'Text'),
+        title=_('Text'),
         required=True,
     )
 
@@ -58,7 +58,7 @@ class Comment(dexterity.Container):
         return sm.checkPermission('esdrt.content: Add ESDRTFile', self)
 
     def get_files(self):
-        items = self.values()
+        items = list(self.values())
         mtool = api.portal.get_tool('portal_membership')
         return [item for item in items if mtool.checkPermission('View', item)]
 
@@ -127,7 +127,7 @@ class AddForm(dexterity.AddForm):
 
     def updateActions(self):
         super(AddForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -151,7 +151,7 @@ class EditForm(dexterity.EditForm):
 
     def updateActions(self):
         super(EditForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 

@@ -2,7 +2,7 @@ from esdrt.content.observation import IObservation
 from five import grok
 from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 
 
 @grok.subscribe(IObservation, IActionSucceededEvent)
@@ -15,7 +15,7 @@ def notification_cp(context, event):
 
     if event.action in ['phase1-request-comments', 'phase2-request-comments']:
         observation = context
-        subject = u'New draft conclusion to comment on'
+        subject = 'New draft conclusion to comment on'
         notify(
             observation,
             _temp,
@@ -35,7 +35,7 @@ def notification_qe(context, event):
 
     if event.action in ['phase1-request-comments']:
         observation = context
-        subject = u'New draft conclusion to comment on'
+        subject = 'New draft conclusion to comment on'
         notify(
             observation,
             _temp,
@@ -55,7 +55,7 @@ def notification_lr(context, event):
 
     if event.action in ['phase2-request-comments']:
         observation = context
-        subject = u'New draft conclusion to comment on'
+        subject = 'New draft conclusion to comment on'
         notify(
             observation,
             _temp,

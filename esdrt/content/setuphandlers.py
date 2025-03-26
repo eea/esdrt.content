@@ -60,7 +60,7 @@ def create_vocabulary(context, vocabname, vocabtitle, importfilename=None,
         data = profile.readDataFile(importfilename, subdir='esdrtvocabularies')
         vocabulary.importCSV(data)
 
-    for term in vocabulary.values():
+    for term in list(vocabulary.values()):
         wtool.doActionFor(term, 'publish')
 
     log.info('done')
@@ -84,8 +84,8 @@ def prepareVocabularies(context, profile):
 
 def enable_atd_spellchecker(portal):
     tinymce = getToolByName(portal, 'portal_tinymce')
-    tinymce.libraries_spellchecker_choice = u'AtD'
-    tinymce.libraries_atd_service_url = u'service.afterthedeadline.com'
+    tinymce.libraries_spellchecker_choice = 'AtD'
+    tinymce.libraries_atd_service_url = 'service.afterthedeadline.com'
 
 
 def setupVarious(context):

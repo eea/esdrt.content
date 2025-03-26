@@ -39,13 +39,13 @@ def send_mail(subject, email_content, users=[]):
         try:
             mailhost = api.portal.get_tool('MailHost')
             mailhost.send(mail.as_string())
-            message = u'Users have been notified by e-mail'
+            message = 'Users have been notified by e-mail'
             log.info('Emails sent to users %s' % ', '.join([
                 email.replace('@', ' <at> ') for email in user_emails
             ]))
             IStatusMessage(request).add(message)
         except Exception as e:
-            message = u'There was an error sending the notification, but your action was completed succesfuly. Contact the EEA Secretariat for further instructions.'
+            message = 'There was an error sending the notification, but your action was completed succesfuly. Contact the EEA Secretariat for further instructions.'
             log.error('Error when sending the notification: %s' % e)
             IStatusMessage(request).add(message, type='error')
 

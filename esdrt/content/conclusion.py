@@ -35,20 +35,20 @@ class IConclusion(form.Schema, IImageScaleTraversable):
     """
 
     closing_reason = schema.Choice(
-        title=_(u'Status of observation'),
+        title=_('Status of observation'),
         vocabulary='esdrt.content.conclusionreasons',
         required=True,
 
     )
 
     text = schema.Text(
-        title=_(u'Internal note for expert/reviewers'),
+        title=_('Internal note for expert/reviewers'),
         required=True,
         )
 
     remarks = schema.Text(
-        title=_(u'Concluding remark'),
-        description=_(u'(visible to MS when observation finalised)'),
+        title=_('Concluding remark'),
+        description=_('(visible to MS when observation finalised)'),
         required=False,
         )
 
@@ -85,7 +85,7 @@ class Conclusion(dexterity.Container):
         vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
         vocabulary = vocab_factory(self)
         if not term:
-            return u''
+            return ''
         try:
             value = vocabulary.getTerm(term)
             return value.title
@@ -123,7 +123,7 @@ class Conclusion(dexterity.Container):
         return [mitem for mitem in menu_items if not hidden(mitem)]
 
     def get_files(self):
-        items = self.values()
+        items = list(self.values())
         mtool = api.portal.get_tool('portal_membership')
         return [item for item in items if mtool.checkPermission('View', item)]
 
@@ -201,7 +201,7 @@ class AddForm(dexterity.AddForm):
                     updated_item['value'] in (self.context.highlight or [])
                 )
                 return updated_item
-        widget_highlight.items = map(set_checked, widget_highlight.items)
+        widget_highlight.items = list(map(set_checked, widget_highlight.items))
 
     def create(self, data={}):
         # import pdb; pdb.set_trace()
@@ -242,7 +242,7 @@ class AddForm(dexterity.AddForm):
     def updateActions(self):
         super(AddForm, self).updateActions()
         self.actions['save'].addClass('defaultWFButton')
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -291,7 +291,7 @@ class EditForm(dexterity.EditForm):
 
     def updateActions(self):
         super(EditForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
     def applyChanges(self, data):
