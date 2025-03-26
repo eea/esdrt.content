@@ -1,5 +1,5 @@
 from Acquisition import aq_parent, aq_inner
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from plone import api
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -12,7 +12,7 @@ from zope import schema
 from zope.interface import Interface
 from esdrt.content.notifications.utils import notify
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from eea.cache import cache
+from plone.memoize.ram import cache
 from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
 

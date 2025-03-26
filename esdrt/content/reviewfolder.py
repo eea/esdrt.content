@@ -3,6 +3,8 @@ import operator
 import itertools
 import time
 from datetime import datetime
+from typing import Tuple
+from typing import cast
 
 from Acquisition import aq_inner
 from z3c.form import button
@@ -22,6 +24,7 @@ from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 from Products.Five import BrowserView
@@ -46,7 +49,7 @@ import Missing
 import tablib
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
-from eea.cache import cache
+from plone.memoize.ram import cache
 from esdrt.content import ldap_utils
 from esdrt.content.browser.inbox_sections import SECTIONS
 from esdrt.content.constants import ROLE_LR
@@ -85,6 +88,68 @@ LDAP_QUERY_GROUPS = (
     "(cn=extranet-esd-esdreview-reviewexp-*)"
     ")"
 )
+
+def get_vocabulary(context: "ReviewFolder", name: str) -> SimpleVocabulary:
+    factory = getUtility(IVocabularyFactory, name=name)
+    return factory(context)
+
+
+def get_vocabulary_items(
+    context: "ReviewFolder", name: str
+) -> list[Tuple[str, str]]:
+    """Given a vocabulary, returns a list of (token, title)."""
+    voc: SimpleVocabulary = get_vocabulary(context, name)
+    terms: list[SimpleTerm] = iter(voc)
+    return [(cast(str, term.token), cast(str, term.title)) for term in terms]
+
+
+def get_necd_vocabulary_items(context: "ReviewFolder", name: str):
+    """Helper function to avoid using the whole dotted name.
+
+    Prepends esdrt.content. to `name`.
+    """
+    return get_vocabulary_items(context, f"esdrt.content.{name}")
+
+
+def get_finalisation_reasons(reviewfolder: "ReviewFolder"):
+    """Vocabularies are used to fetch available reasons.
+
+    This used to have hardcoded values for 2015 and 2016.
+    Currently it works like this:
+        - try to get vocabulary values that end
+          in the current folder title (e.g. "resolved2016")
+        - if no values match, get the values which don't
+          end in an year (e.g. "resolved")
+    This covers the previous functionality while also supporting
+    any number of upcoming years, as well as "Test"-type
+    review folders.
+    """
+    reasons: List[Tuple[str, str]] = [("open", "open")]
+
+    context_title = reviewfolder.Title().strip()
+
+    vocab_ids = ("conclusion_reasons", "conclusion_phase2_reasons")
+
+    to_add: List[Tuple[str, str]] = []
+    all_terms: List[Tuple[str, str]] = []
+
+    for vocab_id in vocab_ids:
+        all_terms.extend(get_necd_vocabulary_items(reviewfolder, vocab_id))
+
+    # if term ends in the review folder title (e.g. 2016)
+    for term_key, term_title in all_terms:
+        if term_key.endswith(context_title):
+            to_add.append((term_key, term_title))
+
+    # if no matching term keys were found,
+    # use those that don't end in a year
+    if not to_add:
+        for term_key, term_title in all_terms:
+            if not term_key[-4:].isdigit():
+                to_add.append((term_key, term_title))
+
+    reasons.extend(to_add)
+    return reasons
 
 
 def get_indexed_authors(context):
@@ -406,21 +471,10 @@ class ReviewFolderMixin(BrowserView):
         )
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_highlights(self):
-        vocab_factory = getUtility(
-            IVocabularyFactory, name="esdrt.content.highlight"
-        )
-        vocabulary = vocab_factory(self.context)
-        return [(t.value, t.title) for t in vocabulary]
+        return get_necd_vocabulary_items(self.context, "highlight")
 
     def get_review_years(self):
         catalog = api.portal.get_tool("portal_catalog")
@@ -436,63 +490,13 @@ class ReviewFolderMixin(BrowserView):
         return inventory_years
 
     def get_crf_categories(self):
-        vocab_factory = getUtility(
-            IVocabularyFactory, name="esdrt.content.crf_code"
-        )
-        vocabulary = vocab_factory(self.context)
-        return [(x.value, x.title) for x in vocabulary]
+        return get_necd_vocabulary_items(self.context, "crf_code")
 
     def get_gases(self):
-        vocab_factory = getUtility(
-            IVocabularyFactory, name="esdrt.content.gas"
-        )
-        vocabulary = vocab_factory(self.context)
-        return [(x.value, x.title) for x in vocabulary]
+        return get_necd_vocabulary_items(self.context, "gas")
 
     def get_finalisation_reasons(self):
-        """ Vocabularies are used to fetch available reasons.
-            This used to have hardcoded values for 2015 and 2016.
-            Currently it works like this:
-
-                - try to get vocabulary values that end
-                  in the current folder title (e.g. "resolved2016")
-
-                - if no values match, get the values which don't
-                  end in an year (e.g. "resolved")
-
-            This covers the previous functionality while also supporting
-            any number of upcoming years, as well as "Test"-type
-            review folders.
-        """
-        vtool = getToolByName(self, "portal_vocabularies")
-        reasons = [("open", "open")]
-
-        context_title = self.context.Title().strip()
-
-        vocab_ids = ("conclusion_reasons", "conclusion_phase2_reasons")
-
-        to_add = []
-        all_terms = []
-
-        for vocab_id in vocab_ids:
-            voc = vtool.getVocabularyByName(vocab_id)
-            voc_terms = list(voc.getDisplayList(self).items())
-            all_terms.extend(voc_terms)
-
-        # if term ends in the review folder title (e.g. 2016)
-        for term_key, term_title in all_terms:
-            if term_key.endswith(context_title):
-                to_add.append((term_key, term_title))
-
-        # if no matching term keys were found,
-        # use those that don't end in a year
-        if not to_add:
-            for term_key, term_title in all_terms:
-                if not term_key[-4:].isdigit():
-                    to_add.append((term_key, term_title))
-
-        reasons.extend(to_add)
-        return list(set(reasons))
+        return get_finalisation_reasons(self.context)
 
     @staticmethod
     def is_member_state_coordinator():
@@ -1696,24 +1700,10 @@ class InboxReviewFolderView(BrowserView):
         return user.getProperty("fullname", userid)
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_sectors(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("ghg_source_sectors")
-        sectors = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            sectors.append((term[0], term[1]))
-
-        return sectors
+        return get_necd_vocabulary_items(self.context, "ghg_source_sectors")
 
     @staticmethod
     def is_sector_expert_or_review_expert():
@@ -1867,24 +1857,10 @@ class FinalisedFolderView(BrowserView):
         return user.getProperty("fullname", userid)
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_sectors(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("ghg_source_sectors")
-        sectors = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            sectors.append((term[0], term[1]))
-
-        return sectors
+        return get_necd_vocabulary_items(self.context, "ghg_source_sectors")
 
     @staticmethod
     def is_sector_expert_or_review_expert():

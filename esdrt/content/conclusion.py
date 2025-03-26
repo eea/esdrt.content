@@ -4,7 +4,7 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from five import grok
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion

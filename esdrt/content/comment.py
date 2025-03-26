@@ -17,7 +17,7 @@ from zope.app.container.interfaces import IObjectAddedEvent
 from zope.component import createObject
 from zope.component import getUtility
 
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 
 
 # Interface class; used to define content-type schema.

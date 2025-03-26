@@ -11,7 +11,7 @@
   <include file="permissions.zcml" />
   <include file="profiles.zcml" />
   <include file="patches.zcml" />
-  <include file="vocabularies.zcml" />
+  <include package=".vocabularies" />
   <include package=".upgrades" />
   <include package=".adapters" />
   <include package=".utilities" />

@@ -5,7 +5,7 @@ from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield import DictRow
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from esdrt.content.observation import hidden
 from five import grok
 from plone import api

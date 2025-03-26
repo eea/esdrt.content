@@ -1,4 +1,4 @@
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from z3c.form.converter import NumberDataConverter
 from z3c.form.interfaces import IWidget
 

@@ -1,5 +1,5 @@
 from Products.CMFDiffTool import dexteritydiff
-from eea.cache import cache
+from plone.memoize.ram import cache
 
 EXCLUDED_FIELDS = list(dexteritydiff.EXCLUDED_FIELDS)
 EXCLUDED_FIELDS.append('ghg_estimations')

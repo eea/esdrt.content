@@ -2,7 +2,7 @@ from zope.interface import Interface
 from zope import schema
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from logging import getLogger
 from collections import OrderedDict
 logger = getLogger('esdrt.content.crf_codes')

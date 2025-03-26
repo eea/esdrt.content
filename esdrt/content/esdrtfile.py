@@ -1,6 +1,6 @@
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from five import grok
 from plone.directives import dexterity
 from plone.directives import form

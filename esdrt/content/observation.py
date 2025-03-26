@@ -17,7 +17,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Pt
-from eea.cache import cache
+from plone.memoize.ram import cache
 from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
@@ -44,7 +44,7 @@ from zope.lifecycleevent.interfaces import IObjectAddedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
 
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from esdrt.content.constants import ROLE_LR
 from esdrt.content.constants import ROLE_MSE
 from esdrt.content.constants import ROLE_QE

@@ -6,7 +6,7 @@
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from Acquisition import Implicit
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from persistent import Persistent
 from plone.app.discussion.browser.comments import CommentForm
 from plone.app.discussion.comment import Comment

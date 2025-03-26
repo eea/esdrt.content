@@ -30,8 +30,7 @@ setup(
     zip_safe=False,
     install_requires=[
         "setuptools",
-        "five.grok",
-        "plone.app.dexterity [grok]",
+        "plone.app.dexterity",
         "collective.z3cform.datagridfield",
         "plone.api",
         "cs.htmlmailer",
