@@ -8,9 +8,6 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="esdrt.content">
 
-  <!-- Include configuration for dependencies listed in setup.py -->
-  <includeDependencies package="." />
-
   <include file="permissions.zcml" />
   <include file="profiles.zcml" />
   <include file="patches.zcml" />
