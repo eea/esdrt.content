@@ -6,7 +6,6 @@ from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from .utils import notify
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_cp(context, event):
     """
     To:     CounterParts
@@ -26,7 +25,6 @@ def notification_cp(context, event):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_qe(context, event):
     """
     To:     QualityExpert
@@ -46,7 +44,6 @@ def notification_qe(context, event):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_lr(context, event):
     """
     To:     LeadReviewer

@@ -1,0 +1,246 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="esdrt.content">
+
+  <!--  Comment  -->
+  <subscriber
+    for="esdrt.content.comment.IComment
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="esdrt.content.comment.add_comment"
+    />
+
+
+  <!--  Question  -->
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="esdrt.content.question.add_question"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler="esdrt.content.question.modify_question"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.subscribers.question_transition"
+    />
+
+  <!--  Observation -->
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="esdrt.content.observation.set_title_to_observation"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler="esdrt.content.observation.set_title_to_observation"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="esdrt.content.observation.add_observation"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.subscribers.observation_transition"
+    />
+
+  <!--  Subscribers   -->
+  <subscriber
+    for="esdrt.content.commentanswer.ICommentAnswer
+         plone.app.discussion.interfaces.ICommentAddedEvent"
+    handler="esdrt.content.subscribers.answer_comment_added"
+    />
+
+  <subscriber
+    for="esdrt.content.comment.IComment
+         plone.app.discussion.interfaces.ICommentAddedEvent"
+    handler="esdrt.content.subscribers.question_comment_added"
+    />
+
+  <!--  Notifications   -->
+  <!--  Question: question_to_ms   -->
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_to_ms.notification_ms"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_to_ms.notification_rev_ph1"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_to_ms.notification_rev_ph2"
+    />
+
+  <!--  Question: question_answered   -->
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_answered.notification_qe"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_answered.notification_lr"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_answered.notification_rev_ph1"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_answered.notification_rev_ph2"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_answered.notification_rev_msexperts"
+    />
+
+  <!--  Question: question_to_counterpart   -->
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_to_counterpart.notification_cp"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_to_counterpart.notification_qe"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_to_counterpart.notification_lr"
+    />
+
+  <!--  Question: question_ready_for_approval   -->
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_ready_for_approval.notification_qe"
+    />
+
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.question_ready_for_approval.notification_lr"
+    />
+
+  <!--  Question: answer_to_msexperts   -->
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.answer_to_msexperts.notification_mse"
+    />
+
+  <!--  Question: answer_acknowledged   -->
+  <subscriber
+    for="esdrt.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.answer_acknowledged.notification_ms"
+    />
+
+  <!--  Observation: observation_finalisation_denied   -->
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_finalisation_denied.notification_rev_ph1"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_finalisation_denied.notification_rev_ph2"
+    />
+
+  <!--  Observation: observation_finalisation_request   -->
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_finalisation_request.notification_qe"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_finalisation_request.notification_lr"
+    />
+
+  <!--  Observation: observation_finalised   -->
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_finalised.notification_ms"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_finalised.notification_rev_ph1"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_finalised.notification_rev_ph2"
+    />
+
+  <!--  Observation: observation_to_phase2   -->
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_to_phase2.notification_lr"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.observation_to_phase2.notification_rev_ph2"
+    />
+
+  <!--  Observation: conclusion_to_comment   -->
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.conclusion_to_comment.notification_cp"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.conclusion_to_comment.notification_qe"
+    />
+
+  <subscriber
+    for="esdrt.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="esdrt.content.notifications.conclusion_to_comment.notification_lr"
+    />
+
+
+</configure>

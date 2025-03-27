@@ -6,7 +6,6 @@ from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from .utils import notify
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_ms(context, event):
     """
     To:     MSAuthority

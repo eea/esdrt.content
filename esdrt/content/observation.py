@@ -292,8 +292,6 @@ def default_year(data):
     return datetime.datetime.now().year
 
 
-@grok.subscribe(IObservation, IObjectAddedEvent)
-@grok.subscribe(IObservation, IObjectModifiedEvent)
 def set_title_to_observation(object, event):
     sector = safe_unicode(object.ghg_source_category_value())
     gas = safe_unicode(object.gas_value())
@@ -303,7 +301,6 @@ def set_title_to_observation(object, event):
     grant_local_roles(object)
 
 
-@grok.subscribe(IObservation, IObjectAddedEvent)
 def add_observation(context, event):
     """ When adding an observation, go directly to
         'open' status on the observation

@@ -5,7 +5,6 @@ from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from .utils import notify
 
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def notification_ms(context, event):
     """
     To:     MSAuthority
@@ -47,7 +46,6 @@ def notification_ms(context, event):
         )
 
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def notification_rev_ph1(context, event):
     """
     To:     ReviewerPhase1
@@ -66,7 +64,6 @@ def notification_rev_ph1(context, event):
         )
 
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def notification_rev_ph2(context, event):
     """
     To:     ReviewerPhase2

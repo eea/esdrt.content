@@ -24,18 +24,15 @@ def run_as_manager(context, func, *args, **kwargs):
         api.user.revoke_roles(user=curr_user, obj=context, roles=['Manager'])
 
 
-@grok.subscribe(ICommentAnswer, ICommentAddedEvent)
 def answer_comment_added(answer, event):
     obs = answer.get_observation()
     obs.reindexObject()
 
-@grok.subscribe(IComment, ICommentAddedEvent)
 def question_comment_added(comment, event):
     obs = comment.get_observation()
     obs.reindexObject()
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def question_transition(question, event):
     if event.action in ['phase1-approve-question', 'phase2-approve-question']:
 
@@ -125,7 +122,6 @@ def question_transition(question, event):
 #                api.content.transition(obj=parent, transition='phase2-draft-conclusions')
 
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def observation_transition(observation, event):
     if event.action == 'phase1-reopen':
         with api.env.adopt_roles(roles=['Manager']):

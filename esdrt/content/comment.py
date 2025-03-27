@@ -155,9 +155,8 @@ class EditForm(dexterity.EditForm):
             self.actions[k].addClass('standardButton')
 
 
-@grok.subscribe(IComment, IObjectAddedEvent)
-def add_question(context, event):
-    """ When adding a question, go directly to
+def add_comment(context, event):
+    """ When adding a comment, go directly to
         'open' status on the observation
     """
     question = aq_parent(context)

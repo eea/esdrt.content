@@ -284,7 +284,6 @@ class AddForm(dexterity.AddForm):
         comment.text = text
 
 
-@grok.subscribe(IQuestion, IObjectAddedEvent)
 def add_question(context, event):
     """ When adding a question, go directly to
         'open' status on the observation
@@ -298,8 +297,7 @@ def add_question(context, event):
     observation.reindexObject()
 
 
-@grok.subscribe(IQuestion, IObjectModifiedEvent)
-def add_question(context, event):
+def modify_question(context, event):
     """ When adding a question, go directly to
         'open' status on the observation
     """

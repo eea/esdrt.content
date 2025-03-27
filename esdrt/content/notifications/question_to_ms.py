@@ -32,7 +32,6 @@ def make_sure_observation_is_pending(observation):
         observation.reindexObjectSecurity()
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_ms(context, event):
     """
     To:     MSAuthority
@@ -53,7 +52,6 @@ def notification_ms(context, event):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_rev_ph1(context, event):
     """
     To:     ReviewerPhase1
@@ -73,7 +71,6 @@ def notification_rev_ph1(context, event):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_rev_ph2(context, event):
     """
     To:     ReviewerPhase2
