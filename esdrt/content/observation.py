@@ -1,3 +1,6 @@
+from Products.Five import BrowserView
+from zope.interface import implementer
+
 try:
     from io import StringIO
 except ImportError:
@@ -18,11 +21,15 @@ from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Pt
 from plone.memoize.ram import cache
-from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.app.discussion.interfaces import IConversation
+
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
+from plone.dexterity.browser.view import DefaultView
+
 from plone.directives import dexterity
 from plone.directives import form
 from plone.directives.form import default_value
@@ -315,8 +322,8 @@ def add_observation(context, event):
             api.content.transition(obj=observation, transition="phase1-approve")
 
 
+@implementer(IObservation)
 class Observation(dexterity.Container):
-    grok.implements(IObservation)
 
     # Add your class methods and properties here
 
@@ -1181,18 +1188,6 @@ class Observation(dexterity.Container):
         return status in ["phase1-conclusions", "phase2-conclusions"]
 
 
-# View class
-# The view will automatically use a similarly named template in
-# templates called observationview.pt .
-# Template filenames should be all lower case.
-# The view will render when you request a content object with this
-# interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
-# This will make this view the default view for your content-type
-
-grok.templatedir("templates")
-
-
 def exclude_terms_from_widget_vocabulary(widget, to_exclude):
     if not to_exclude:
         return
@@ -1210,10 +1205,7 @@ def exclude_terms_from_widget_vocabulary(widget, to_exclude):
     widget.update()
 
 
-class AddForm(dexterity.AddForm):
-    grok.name("esdrt.content.observation")
-    grok.context(IObservation)
-    grok.require("esdrt.content.AddObservation")
+class AddForm(add.DefaultAddForm):
 
     label = "Observation"
     description = " "
@@ -1263,8 +1255,12 @@ class AddForm(dexterity.AddForm):
             self.actions[k].addClass("standardButton")
 
 
-class ObservationMixin(grok.View):
-    grok.baseclass()
+class AddView(add.DefaultAddView):
+    form_instance: AddForm
+    form = AddForm
+
+
+class ObservationMixin(DefaultView):
 
     def is_key_category_enabled(self):
         return aq_parent(self.context).enable_key_category
@@ -1696,9 +1692,6 @@ class ObservationMixin(grok.View):
 
 
 class ObservationView(ObservationMixin):
-    grok.context(IObservation)
-    grok.require("zope2.View")
-    grok.name("view")
 
     def get_current_counterparters(self):
         """ Return list of current counterparters,
@@ -1720,16 +1713,7 @@ class ObservationView(ObservationMixin):
         )
 
 
-class DiffedView(ObservationView):
-    grok.name("diffedview")
-    grok.context(IObservation)
-    grok.require("zope2.View")
-
-
 class ExportAsDocView(ObservationMixin):
-    grok.name("export_as_docx")
-    grok.context(IObservation)
-    grok.require("esdrt.content.ExportAnObservation")
 
     def strip_special_chars(self, s):
         """ return s without special chars
@@ -1997,13 +1981,10 @@ class AddQuestionForm(Form):
             self.actions[k].addClass("defaultWFButton")
 
 
-class ModificationForm(dexterity.EditForm):
-    grok.name("modifications")
-    grok.context(IObservation)
-    grok.require("cmf.ModifyPortalContent")
+class EditForm(edit.DefaultEditForm):
 
     def updateFields(self):
-        super(ModificationForm, self).updateFields()
+        super(EditForm, self).updateFields()
 
         user = api.user.get_current()
         roles = api.user.get_roles(username=user.getId(), obj=self.context)
@@ -2043,7 +2024,7 @@ class ModificationForm(dexterity.EditForm):
             self.fields["gas"].widgetFactory = CheckBoxFieldWidget
 
     def updateWidgets(self):
-        super(ModificationForm, self).updateWidgets()
+        super(EditForm, self).updateWidgets()
         if "review_year" in self.widgets and not Observation.is_secretariat():
             self.widgets["review_year"].readonly = "readonly"
 
@@ -2064,13 +2045,9 @@ class ModificationForm(dexterity.EditForm):
                     widget.mode = interfaces.HIDDEN_MODE
 
     def updateActions(self):
-        super(ModificationForm, self).updateActions()
+        super(EditForm, self).updateActions()
         for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
-
-
-class EditForm(ModificationForm):
-    grok.name("edit")
 
 
 class AddAnswerForm(Form):
@@ -2121,10 +2098,7 @@ class AddAnswerForm(Form):
             self.actions[k].addClass("standardButton")
 
 
-class AddAnswerAndRequestComments(grok.View):
-    grok.context(IObservation)
-    grok.name("add-answer-and-request-comments")
-    grok.require("zope2.View")
+class AddAnswerAndRequestComments(BrowserView):
 
     def render(self):
         observation = aq_inner(self.context)
@@ -2228,10 +2202,7 @@ class AddConclusionForm(Form):
             self.actions[k].addClass("standardButton")
 
 
-class EditConclusionAndCloseComments(grok.View):
-    grok.name("edit-conclusions-and-close-comments")
-    grok.context(IObservation)
-    grok.require("zope2.View")
+class EditConclusionAndCloseComments(BrowserView):
 
     def update(self):
         # Some checks:
@@ -2252,10 +2223,7 @@ class EditConclusionAndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditConclusionP2AndCloseComments(grok.View):
-    grok.name("edit-conclusions-and-close-comments-phase2")
-    grok.context(IObservation)
-    grok.require("zope2.View")
+class EditConclusionP2AndCloseComments(BrowserView):
 
     def update(self):
         # Some checks:
@@ -2276,10 +2244,7 @@ class EditConclusionP2AndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditHighlightsForm(dexterity.EditForm):
-    grok.name("edit-highlights")
-    grok.context(IObservation)
-    grok.require("cmf.ModifyPortalContent")
+class EditHighlightsForm(edit.DefaultEditForm):
 
     def updateFields(self):
         super(EditHighlightsForm, self).updateFields()
@@ -2290,10 +2255,7 @@ class EditHighlightsForm(dexterity.EditForm):
         ]
 
 
-class AddConclusions(grok.View):
-    grok.context(IObservation)
-    grok.name("add-conclusions")
-    grok.require("zope2.View")
+class AddConclusions(BrowserView):
 
     def render(self):
         context = aq_inner(self.context)

@@ -1,0 +1,96 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  i18n_domain="esdrt.content">
+
+  <!--Question forms -->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="esdrt.content.question.AddView"
+    name="esdrt.content.question"
+    />
+
+  <class class=".question.AddView">
+    <require
+      permission="esdrt.content.AddQuestion"
+      interface="zope.publisher.interfaces.browser.IBrowserPage"
+      />
+  </class>
+
+  <!--  Observation forms  -->
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="esdrt.content.observation.AddView"
+    name="esdrt.content.observation"
+    />
+
+  <class class=".observation.AddView">
+    <require
+      permission="esdrt.content.AddObservation"
+      interface="zope.publisher.interfaces.browser.IBrowserPage"
+      />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="esdrt.content.observation.IObservation"
+    class="esdrt.content.observation.EditForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <!-- Conclusion forms-->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="esdrt.content.conclusion.AddView"
+    name="esdrt.content.conclusion"
+    />
+
+  <class class=".conclusions.AddView">
+    <require
+      permission="esdrt.content.AddConclusion"
+      interface="zope.publisher.interfaces.browser.IBrowserPage"
+      />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="esdrt.content.conclusion.IConclusion"
+    class=".conclusion.EditForm"
+    permission="cmf.ModifyPortalContent"
+  />
+
+  <!-- Conclusion phase 2 forms-->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="esdrt.content.conclusionsphase2.AddView"
+    name="esdrt.content.conclusionsphase2"
+    />
+
+  <class class=".conclusionsphase2.AddView">
+    <require
+      permission="esdrt.content.AddConclusionsPhase2"
+      interface="zope.publisher.interfaces.browser.IBrowserPage"
+      />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="esdrt.content.conclusionsphase2.IConclusionsPhase2"
+    class=".conclusionsphase2.EditForm"
+    permission="cmf.ModifyPortalContent"
+  />
+
+</configure>

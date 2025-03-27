@@ -4,8 +4,13 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
+from Products.Five import BrowserView
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
+from plone.dexterity.content import Container
+from zope.interface import implementer
+
 from esdrt.content import _
-from five import grok
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
@@ -68,13 +73,8 @@ def hidden(menuitem):
     return False
 
 
-# Custom content-type class; objects created for this content type will
-# be instances of this class. Use this class to add content-type specific
-# methods and properties. Put methods that are mainly useful for rendering
-# in separate view classes.
-class Conclusion(dexterity.Container):
-    grok.implements(IConclusion)
-    # Add your class methods and properties here
+@implementer(IConclusion)
+class Conclusion(Container):
 
     def reason_value(self):
         return self._vocabulary_value('esdrt.content.conclusionreasons',
@@ -127,21 +127,8 @@ class Conclusion(dexterity.Container):
         mtool = api.portal.get_tool('portal_membership')
         return [item for item in items if mtool.checkPermission('View', item)]
 
-# View class
-# The view will automatically use a similarly named template in
-# templates called conclusionview.pt .
-# Template filenames should be all lower case.
-# The view will render when you request a content object with this
-# interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
-# This will make this view the default view for your content-type
-grok.templatedir('templates')
 
-
-class ConclusionView(grok.View):
-    grok.context(IConclusion)
-    grok.require('zope2.View')
-    grok.name('view')
+class ConclusionView(BrowserView):
 
     def render(self):
         context = aq_inner(self.context)
@@ -151,10 +138,7 @@ class ConclusionView(grok.View):
         return self.request.response.redirect(url)
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('esdrt.content.conclusion')
-    grok.context(IConclusion)
-    grok.require('esdrt.content.AddConclusion')
+class AddForm(add.DefaultAddForm):
 
     label = 'Conclusions Step 1'
     description = ''
@@ -246,10 +230,12 @@ class AddForm(dexterity.AddForm):
             self.actions[k].addClass('standardButton')
 
 
-class EditForm(dexterity.EditForm):
-    grok.name('edit')
-    grok.context(IConclusion)
-    grok.require('cmf.ModifyPortalContent')
+class AddView(add.DefaultAddView):
+    form_instance: AddForm
+    form = AddForm
+
+
+class EditForm(edit.DefaultEditForm):
 
     label = 'Conclusions Step 1'
     description = ''

@@ -928,7 +928,7 @@
         </a>
         <tal:block condition="view/can_edit">
           <a href=""
-              tal:attributes="href string:${here/absolute_url}/modifications"
+              tal:attributes="href string:${here/absolute_url}/edit"
               class="standardButton">
               Edit observation
           </a>

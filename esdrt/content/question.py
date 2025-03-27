@@ -3,12 +3,15 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
+from Products.Five import BrowserView
+from zope.interface import implementer
+
 from esdrt.content import _
 from esdrt.content.comment import IComment
-from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.browser import add
 from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
@@ -22,8 +25,6 @@ from zope import schema
 from zope.component import createObject
 from zope.component import getUtility
 from zope.interface import Invalid
-from zope.lifecycleevent import IObjectAddedEvent
-from zope.lifecycleevent import IObjectModifiedEvent
 
 
 class IQuestion(form.Schema, IImageScaleTraversable):
@@ -89,9 +90,8 @@ def create_question(context):
 
     return aq_base(content)
 
-
+@implementer(IQuestion)
 class Question(dexterity.Container):
-    grok.implements(IQuestion)    # Add your class methods and properties here
 
     def get_state_api(self):
         return api.content.get_state(self)
@@ -217,32 +217,19 @@ class Question(dexterity.Container):
         return sm.checkPermission('esdrt.content: View Answer Discussion', self)
 
 # View class
-# The view will automatically use a similarly named template in
-# templates called questionview.pt .
-# Template filenames should be all lower case.
 # The view will render when you request a content object with this
 # interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
 # This will make this view the default view for your content-type
 
-grok.templatedir('templates')
 
-
-class QuestionView(grok.View):
-    grok.context(IQuestion)
-    grok.require('zope2.View')
-    grok.name('view')
-
+class QuestionView(BrowserView):
     def render(self):
         context = aq_inner(self.context)
         parent = aq_parent(context)
         return self.request.response.redirect(parent.absolute_url())
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('esdrt.content.question')
-    grok.context(IQuestion)
-    grok.require('esdrt.content.AddQuestion')
+class AddForm(add.DefaultAddForm):
 
     def updateFields(self):
         super(AddForm, self).updateFields()
@@ -253,35 +240,33 @@ class AddForm(dexterity.AddForm):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
 
-    def create(self, data={}):
-        fti = getUtility(IDexterityFTI, name=self.portal_type)
-        container = aq_inner(self.context)
-        content = createObject(fti.factory)
-        if hasattr(content, '_setPortalTypeName'):
-            content._setPortalTypeName(fti.getId())
+    def create(self, data=None):
+        return create_question(self.context)
 
-        # Acquisition wrap temporarily to satisfy things like vocabularies
-        # depending on tools
-        if IAcquirer.providedBy(content):
-            content = content.__of__(container)
-        context = self.context
-        ids = [id for id in list(context.keys()) if id.startswith('question-')]
-        id = len(ids) + 1
-        content.title = 'Question %d' % id
+    def add(self, obj):
+        super(AddForm, self).add(obj)
+        item = self.context.get(obj.getId())
 
-        return aq_base(content)
+        data, errors = self.extractData()
 
-    def add(self, object):
-        super(AddForm, self).add(object)
-        item = self.context.get(object.getId())
-        text = self.request.form.get('form.widgets.text', '')
-        id = str(int(time()))
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        _id = str(int(time()))
         item_id = item.invokeFactory(
-            type_name='Comment',
-            id=id,
+            type_name="Comment",
+            id=_id,
         )
         comment = item.get(item_id)
         comment.text = text
+
+
+class AddView(add.DefaultAddView):
+    form_instance: AddForm
+    form = AddForm
 
 
 def add_question(context, event):
@@ -316,14 +301,22 @@ class AddCommentForm(Form):
     @button.buttonAndHandler(_('Add question'))
     def create_question(self, action):
         context = aq_inner(self.context)
-        text = self.request.form.get('form.widgets.text', '')
-        if not text.strip():
-            raise ActionExecutionError(Invalid("Question text is empty"))
 
-        id = str(int(time()))
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
+            raise ActionExecutionError(Invalid(u"Question text is empty"))
+
+        _id = str(int(time()))
         item_id = context.invokeFactory(
-            type_name='Comment',
-            id=id,
+            type_name="Comment",
+            id=_id,
         )
         comment = context.get(item_id)
         comment.text = text
@@ -351,14 +344,22 @@ class AddAnswerForm(Form):
     @button.buttonAndHandler(_('Add answer'))
     def create_question(self, action):
         context = aq_inner(self.context)
-        text = self.request.form.get('form.widgets.text', '')
-        if not text.strip():
-            raise ActionExecutionError(Invalid("Answer text is empty"))
 
-        id = str(int(time()))
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
+            raise ActionExecutionError(Invalid(u"Answer text is empty"))
+
+        _id = str(int(time()))
         item_id = context.invokeFactory(
-            type_name='CommentAnswer',
-            id=id,
+            type_name="CommentAnswer",
+            id=_id,
         )
         comment = context.get(item_id)
         comment.text = text
@@ -375,11 +376,7 @@ class AddAnswerForm(Form):
             self.actions[k].addClass('standardButton')
 
 
-class EditAndCloseComments(grok.View):
-    grok.name('edit-and-close-comments')
-    grok.context(IQuestion)
-    grok.require('zope2.View')
-
+class EditAndCloseComments(BrowserView):
     def update(self):
         # Some checks:
         waction = self.request.get('workflow_action')
@@ -411,10 +408,7 @@ class EditAndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditAnswerAndCloseComments(grok.View):
-    grok.name('edit-answer-and-close-comments')
-    grok.context(IQuestion)
-    grok.require('zope2.View')
+class EditAnswerAndCloseComments(BrowserView):
 
     def update(self):
         # Some checks:
@@ -448,10 +442,7 @@ class EditAnswerAndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class AddFollowUpQuestion(grok.View):
-    grok.context(IQuestion)
-    grok.name('add-follow-up-question')
-    grok.require('zope2.View')
+class AddFollowUpQuestion(BrowserView):
 
     def render(self):
         if api.content.get_state(self.context).startswith('phase1-'):
@@ -469,10 +460,7 @@ class AddFollowUpQuestion(grok.View):
         return self.request.response.redirect(url)
 
 
-class AddConclusions(grok.View):
-    grok.context(IQuestion)
-    grok.name('add-conclusions')
-    grok.require('zope2.View')
+class AddConclusions(BrowserView):
 
     def render(self):
         parent = aq_parent(self.context)
@@ -504,10 +492,7 @@ class AddConclusions(grok.View):
         return self.request.response.redirect(url)
 
 
-class DeleteLastComment(grok.View):
-    grok.context(IQuestion)
-    grok.name('delete-last-comment')
-    grok.require('zope2.View')
+class DeleteLastComment(BrowserView):
 
     def render(self):
         catalog = api.portal.get_tool('portal_catalog')
@@ -535,10 +520,7 @@ class DeleteLastComment(grok.View):
                 return self.request.response.redirect(url)
 
 
-class DeleteLastAnswer(grok.View):
-    grok.context(IQuestion)
-    grok.name('delete-last-answer')
-    grok.require('zope2.View')
+class DeleteLastAnswer(BrowserView):
 
     def render(self):
         question = aq_inner(self.context)

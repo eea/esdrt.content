@@ -3,19 +3,22 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
+from Products.Five import BrowserView
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield import DictRow
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
+from plone.dexterity.content import Container
+from zope.interface import implementer
+
 from esdrt.content import _
 from esdrt.content.observation import hidden
-from five import grok
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
 from time import time
-from types import IntType
 from types import ListType
 from types import TupleType
 from types import FloatType
@@ -99,12 +102,8 @@ def check_ghg_estimations(value):
                 raise Invalid('Estimation values must be positive numbers')
 
 
-# Custom content-type class; objects created for this content type will
-# be instances of this class. Use this class to add content-type specific
-# methods and properties. Put methods that are mainly useful for rendering
-# in separate view classes.
-class ConclusionsPhase2(dexterity.Container):
-    grok.implements(IConclusionsPhase2)
+@implementer(IConclusionsPhase2)
+class ConclusionsPhase2(Container):
 
     def reason_value(self):
         return self._vocabulary_value(
@@ -157,10 +156,7 @@ class ConclusionsPhase2(dexterity.Container):
         return [item for item in items if mtool.checkPermission('View', item)]
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('esdrt.content.conclusionsphase2')
-    grok.context(IConclusionsPhase2)
-    grok.require('esdrt.content.AddConclusionsPhase2')
+class AddForm(add.DefaultAddForm):
 
     label = 'Conclusions Step 2'
     description = ''
@@ -211,10 +207,12 @@ class AddForm(dexterity.AddForm):
             self.actions[k].addClass('standardButton')
 
 
-class ConclusionsPhase2View(grok.View):
-    grok.context(IConclusionsPhase2)
-    grok.require('zope2.View')
-    grok.name('view')
+class AddView(add.DefaultAddView):
+    form_instance: AddForm
+    form = AddForm
+
+
+class ConclusionsPhase2View(BrowserView):
 
     def render(self):
         context = aq_inner(self.context)
@@ -224,10 +222,7 @@ class ConclusionsPhase2View(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditForm(dexterity.EditForm):
-    grok.name('edit')
-    grok.context(IConclusionsPhase2)
-    grok.require('cmf.ModifyPortalContent')
+class EditForm(edit.DefaultEditForm):
 
     label = 'Conclusions Step 2'
     description = ''
