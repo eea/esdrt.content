@@ -1,7 +1,7 @@
 from itertools import chain
 
-from zope.component import getUtility
-from esdrt.content.utilities.interfaces import ILDAPQuery
+from esdrt.content.setuphandlers import LDAP_PLUGIN_ID
+from esdrt.content.utilities import ldap_utils
 from esdrt.content.utilities.ldap_utils import format_or
 
 
@@ -22,8 +22,8 @@ def format_groups(q_attr, ldap_result):
 
 
 def query_group_members(portal, query):
-    ldap_plugin = portal['acl_users']['ldap-plugin']['acl_users']
-    with getUtility(ILDAPQuery)(ldap_plugin, paged=True) as q_ldap:
+    acl = portal['acl_users'][LDAP_PLUGIN_ID]
+    with ldap_utils.get_query_utility()(acl, paged=True) as q_ldap:
         res_groups = format_groups(
             'uniqueMember',
             q_ldap.query_groups(query, ('uniqueMember', ))

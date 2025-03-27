@@ -1,9 +1,14 @@
 import string
+from typing import Optional
+from typing import cast
 
+from Acquisition import aq_parent
+from OFS.Traversable import Traversable
 from Products.CMFCore.interfaces._content import IContentish
 from zope.globalrequest import getRequest
 
 import plone.api as api
+from zope.interface.interface import Specification
 
 
 def get_userid_name(userid):
@@ -70,3 +75,14 @@ def exclude_phase2_actions(observation, menu_items):
             not in exclude_transitions
         ]
     return menu_items
+
+
+def find_parent_with_interface(
+    interface: Specification, context: Traversable
+) -> Optional[Traversable]:
+    if interface.providedBy(context):
+        return context
+    elif parent := cast(Optional[Traversable], aq_parent(context)):
+        return find_parent_with_interface(interface, parent)
+    else:
+        return None

@@ -5,7 +5,6 @@ from esdrt.content.comment import IComment
 from esdrt.content.commentanswer import ICommentAnswer
 from esdrt.content.observation import IObservation
 from esdrt.content.question import IQuestion
-from esdrt.content.browser.statechange import revoke_roles
 from five import grok
 from plone import api
 from Products.CMFCore.interfaces import IActionSucceededEvent
@@ -104,11 +103,10 @@ def question_transition(question, event):
             local_roles = observation.get_local_roles()
             for uid, roles in local_roles:
                 if 'CounterPart' in roles:
-                    revoke_roles(
+                    api.user.revoke_roles(
                         username=uid,
                         obj=observation,
                         roles=['CounterPart'],
-                        inherit=False,
                     )
 
     observation = aq_parent(question)

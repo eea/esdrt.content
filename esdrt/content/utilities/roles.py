@@ -4,9 +4,8 @@ from itertools import product
 
 
 from zope.component.hooks import getSite
-from zope.component import getUtility
 
-from esdrt.content.utilities.interfaces import ILDAPQuery
+from esdrt.content.setuphandlers import LDAP_PLUGIN_ID
 
 from esdrt.content.utilities import ldap_utils
 
@@ -48,9 +47,9 @@ f_start_msa = partial(f_start, LDAP_MSA)
 
 def setup_reviewfolder_roles(folder):
     site = getSite()
-    acl = site['acl_users']['ldap-plugin']['acl_users']
+    acl = site["acl_users"][LDAP_PLUGIN_ID]
 
-    with getUtility(ILDAPQuery)(acl, paged=True) as q_ldap:
+    with ldap_utils.get_query_utility()(acl, paged=True) as q_ldap:
         q_groups = q_ldap.query_groups(QUERY_LDAP_ROLES, ('cn',))
 
     groups = [r[1]['cn'][0] for r in q_groups]

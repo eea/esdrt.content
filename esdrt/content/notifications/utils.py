@@ -1,3 +1,5 @@
+from esdrt.content.constants import LDAP_BASE
+from esdrt.content.setuphandlers import LDAP_PLUGIN_ID
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.reviewfolder import IReviewFolder
 from Acquisition import aq_inner
@@ -7,6 +9,8 @@ from plone import api
 from Products.CMFPlone.utils import safe_unicode
 from Products.statusmessages.interfaces import IStatusMessage
 from zope.globalrequest import getRequest
+
+from esdrt.content.utilities import ldap_utils
 
 
 def notify(observation, template, subject, role, notification_name):
@@ -115,3 +119,19 @@ def exclude_user_from_notification(observation, user, role, notification):
         owner_info = observation.owner_info()
         return user_id != owner_info["id"] if owner_info and owner_info[
             "explicit"] else False
+
+
+def get_ldap_group_member_ids(context, groupname):
+    acl = api.portal.get()["acl_users"].get(LDAP_PLUGIN_ID)
+
+    if acl and groupname.startswith(LDAP_BASE):
+        with ldap_utils.get_query_utility()(acl) as q_ldap:
+            ldap_group = q_ldap.query_groups(
+                f"(cn={groupname})", ("uniqueMember",)
+            )
+            ldap_members = [
+                x.decode() for x in ldap_group[0][1]["uniqueMember"]
+            ]
+            return [m.split(",")[0].split("=")[1] for m in ldap_members]
+    else:
+        raise ValueError

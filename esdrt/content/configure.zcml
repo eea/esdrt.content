@@ -87,12 +87,4 @@
     />
   </class>
 
-  <!-- Crons view -->
-  <browser:page
-      name="cron_update_vocabularies"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class=".crons.UpdateLDAPUsersVocabulariesCron"
-      permission="zope.Public"
-  />
-
 </configure>

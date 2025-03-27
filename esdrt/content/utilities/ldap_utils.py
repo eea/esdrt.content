@@ -5,6 +5,10 @@ import ldap
 from ldap.controls import SimplePagedResultsControl
 from functools import partial
 
+from zope.component import getUtility
+
+from esdrt.content.utilities.interfaces import ILDAPQuery
+
 LOG = logging.getLogger('esdrt.content.ILDAPQuery')
 
 PAGESIZE = 1000
@@ -136,3 +140,11 @@ class LDAPQuery(object):
         self.config = None
         self.paged = False
         self.pagesize = PAGESIZE
+
+
+def get_query_utility() -> LDAPQuery:
+    """Get ILDAPQuery utility.
+
+    Wrapper used for type checking.
+    """
+    return getUtility(ILDAPQuery)

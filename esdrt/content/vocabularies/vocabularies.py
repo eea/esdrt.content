@@ -112,8 +112,12 @@ class Fuel(object):
 class Highlight(object):
 
     def __call__(self, context):
-        pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('highlight')
+        from esdrt.content.reviewfolder import ReviewFolderMixin
+
+        csv_data = get_registry_interface_field_data(
+            IESDRTVocabularies, "highlight"
+        )
+        entries = csv_entries(csv_data)
 
         # In some cases (such as a form group) the context can be a dict or
         # something else that's not a true Plone context.
@@ -121,37 +125,35 @@ class Highlight(object):
         context = request_context(context)
 
         terms = []
-        if voc is not None:
-            from esdrt.content.reviewfolder import ReviewFolderMixin
 
+        # [refs #159093]
+        internal_flags = getattr(context, "internal_highlights", []) or []
+        can_view_internal_flags = (
+            ReviewFolderMixin.can_view_internal_flags()
+        )
+
+        # [refs #159094]
+        excluded_highlights = getattr(
+            context, "excluded_highlights", []) or []
+
+        # [refs #261305 #261306]
+        highlights_access_roles = permissions_to_dict(getattr(context, "highlights_access_roles", "") or "")
+        user_roles = api.user.get_roles(obj=context)
+
+        for key, value in entries:
             # [refs #159093]
-            internal_flags = getattr(context, "internal_highlights", []) or []
-            can_view_internal_flags = (
-                ReviewFolderMixin.can_view_internal_flags()
-            )
+            if key in internal_flags and not can_view_internal_flags:
+                continue
 
             # [refs #159094]
-            excluded_highlights = getattr(
-                context, "excluded_highlights", []) or []
+            if key in excluded_highlights:
+                continue
 
             # [refs #261305 #261306]
-            highlights_access_roles = permissions_to_dict(getattr(context, "highlights_access_roles", "") or "")
-            user_roles = api.user.get_roles(obj=context)
+            if highlights_access_roles.get(key) and not set(highlights_access_roles[key]).intersection(user_roles):
+                continue
 
-            for key, value in voc.getVocabularyLines():
-                # [refs #159093]
-                if key in internal_flags and not can_view_internal_flags:
-                    continue
-
-                # [refs #159094]
-                if key in excluded_highlights:
-                    continue
-
-                # [refs #261305 #261306]
-                if highlights_access_roles.get(key) and not set(highlights_access_roles[key]).intersection(user_roles):
-                    continue
-
-                terms.append(SimpleVocabulary.createTerm(key, key, value))
+            terms.append(SimpleVocabulary.createTerm(key, key, value))
 
         return SimpleVocabulary(terms)
 
