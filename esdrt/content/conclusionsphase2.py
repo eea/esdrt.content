@@ -17,6 +17,7 @@ from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.supermodel import model
+from plone.autoform import directives
 from plone.namedfile.interfaces import IImageScaleTraversable
 from time import time
 from types import ListType
@@ -33,7 +34,6 @@ from zope.interface import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
-from z3c.form import interfaces
 
 
 DEFAULTCONCLUSIONTEXT = """For category x and gases a, b, c for year[s]... the TERT noted that...
@@ -43,6 +43,12 @@ The TERT [disagreed][agreed][party agreed] with the [explanation] [revised estim
 The TERT recommends that... [[the Member State] include the revised estimate in its next submission.]
 """
 
+def check_ghg_estimations(value):
+    for item in value:
+        for val in list(item.values()):
+            if type(val) is FloatType and val < 0:
+                raise Invalid('Estimation values must be positive numbers')
+    return True
 
 class ITableRowSchema(model.Schema):
 
@@ -80,7 +86,7 @@ class IConclusionsPhase2(model.Schema, IImageScaleTraversable):
         )
 
 
-    form.widget(ghg_estimations=DataGridFieldFactory)
+    directives.widget("ghg_estimations", DataGridFieldFactory)
     ghg_estimations = schema.List(
         title=_('GHG estimates [Gg CO2 eq.]'),
         value_type=DictRow(title="tablerow", schema=ITableRowSchema),
@@ -91,15 +97,8 @@ class IConclusionsPhase2(model.Schema, IImageScaleTraversable):
             {'line_title': 'Corrected estimate', 'co2': 0, 'ch4': 0, 'n2o': 0, 'nox': 0, 'co': 0, 'nmvoc': 0, 'so2': 0},
 
         ],
+        constraint=check_ghg_estimations,
     )
-
-
-@form.validator(field=IConclusionsPhase2['ghg_estimations'])
-def check_ghg_estimations(value):
-    for item in value:
-        for val in list(item.values()):
-            if type(val) is FloatType and val < 0:
-                raise Invalid('Estimation values must be positive numbers')
 
 
 @implementer(IConclusionsPhase2)

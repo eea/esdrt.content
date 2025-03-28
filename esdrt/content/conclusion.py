@@ -14,7 +14,6 @@ from esdrt.content import _
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import dexterity
 from plone.supermodel import model
 from plone.namedfile.interfaces import IImageScaleTraversable
 from time import time

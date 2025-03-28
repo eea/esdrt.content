@@ -30,20 +30,19 @@ from zope.schema.vocabulary import SimpleVocabulary
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 
-import plone.directives
 from plone import api
 from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
 from plone.dexterity.browser import add
 from plone.dexterity.content import Container
-from plone.memoize import ram
+from plone.autoform import directives
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.layout import wrap_form
 from plone.supermodel import model
+from plone.supermodel.directives import fieldset
 
 import Missing
 import tablib
@@ -270,7 +269,7 @@ def redirect_for_author(context, request):
             return request.response.redirect(new_url)
 
 
-class IReviewFolder(plone.directives.model.Schema, IImageScaleTraversable):
+class IReviewFolder(model.Schema, IImageScaleTraversable):
     """
     Folder to have all observations together
     """
@@ -279,13 +278,13 @@ class IReviewFolder(plone.directives.model.Schema, IImageScaleTraversable):
         title="Tableau statistics embed code", required=False,
     )
 
-    plone.directives.form.widget(tableau_statistics_roles=CheckBoxFieldWidget)
+    directives.widget("tableau_statistics_roles", CheckBoxFieldWidget)
     tableau_statistics_roles = List(
         title="Roles that can access the statistics",
         value_type=Choice(vocabulary="esdrt.content.roles"),
     )
 
-    model.fieldset(
+    fieldset(
         "year_options",
         label="Year options",
         fields=[

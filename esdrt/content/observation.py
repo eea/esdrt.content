@@ -1,4 +1,5 @@
 from Products.Five import BrowserView
+from plone.dexterity.content import Container
 from zope.interface import implementer
 
 try:
@@ -30,9 +31,9 @@ from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
 
-from plone.directives import dexterity
 from plone.supermodel import model
-from plone.directives.form import default_value
+from plone.autoform import directives
+
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.interfaces import IWrappedForm
 from z3c.form import button
@@ -47,8 +48,6 @@ from zope.component import getUtility
 from zope.i18n import translate
 from zope.interface import Invalid
 from zope.interface import alsoProvides
-from zope.lifecycleevent.interfaces import IObjectAddedEvent
-from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
 
 from esdrt.content import _
@@ -87,138 +86,22 @@ def _user_name(fun, self, userid):
     return (userid, time() // 86400)
 
 
-# Interface class; used to define content-type schema.
-class IObservation(model.Schema, IImageScaleTraversable):
-    """
-    New review observation
-    """
-
-    text = schema.Text(
-        title="Observation title by expert",
-        required=True,
-        description="Provide a title for the issue identified. "
-                    "Keep it short, you cannot change this title once you have sent it "
-                    "to the QE. MS can only see the question once it has been approved "
-                    "and sent by the QE. The question to the MS should be asked in the "
-                    "Q&A tab, not here.",
-    )
-
-    country = schema.Choice(
-        title="Country",
-        vocabulary="esdrt.content.eea_member_states",
-        required=True,
-    )
-
-    crf_code = schema.Choice(
-        title="CRF category codes",
-        vocabulary="esdrt.content.crf_code",
-        required=True,
-    )
-
-    year = schema.TextLine(
-        title="Inventory year",
-        description="Inventory year is the year, a range or a list "
-                    "of years or a (e.g. '2012', '2009-2012', "
-                    "'2009, 2012, 2013') when the emissions had "
-                    "occured for which an issue was observed in the review.",
-        required=True,
-    )
-
-    form.widget(gas=CheckBoxFieldWidget)
-    gas = schema.List(
-        title="Gas",
-        value_type=schema.Choice(vocabulary="esdrt.content.gas", ),
-        required=True,
-    )
-
-    review_year = schema.Int(
-        title="Review year",
-        description="Review year is the year in which the inventory was "
-                    "submitted and the review was carried out",
-        required=True,
-    )
-
-    fuel = schema.Choice(
-        title="Fuel", vocabulary="esdrt.content.fuel", required=False,
-    )
-
-    # ghg_source_category = schema.Choice(
-    #     title=_(u"CRF category group"),
-    #     vocabulary='esdrt.content.ghg_source_category',
-    #     required=True,
-    # )
-
-    # ghg_source_sectors = schema.Choice(
-    #     title=_(u"CRF Sector"),
-    #     vocabulary='esdrt.content.ghg_source_sectors',
-    #     required=True,
-    # )
-
-    ms_key_catagory = schema.Bool(
-        title="MS key category",
-        required=False,
-        default=False,
-    )
-
-    eu_key_catagory = schema.Bool(
-        title="EU key category",
-        required=False,
-        default=False,
-    )
-
-    form.widget(parameter=CheckBoxFieldWidget)
-    parameter = schema.List(
-        title="Parameter",
-        value_type=schema.Choice(
-            vocabulary="esdrt.content.parameter", required=True,
-        ),
-        required=True,
-    )
-
-    form.widget(highlight=CheckBoxFieldWidget)
-    highlight = schema.List(
-        title="Description flags",
-        description="Description flags highlight important information that "
-                    "is closely related to the main purpose of 'initial checks'",
-        value_type=schema.Choice(vocabulary="esdrt.content.highlight", ),
-        required=False,
-        default=[],
-    )
-
-    form.write_permission(closing_comments="cmf.ManagePortal")
-    closing_comments = schema.Text(
-        title="Finish request comments", required=False,
-    )
-
-    form.write_permission(closing_deny_comments="cmf.ManagePortal")
-    closing_deny_comments = schema.Text(
-        title="Finish deny comments", required=False,
-    )
-
-    form.write_permission(closing_comments_phase2="cmf.ManagePortal")
-    closing_comments_phase2 = schema.Text(
-        title="Finish request comments for phase 2", required=False,
-    )
-
-    form.write_permission(closing_deny_comments_phase2="cmf.ManagePortal")
-    closing_deny_comments_phase2 = schema.Text(
-        title="Finish deny comments for phase 2", required=False,
-    )
+def default_year():
+    return datetime.datetime.now().year
 
 
-@form.validator(field=IObservation["parameter"])
 def check_parameter(value):
     if len(value) == 0:
         raise Invalid("You need to select at least one parameter")
+    return True
 
 
-@form.validator(field=IObservation["gas"])
 def check_gas(value):
     if len(value) == 0:
         raise Invalid("You need to select at least one gas")
+    return True
 
 
-@form.validator(field=IObservation["crf_code"])
 def check_crf_code(value):
     """ Check if the user is in one of the group of users
         allowed to add this category CRF Code observations
@@ -238,8 +121,9 @@ def check_crf_code(value):
             "You are not allowed to add observations for this sector category"
         )
 
+    return valid
 
-@form.validator(field=IObservation["country"])
+
 def check_country(value):
     user = api.user.get_current()
     groups = user.getGroups()
@@ -259,8 +143,9 @@ def check_country(value):
             "You are not allowed to add observations for this country"
         )
 
+    return valid
 
-@form.validator(field=IObservation["year"])
+
 def inventory_year(value):
     """
     Inventory year can be a given year (2014), a range of years (2012-2014)
@@ -293,10 +178,132 @@ def inventory_year(value):
     if not valid:
         raise Invalid("Inventory year format is not correct. ")
 
+    return True
 
-@default_value(field=IObservation["review_year"])
-def default_year(data):
-    return datetime.datetime.now().year
+
+# Interface class; used to define content-type schema.
+class IObservation(model.Schema, IImageScaleTraversable):
+    """
+    New review observation
+    """
+
+    text = schema.Text(
+        title="Observation title by expert",
+        required=True,
+        description="Provide a title for the issue identified. "
+                    "Keep it short, you cannot change this title once you have sent it "
+                    "to the QE. MS can only see the question once it has been approved "
+                    "and sent by the QE. The question to the MS should be asked in the "
+                    "Q&A tab, not here.",
+    )
+
+    country = schema.Choice(
+        title="Country",
+        vocabulary="esdrt.content.eea_member_states",
+        constraint=check_country,
+        required=True,
+    )
+
+    crf_code = schema.Choice(
+        title="CRF category codes",
+        vocabulary="esdrt.content.crf_code",
+        constraint=check_crf_code,
+        required=True,
+    )
+
+    year = schema.TextLine(
+        title="Inventory year",
+        description="Inventory year is the year, a range or a list "
+                    "of years or a (e.g. '2012', '2009-2012', "
+                    "'2009, 2012, 2013') when the emissions had "
+                    "occured for which an issue was observed in the review.",
+        constraint=inventory_year,
+        required=True,
+    )
+
+    directives.widget("gas", CheckBoxFieldWidget)
+    gas = schema.List(
+        title="Gas",
+        value_type=schema.Choice(vocabulary="esdrt.content.gas", ),
+        constraint=check_gas,
+        required=True,
+    )
+
+    review_year = schema.Int(
+        title="Review year",
+        description="Review year is the year in which the inventory was "
+                    "submitted and the review was carried out",
+        defaultFactory=default_year,
+        required=True,
+    )
+
+    fuel = schema.Choice(
+        title="Fuel", vocabulary="esdrt.content.fuel", required=False,
+    )
+
+    # ghg_source_category = schema.Choice(
+    #     title=_(u"CRF category group"),
+    #     vocabulary='esdrt.content.ghg_source_category',
+    #     required=True,
+    # )
+
+    # ghg_source_sectors = schema.Choice(
+    #     title=_(u"CRF Sector"),
+    #     vocabulary='esdrt.content.ghg_source_sectors',
+    #     required=True,
+    # )
+
+    ms_key_catagory = schema.Bool(
+        title="MS key category",
+        required=False,
+        default=False,
+    )
+
+    eu_key_catagory = schema.Bool(
+        title="EU key category",
+        required=False,
+        default=False,
+    )
+
+    directives.widget("parameter", CheckBoxFieldWidget)
+    parameter = schema.List(
+        title="Parameter",
+        value_type=schema.Choice(
+            vocabulary="esdrt.content.parameter", required=True,
+        ),
+        constraint=check_parameter,
+        required=True,
+    )
+
+    directives.widget("highlight", CheckBoxFieldWidget)
+    highlight = schema.List(
+        title="Description flags",
+        description="Description flags highlight important information that "
+                    "is closely related to the main purpose of 'initial checks'",
+        value_type=schema.Choice(vocabulary="esdrt.content.highlight", ),
+        required=False,
+        default=[],
+    )
+
+    directives.write_permission(closing_comments="cmf.ManagePortal")
+    closing_comments = schema.Text(
+        title="Finish request comments", required=False,
+    )
+
+    directives.write_permission(closing_deny_comments="cmf.ManagePortal")
+    closing_deny_comments = schema.Text(
+        title="Finish deny comments", required=False,
+    )
+
+    directives.write_permission(closing_comments_phase2="cmf.ManagePortal")
+    closing_comments_phase2 = schema.Text(
+        title="Finish request comments for phase 2", required=False,
+    )
+
+    directives.write_permission(closing_deny_comments_phase2="cmf.ManagePortal")
+    closing_deny_comments_phase2 = schema.Text(
+        title="Finish deny comments for phase 2", required=False,
+    )
 
 
 def set_title_to_observation(object, event):
@@ -323,7 +330,7 @@ def add_observation(context, event):
 
 
 @implementer(IObservation)
-class Observation(dexterity.Container):
+class Observation(Container):
 
     # Add your class methods and properties here
 

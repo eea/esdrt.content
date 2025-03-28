@@ -4,6 +4,7 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
 from Products.Five import BrowserView
+from plone.dexterity.content import Container
 from zope.interface import implementer
 
 from esdrt.content import _
@@ -12,8 +13,8 @@ from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.browser import add
-from plone.directives import dexterity
 from plone.supermodel import model
+from plone.autoform import directives
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.statusmessages.interfaces import IStatusMessage
 from time import time
@@ -32,13 +33,13 @@ class IQuestion(model.Schema, IImageScaleTraversable):
     New Question regarding an Observation
     """
 
-    form.write_permission(request_redraft_comments='cmf.ManagePortal')
+    directives.write_permission(request_redraft_comments='cmf.ManagePortal')
     request_redraft_comments = schema.Text(
         title='Request redraft reasons',
         required=False,
     )
 
-    form.write_permission(request_redraft_comments_phase2='cmf.ManagePortal')
+    directives.write_permission(request_redraft_comments_phase2='cmf.ManagePortal')
     request_redraft_comments_phase2 = schema.Text(
         title='Request redraft reasons for phase 2',
         required=False,
@@ -91,7 +92,7 @@ def create_question(context):
     return aq_base(content)
 
 @implementer(IQuestion)
-class Question(dexterity.Container):
+class Question(Container):
 
     def get_state_api(self):
         return api.content.get_state(self)
