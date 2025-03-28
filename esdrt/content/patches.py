@@ -1,59 +1,64 @@
+"""Patches."""
+
+import hashlib
+from logging import getLogger
+from typing import List
+
 from Products.CMFDiffTool import dexteritydiff
+
 from plone.memoize.ram import cache
 
-EXCLUDED_FIELDS = list(dexteritydiff.EXCLUDED_FIELDS)
-EXCLUDED_FIELDS.append('ghg_estimations')
+EXCLUDED_FIELDS: List[str] = list(dexteritydiff.EXCLUDED_FIELDS)
+EXCLUDED_FIELDS.append("ghg_estimations")
 dexteritydiff.EXCLUDED_FIELDS = tuple(EXCLUDED_FIELDS)
 
-from logging import getLogger
 log = getLogger(__name__)
-log.info('Patching difftool excluded fields to add ghg_estimations')
+log.info("Patching difftool excluded fields to add ghg_estimations")
 
 
-def _cachekey_lookupuserbyattr(meth, self, *args, **kwargs):
-    return (meth.__name__, self.__name__, args, list(kwargs.items()))
+def _sha_cachekey(sig):
+    return hashlib.sha256(str(sig).encode()).hexdigest()
 
 
-@cache(_cachekey_lookupuserbyattr)
-def _lookupuserbyattr_cache_wrapper(meth, *args, **kwargs):
-    """ Wrapper to raise error when login was not successfull.
-        Needed to avoid caching unsuccessfull login attempts.
+@property
+def Group_existing_member_ids(self):
+    """Patched Group.existing_member_ids."""
+    return self.translate_ids(
+        self.context.attrs.get(self._member_attribute, list())
+    )
+
+
+def LDAPUserPropertySheet__init__(self, principal, plugin):
+    """Patched LDAPUserPropertySheet.__init__.
+
+    Join fullname if it's a list.
     """
-    result = meth(*args, **kwargs)
-    if not any(result):
-        raise ValueError(result)
+    self._old___init__(principal, plugin)
+    fullname = self._properties.get("fullname", "")
+    if isinstance(fullname, (list, tuple)):
+        self._properties["fullname"] = " ".join(fullname)
+
+def _items_from_dict(d):
+    if isinstance(d, dict):
+        return tuple([
+            (k, _items_from_dict(v))
+            for k, v in d.items()
+        ])
+    return d
+
+def _cachekey(meth, self, *args, **kwargs):
+    kw = _items_from_dict(kwargs)
+    sig = (meth.__name__, self.__name__, args, kw)
+    return _sha_cachekey(sig)
+
+
+@cache(_cachekey)
+def cache_wrapper(meth, *args, **kwargs):
+    """Wrapper."""
+    return meth(*args, **kwargs)
+
+
+def LDAPPrincipals_search(self, *args, **kwargs):
+    """Patch LDAPPrincipals.search."""
+    result = cache_wrapper(self._old_search, *args, **kwargs)
     return result
-
-
-def _lookupuserbyattr(self, *args, **kwargs):
-    try:
-        return _lookupuserbyattr_cache_wrapper(
-            self._old__lookupuserbyattr, *args, **kwargs)
-    except ValueError as exc:
-        return exc.message
-
-
-def _cachekey_LDAPDelegate_search(meth, self, *args, **kwargs):
-    kw = tuple([(k, v) for k, v in list(kwargs.items()) if k != 'bind_pwd'])
-    return (meth.__name__, self.__name__, args, kw)
-
-
-@cache(_cachekey_LDAPDelegate_search)
-def LDAPDelegate_search_cache_wrapper(meth, *args, **kwargs):
-    """ Wrapper to avoid cache when there is an
-        error in the query result.
-    """
-    result = meth(*args, **kwargs)
-
-    if result['exception']:
-        raise ValueError(result)
-
-    return result
-
-
-def LDAPDelegate_search(self, *args, **kwargs):
-    try:
-        return LDAPDelegate_search_cache_wrapper(
-            self._old_search, *args, **kwargs)
-    except ValueError as exc:
-        return exc.message

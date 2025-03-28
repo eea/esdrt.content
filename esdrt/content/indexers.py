@@ -1,10 +1,4 @@
-from types import FloatType
-from types import IntType
-from types import ListType
-from types import StringType
-from types import TupleType
-from types import UnicodeType
-
+from plone.base.utils import safe_text
 from zope.schema import getFieldsInOrder
 
 from Products.CMFPlone.utils import safe_unicode
@@ -143,7 +137,7 @@ def index_fields(fields, context):
     for name, field in fields:
         value = getattr(context, name)
         if getattr(field, "vocabularyName", None):
-            if type(value) in [ListType, TupleType]:
+            if isinstance(value, (list, tuple)):
                 vals = [
                     context._vocabulary_value(field.vocabularyName, v)
                     for v in value
@@ -169,11 +163,11 @@ def index_fields(fields, context):
 
 
 def to_unicode(value):
-    if type(value) in (StringType, UnicodeType):
-        return [safe_unicode(value)]
-    elif type(value) in [IntType, FloatType]:
-        return [safe_unicode(str(value))]
-    elif type(value) in [ListType, TupleType]:
+    if isinstance(value, str):
+        return [safe_text(value)]
+    elif isinstance(value, (int, float)):
+        return [safe_text(str(value))]
+    elif isinstance(value, (list, tuple)):
         return [" ".join(to_unicode(v)) for v in value if v]
     return []
 

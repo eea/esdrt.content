@@ -12,7 +12,7 @@ from zope.interface import implementer
 
 from esdrt.content import _
 from plone import api
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.app.discussion.behavior import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.supermodel import model
 from plone.namedfile.interfaces import IImageScaleTraversable
@@ -25,8 +25,6 @@ from zope.component import createObject
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 from zope.schema.interfaces import IVocabularyFactory
-from types import ListType
-from types import TupleType
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
 
@@ -246,7 +244,7 @@ class EditForm(edit.DefaultEditForm):
         data = {}
         data['text'] = context.text
         data['remarks'] = context.remarks
-        if type(context.closing_reason) in (ListType, TupleType):
+        if isinstance(context.closing_reason, (list, tuple)):
             data['closing_reason'] = context.closing_reason[0]
         else:
             data['closing_reason'] = context.closing_reason
@@ -288,7 +286,7 @@ class EditForm(edit.DefaultEditForm):
         closing_reason = self.request.form.get('form.widgets.closing_reason')
         context.text = text
         context.remarks = remarks
-        if type(closing_reason) in (ListType, TupleType):
+        if isinstance(closing_reason, (list, tuple)):
             context.closing_reason = closing_reason[0]
         highlight = self.request.form.get('form.widgets.highlight')
         container.highlight = highlight

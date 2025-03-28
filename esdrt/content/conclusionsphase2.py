@@ -4,8 +4,8 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
 from Products.Five import BrowserView
-from collective.z3cform.datagridfield import DataGridFieldFactory
-from collective.z3cform.datagridfield import DictRow
+from collective.z3cform.datagridfield.datagridfield import DataGridFieldFactory
+from collective.z3cform.datagridfield.row import DictRow
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.content import Container
@@ -14,15 +14,12 @@ from zope.interface import implementer
 from esdrt.content import _
 from esdrt.content.observation import hidden
 from plone import api
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.app.discussion.behavior import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.supermodel import model
 from plone.autoform import directives
 from plone.namedfile.interfaces import IImageScaleTraversable
 from time import time
-from types import ListType
-from types import TupleType
-from types import FloatType
 from z3c.form import field
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
@@ -46,7 +43,7 @@ The TERT recommends that... [[the Member State] include the revised estimate in 
 def check_ghg_estimations(value):
     for item in value:
         for val in list(item.values()):
-            if type(val) is FloatType and val < 0:
+            if isinstance(val, float) and val < 0:
                 raise Invalid('Estimation values must be positive numbers')
     return True
 
@@ -236,7 +233,7 @@ class EditForm(edit.DefaultEditForm):
             data['text'] = context.text
         if context.remarks:
             data['remarks'] = context.remarks
-        if type(context.closing_reason) in (ListType, TupleType):
+        if isinstance(context.closing_reason, (list, tuple)):
             data['closing_reason'] = context.closing_reason[0]
         else:
             data['closing_reason'] = context.closing_reason
@@ -276,7 +273,7 @@ class EditForm(edit.DefaultEditForm):
         closing_reason = self.request.form.get('form.widgets.closing_reason')
         context.text = text
         context.remarks = remarks
-        if type(closing_reason) in (ListType, TupleType):
+        if isinstance(closing_reason, (list, float)):
             context.closing_reason = closing_reason[0]
         #context.ghg_estimations = data['ghg_estimations']
         highlight = self.request.form.get('form.widgets.highlight')

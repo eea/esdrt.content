@@ -24,7 +24,7 @@ from docx.shared import Pt
 from plone.memoize.ram import cache
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.app.discussion.behavior import IAllowDiscussion
 from plone.app.discussion.interfaces import IConversation
 
 from plone.dexterity.browser import add
