@@ -13,7 +13,7 @@ from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.browser import add
 from plone.directives import dexterity
-from plone.directives import form
+from plone.supermodel import model
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.statusmessages.interfaces import IStatusMessage
 from time import time
@@ -27,7 +27,7 @@ from zope.component import getUtility
 from zope.interface import Invalid
 
 
-class IQuestion(form.Schema, IImageScaleTraversable):
+class IQuestion(model.Schema, IImageScaleTraversable):
     """
     New Question regarding an Observation
     """

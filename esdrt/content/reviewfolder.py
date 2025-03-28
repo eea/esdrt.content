@@ -270,7 +270,7 @@ def redirect_for_author(context, request):
             return request.response.redirect(new_url)
 
 
-class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
+class IReviewFolder(plone.directives.model.Schema, IImageScaleTraversable):
     """
     Folder to have all observations together
     """

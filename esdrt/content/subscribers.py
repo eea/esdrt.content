@@ -1,16 +1,7 @@
-from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from Acquisition import aq_parent
 from DateTime import DateTime
-from esdrt.content.comment import IComment
-from esdrt.content.commentanswer import ICommentAnswer
-from esdrt.content.observation import IObservation
-from esdrt.content.question import IQuestion
-from five import grok
 from plone import api
-from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.CMFCore.utils import getToolByName
-from zope.lifecycleevent.interfaces import IObjectRemovedEvent
-from plone.app.discussion.interfaces import ICommentAddedEvent
 
 
 def run_as_manager(context, func, *args, **kwargs):

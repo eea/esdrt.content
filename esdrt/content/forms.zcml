@@ -93,4 +93,70 @@
     permission="cmf.ModifyPortalContent"
   />
 
+  <!--Comment forms -->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="esdrt.content.comment.AddView"
+    name="esdrt.content.comment"
+    />
+
+  <class class=".comment.AddView">
+      <require
+          permission="esdrt.content.AddComment"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="esdrt.content.comment.IComment"
+    class="esdrt.content.comment.EditForm"
+    permission="esdrt.content.EditComment"
+    />
+
+  <!--CommentAnswer forms-->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="esdrt.content.commentanswer.AddView"
+    name="esdrt.content.commentanswer"
+    />
+
+  <class class=".commentanswer.AddView">
+    <require
+      permission="esdrt.content.AddCommentAnswer"
+      interface="zope.publisher.interfaces.browser.IBrowserPage"
+      />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="esdrt.content.commentanswer.ICommentAnswer"
+    class="esdrt.content.commentanswer.EditForm"
+    permission="esdrt.content.EditCommentAnswer"
+    />
+
+  <!--ESDRTFile forms -->
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="esdrt.content.esdrtfile.AddView"
+    name="esdrt.content.esdrtfile"
+    />
+
+  <class class=".esdrtfile.AddView">
+      <require
+          permission="esdrt.content.AddESDRTFile"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
 </configure>

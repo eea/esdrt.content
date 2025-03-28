@@ -157,4 +157,81 @@
     attribute="render"
     />
 
+  <!--Comment views-->
+  <browser:page
+    name="view"
+    for=".comment.IComment"
+    class=".comment.CommentView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <!--CommentAnswer  views-->
+  <browser:page
+    name="view"
+    for=".commentanswer.ICommentAnswer"
+    class=".commentanswer.CommentAnswerView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <!--ESDRTFile views-->
+  <browser:page
+    name="view"
+    for=".esdrtfile.IESDRTFile"
+    class=".esdrtfile.ESDRTFileView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <!-- Subscription configuration -->
+  <browser:page
+    name="subscription-configuration"
+    for=".reviewfolder.IReviewFolder"
+    class=".subscriptionconfiguration.SubscriptionConfigurationReview"
+    template="templates/subscriptionconfigurationreview.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="subscription-configuration"
+    for=".observation.IObservation"
+    class=".subscriptionconfiguration.SubscriptionConfiguration"
+    template="templates/subscriptionconfiguration.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="save-subscriptions"
+    for=".reviewfolder.IReviewFolder"
+    class=".subscriptionconfiguration.SaveSubscriptionsReview"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="save-subscriptions"
+    for=".observation.IObservation"
+    class=".subscriptionconfiguration.SaveSubscriptions"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="clear-subscriptions"
+    for=".observation.IObservation"
+    class=".subscriptionconfiguration.ClearSubscriptions"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <!--CopyFileToAnswer-->
+  <browser:page
+    name="copy-attachment-to-answer"
+    for="plone.app.discussion.interfaces.IComment"
+    class=".browser.copyfiles.CopyFileToAnswer"
+    attribute="render"
+    permission="esdrt.content.AddESDRTFile"
+    />
+
 </configure>

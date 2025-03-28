@@ -16,7 +16,7 @@ from esdrt.content.observation import hidden
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import form
+from plone.supermodel import model
 from plone.namedfile.interfaces import IImageScaleTraversable
 from time import time
 from types import ListType
@@ -44,7 +44,7 @@ The TERT recommends that... [[the Member State] include the revised estimate in 
 """
 
 
-class ITableRowSchema(form.Schema):
+class ITableRowSchema(model.Schema):
 
     line_title = schema.TextLine(title=_('Title'), required=True)
     co2 = schema.Float(title=_('CO\\u2082'), required=False)
@@ -56,7 +56,7 @@ class ITableRowSchema(form.Schema):
     so2 = schema.Float(title=_('SO\\u2082'), required=False)
 
 
-class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
+class IConclusionsPhase2(model.Schema, IImageScaleTraversable):
     """
     Conclusions of the Second Phase of the Review
     """

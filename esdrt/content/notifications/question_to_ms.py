@@ -1,8 +1,6 @@
 import plone.api as api
 from Acquisition import aq_parent
-from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from five import grok
 
 from esdrt.content.question import IQuestion
 from .utils import notify

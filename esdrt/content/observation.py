@@ -31,7 +31,7 @@ from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
 
 from plone.directives import dexterity
-from plone.directives import form
+from plone.supermodel import model
 from plone.directives.form import default_value
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.interfaces import IWrappedForm
@@ -88,7 +88,7 @@ def _user_name(fun, self, userid):
 
 
 # Interface class; used to define content-type schema.
-class IObservation(form.Schema, IImageScaleTraversable):
+class IObservation(model.Schema, IImageScaleTraversable):
     """
     New review observation
     """

@@ -1,13 +1,9 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from plone.app.discussion.interfaces import IComment
-from five import grok
+from Products.Five import BrowserView
 
 
-class CopyFileToAnswer(grok.View):
-    grok.require('esdrt.content.AddESDRTFile')
-    grok.context(IComment)
-    grok.name('copy-attachment-to-answer')
+class CopyFileToAnswer(BrowserView):
 
     def render(self):
         context = aq_inner(self.context)

@@ -5,23 +5,26 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
-from five import grok
+from Products.Five import BrowserView
+
 from plone import api
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
+from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import dexterity
-from plone.directives import form
+from plone.supermodel import model
 from plone.namedfile.interfaces import IImageScaleTraversable
 from z3c.form import field
 from zope import schema
-from zope.app.container.interfaces import IObjectAddedEvent
 from zope.component import createObject
 from zope.component import getUtility
+from zope.interface import implementer
 
 from esdrt.content import _
 
 
 # Interface class; used to define content-type schema.
-class IComment(form.Schema, IImageScaleTraversable):
+class IComment(model.Schema, IImageScaleTraversable):
     """
     Q&A item
     """
@@ -36,14 +39,8 @@ class IComment(form.Schema, IImageScaleTraversable):
     )
 
 
-# Custom content-type class; objects created for this content type will
-# be instances of this class. Use this class to add content-type specific
-# methods and properties. Put methods that are mainly useful for rendering
-# in separate view classes.
-class Comment(dexterity.Container):
-    grok.implements(IComment)
-
-    # Add your class methods and properties here
+@implementer(IComment)
+class Comment(Container):
 
     def can_edit(self):
         sm = getSecurityManager()
@@ -63,21 +60,7 @@ class Comment(dexterity.Container):
         return [item for item in items if mtool.checkPermission('View', item)]
 
 
-# View class
-# The view will automatically use a similarly named template in
-# templates called commentview.pt .
-# Template filenames should be all lower case.
-# The view will render when you request a content object with this
-# interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
-# This will make this view the default view for your content-type
-grok.templatedir('templates')
-
-
-class CommentView(grok.View):
-    grok.context(IComment)
-    grok.require('zope2.View')
-    grok.name('view')
+class CommentView(BrowserView):
 
     def render(self):
         context = aq_inner(self.context)
@@ -87,10 +70,7 @@ class CommentView(grok.View):
         return self.request.response.redirect(url)
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('esdrt.content.comment')
-    grok.context(IComment)
-    grok.require('esdrt.content.AddComment')
+class AddForm(add.DefaultAddForm):
 
     label = 'Question'
     description = ''
@@ -131,10 +111,11 @@ class AddForm(dexterity.AddForm):
             self.actions[k].addClass('standardButton')
 
 
-class EditForm(dexterity.EditForm):
-    grok.name('edit')
-    grok.context(IComment)
-    grok.require('esdrt.content.EditComment')
+class AddView(add.DefaultAddView):
+    form = AddForm
+
+
+class EditForm(edit.DefaultEditForm):
 
     label = 'Question'
     description = ''

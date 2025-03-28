@@ -1,7 +1,4 @@
 from Acquisition import aq_parent
-from esdrt.content.question import IQuestion
-from five import grok
-from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from .utils import notify
 

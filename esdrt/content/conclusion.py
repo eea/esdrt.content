@@ -15,7 +15,7 @@ from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.directives import dexterity
-from plone.directives import form
+from plone.supermodel import model
 from plone.namedfile.interfaces import IImageScaleTraversable
 from time import time
 from z3c.form import field
@@ -34,7 +34,7 @@ from zope.event import notify
 from esdrt.content.utils import exclude_phase2_actions
 
 
-class IConclusion(form.Schema, IImageScaleTraversable):
+class IConclusion(model.Schema, IImageScaleTraversable):
     """
     Conclusions of this observation
     """
