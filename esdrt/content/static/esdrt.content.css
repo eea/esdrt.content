@@ -77,24 +77,18 @@
 }
 .standardButton{
 	background-color: #38758a;
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
 	border-radius: 8px;
 	padding: 10px 13px;
-	font-weight: bold;
 	color:#fff !important;
 	position: relative;
 	display: inline-block;
 	border: 1px solid #346F83;
+	text-decoration: none;
 }
 .standardButton.removeButton,
 .standardButton.defaultWFButton {
 	background-color:#f6a800 !important;
 	border-color: #999999;
-	-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-ms-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-o-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 }
 .standardButton:hover,
@@ -103,10 +97,6 @@
 	color: #FFFFFF !important;
 	cursor:pointer;
 	border-color: #999999;
-	-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-ms-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-o-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	text-shadow: none;
 }
@@ -119,7 +109,6 @@
 .standardButton a, .standardButton a:hover, .standardButton a:visited {
 	color: #FFFFFF !important;
 }
-
 .removeButton{
 	color: #d9534f;
 }
@@ -425,8 +414,6 @@ div.phase2-observation{
 }
 .tabs {
 	overflow: hidden;
-	//*-webkit-box-shadow: 0 1px 0 #FFF inset; -moz-box-shadow: 0 1px 0 #FFF inset;
-	//box-shadow: 0 1px 0 #FFF inset;*/
 	background-color: #FBFBFB;
 }
 .tabs>div {
@@ -438,9 +425,6 @@ div.phase2-observation{
 	text-shadow: 0 1px 0 #FFF;
 	position: relative;
 	overflow: hidden;
-	/**background: #e1e1e1;
-	background: -moz-linear-gradient(center top , #f2f2f2, #e1e1e1);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f2f2), color-stop(100%,#e1e1e1)); */
 	border-top: 6px solid transparent;
 }
 .tabs>div.active{
@@ -451,18 +435,17 @@ div.phase2-observation{
 .tabs>div:first-child{
 	margin-left: 10px;
 }
-.tabs div a{
+.tabs div a {
 	border-bottom: 0px !important;
+	text-decoration: none;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
-.tabs div a.overview:before{
-	content: "\f06e";
-	font-size: 30px;
+.tabs i {
+	font-size: 22pt;
 	color: black;
-}
-.tabs a.inbox:before{
-	content: "\f01c";
-	font-size: 30px;
-	color: black;
+	margin-right: 0.3em;
 }
 #filters .row{
 	background-color: #F3F3F3;
@@ -731,34 +714,8 @@ span.envelope:before{
   margin-top: -30px;
   margin-right: 678px;
 }
-.tooltipIcon:after {
-	display: inline-block;
-	font-family: 'FontAwesome';
-	font-weight: normal;
-	font-style: normal;
-	line-height: inherit;
-	text-decoration: inherit;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	speak: none;
-	margin: 0 .3em;
-	color: white;
-	content: "\f05a";
-	cursor: help;
-}
-.tooltipIconBlue:after {
-	display: inline-block;
-	font-family: 'FontAwesome';
-	font-weight: normal;
-	font-style: normal;
-	line-height: inherit;
-	text-decoration: inherit;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	speak: none;
-	margin: 0 .3em;
+.tooltipIconBlue {
 	color: #427597;
-	content: "\f05a";
 	cursor: help;
 }
 #rolesList li{
