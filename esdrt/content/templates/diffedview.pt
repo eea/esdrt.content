@@ -180,7 +180,7 @@
           Files:
           <div class="file" tal:repeat="file question/get_files">
             <p>
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
@@ -205,8 +205,9 @@
         <div class="changes" tal:condition="question/can_edit">
           <div class="row" data-panel="question-history">
             <div class="cell position-0 width-16">
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               History
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
           <div class="question-history">
@@ -308,8 +309,9 @@
           <div class="changes" tal:condition="context/can_edit">
             <div class="row collapsiblePanelTitle" data-panel="question-history">
               <div class="cell position-0 width-16">
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 History
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
             <div class="question-history">
@@ -411,8 +413,9 @@
           <div class="changes" tal:condition="context/can_edit">
             <div class="row collapsiblePanelTitle" data-panel="question-history">
               <div class="cell position-0 width-16">
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 History
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
             <div class="question-history">

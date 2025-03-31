@@ -35,10 +35,10 @@
       <div id="tabs">
         <div class="tabs">
           <div>
-            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/view">Overview list</a>
+            <a href="${here/absolute_url}/view"><i class="bi bi-eye-fill"></i> Overview list</a>
           </div>
           <div class="active">
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
+            <a href="${here/absolute_url}/inboxview"><i class="bi-inbox-fill"></i> My view</a>
           </div>
         </div>
       </div>
@@ -66,8 +66,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 My actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -388,8 +389,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="other-actions-for-my-observations">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 Other actions for my observations
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -711,8 +713,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 My actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1031,8 +1034,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-teams-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 My team's actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1195,8 +1199,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-ms-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 My MS' actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1284,8 +1289,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 My actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1448,8 +1454,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="mse-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 MS experts actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1534,8 +1541,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="se-re-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 Sector expert actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1623,8 +1631,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 My actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1709,8 +1718,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="msc-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 MSC actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1795,8 +1805,9 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="sr-re-actions">
               <div>
+                <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 Sector expert actions
-                <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
           </div>
@@ -1882,8 +1893,9 @@
         <div>
           <div class="collapsiblePanelTitle" data-panel="finalised-observations">
             <div>
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               Finalised observations
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
         </div>

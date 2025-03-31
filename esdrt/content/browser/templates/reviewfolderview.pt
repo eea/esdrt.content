@@ -218,7 +218,6 @@
             <a href=""
               tal:attributes="href string:${here/absolute_url}/subscription-configuration"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
                   Configure notifications
             </a>
           </li>
@@ -227,7 +226,7 @@
                tal:define="query request/QUERY_STRING;
                            querystring python:query and '?' + query or ''"
                tal:attributes="href string:${context/absolute_url}/export_as_xls/$querystring">
-               <i class="eea-icon eea-icon-download">&nbsp;</i> Exports the results in XLS
+               <i class="bi bi-cloud-arrow-down-fill">&nbsp;</i> Exports the results in XLS
             </a>
           </li>
           <li tal:condition="view/can_import_observation">
@@ -255,16 +254,16 @@
       <div id="tabs">
         <div class="tabs">
           <div class="active">
-            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/view">Overview list</a>
+            <a tal:attributes="href string:${here/absolute_url}/view"><i class="bi bi-eye-fill"></i> Overview list</a>
           </div>
           <div>
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
+            <a tal:attributes="href string:${here/absolute_url}/inboxview"><i class="bi bi-inbox-fill"></i> My view</a>
           </div>
           <div tal:condition="python:view.can_view_tableau_dashboard()">
-            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/tableau_dashboard">Statistics</a>
+            <a tal:attributes="href string:${here/absolute_url}/tableau_dashboard"><i class="bi bi-eye-fill"></i> Statistics</a>
           </div>
           <div>
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/finalisedfolderview">Finalised observations</a>
+            <a tal:attributes="href string:${here/absolute_url}/finalisedfolderview"><i class="bi bi-inbox-fill"></i> Finalised observations</a>
           </div>
         </div>
       </div>
@@ -458,7 +457,7 @@
                  tal:define="query request/QUERY_STRING;
                              querystring python:query and '?' + query or ''"
                  tal:attributes="href string:${context/absolute_url}/export_as_xls/$querystring">
-                 <i class="eea-icon eea-icon-download">&nbsp;</i> Exports the results in XLS
+                 <i class="bi bi-cloud-arrow-down-fill"></i> Exports the results in XLS
               </a>
             </li>
             <li class="deleteButton" tal:condition="view/can_add_observation">

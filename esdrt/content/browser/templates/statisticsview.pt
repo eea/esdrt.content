@@ -12,17 +12,18 @@
       <div id="tabs">
         <div class="tabs">
           <div>
-            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/view">Overview list</a>
+            <a tal:attributes="href string:${here/absolute_url}/view"><i class="bi bi-eye-fill"></i> Overview list</a>
           </div>
           <div>
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
+            <a tal:attributes="href string:${here/absolute_url}/inboxview"><i class="bi-inbox-fill"></i> My view</a>
           </div>
           <div>
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/finalisedfolderview">Finalised observations</a>
-          </div>     
+            <a tal:attributes="href string:${here/absolute_url}/finalisedfolderview"><i class="bi-inbox-fill"></i>
+              Finalised observations</a>
+          </div>
           <div class="active">
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/statistics">Statistics</a>
-          </div>                  
+            <a tal:attributes="href string:${here/absolute_url}/statistics"><i class="bi-inbox-fill"></i> Statistics</a>
+          </div>
         </div>
       </div>
       <div id="observations">
@@ -47,8 +48,9 @@
 
       <div class="collapsiblePanelTitle" data-panel="observation_status_per_country">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observations: How many observations are still drafts, open in conclusion state and finished?
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <br>
@@ -79,8 +81,8 @@
               <td tal:content="country/close-requested|string:0">1</td>
               <td tal:content="country/finalised|string:0">1</td>
               <td tal:content="country/sum|string:0">6</td>
-            </tr>  
-          </tal:block>      
+            </tr>
+          </tal:block>
         </tbody>
         <tfoot>
           <tal:block tal:repeat="country view/observation_status_per_country">
@@ -90,13 +92,13 @@
               <td tal:content="country/LRQE|string:0">1</td>
               <td tal:content="country/MSC|string:0">1</td>
               <td tal:content="country/answered|string:0">1</td>
-              <td tal:content="country/conclusions|string:0">1</td>  
+              <td tal:content="country/conclusions|string:0">1</td>
               <td tal:content="country/close-requested|string:0">1</td>
               <td tal:content="country/finalised|string:0">1</td>
               <td tal:content="country/sum|string:0">1</td>
-            </tr>  
-          </tal:block>      
-        </tfoot>      
+            </tr>
+          </tal:block>
+        </tfoot>
       </table>
 
       <table class="listing observation_status_per_country">
@@ -142,13 +144,14 @@
               <td tal:content="country/sum|string:0">6</td>
             </tr>
           </tal:block>
-        </tfoot>      
+        </tfoot>
       </table>
 
       <div class="collapsiblePanelTitle" data-panel="question_status_per_country">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Finalised observation reason
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <br>
@@ -192,7 +195,7 @@
               <td tal:content="country/sum|string:0">Sum</td>
             </tr>
           </tal:block>
-        </tfoot>      
+        </tfoot>
       </table>
 
       <table class="listing finalised_reason_per_country">
@@ -217,7 +220,7 @@
               <td tal:content="country/partly-resolved|string:0">partly-resolved</td>
               <td tal:content="country/resolved|string:0">resolved</td>
               <td tal:content="country/unresolved|string:0">unresolved</td>
-              <td tal:content="country/significant-issue|string:0">significant-issue</td> 
+              <td tal:content="country/significant-issue|string:0">significant-issue</td>
               <td tal:content="country/sum|string:0">Sum</td>
             </tr>
           </tal:block>
@@ -231,17 +234,18 @@
               <td tal:content="country/partly-resolved|string:0">partly-resolved</td>
               <td tal:content="country/resolved|string:0">resolved</td>
               <td tal:content="country/unresolved|string:0">unresolved</td>
-              <td tal:content="country/significant-issue|string:0">significant-issue</td> 
+              <td tal:content="country/significant-issue|string:0">significant-issue</td>
               <td tal:content="country/sum|string:0">Sum</td>
             </tr>
           </tal:block>
-        </tfoot>      
+        </tfoot>
       </table>
 
       <div class="collapsiblePanelTitle" data-panel="observation_highlights_pgf">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           How many observations will potentially require gap filling (initial checks)?
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <br>
@@ -277,14 +281,15 @@
               <td tal:content="sector/sum|string:0">Sum</td>
             </tr>
           </tal:block>
-        </tfoot>      
+        </tfoot>
       </table>
 
 
       <div class="collapsiblePanelTitle" data-panel="observation_highlights_psi">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           How many observations will potentially be significant issues (step 1 annual review)?
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <br>
@@ -320,14 +325,15 @@
               <td tal:content="sector/sum|string:0">Sum</td>
             </tr>
           </tal:block>
-        </tfoot>      
+        </tfoot>
       </table>
 
 
       <div class="collapsiblePanelTitle" data-panel="observation_highlights_ptc">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           How many observations will potentially be technical corrections (step 2 annual review and comprehensive review)?
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <br>

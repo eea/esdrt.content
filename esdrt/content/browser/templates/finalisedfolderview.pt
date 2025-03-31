@@ -46,16 +46,16 @@
       <div id="tabs">
         <div class="tabs">
           <div>
-            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/view">Overview list</a>
+            <a href="${here/absolute_url}/view"><i class="bi bi-eye-fill"></i> Overview list</a>
           </div>
           <div>
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
+            <a href="${here/absolute_url}/inboxview"><i class="bi-inbox-fill"></i> My view</a>
           </div>
           <div tal:condition="python:view.can_view_tableau_dashboard()">
-            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/tableau_dashboard">Statistics</a>
+            <a href="${here/absolute_url}/tableau_dashboard"><i class="bi bi-eye-fill"></i> Statistics</a>
           </div>
           <div class="active">
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/finalisedfolderview">Finalised observations</a>
+            <a href="${here/absolute_url}/finalisedfolderview"><i class="bi-inbox-fill"></i> Finalised observations</a>
           </div>
         </div>
       </div>
@@ -81,16 +81,18 @@
         <div>
           <div class="collapsiblePanelTitle" data-panel="finalised-observations">
             <div>
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               Finalised observations
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
         </div>
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="no-response-needed-observations">
             <div>
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               Finalised with 'no response needed'
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
             <tal:block tal:condition="view/get_no_response_needed_observations"
@@ -174,8 +176,9 @@
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="resolved-observations">
             <div>
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               Finalised with 'resolved'
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
             <tal:block tal:condition="view/get_resolved_observations"
@@ -259,8 +262,9 @@
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="unresolved-observations">
             <div>
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               Finalised with 'unresolved'
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
             <tal:block tal:condition="view/get_unresolved_observations"
@@ -344,8 +348,9 @@
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="party-resolved-observations">
             <div>
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               Finalised with 'partly resolved'
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
           <tal:block tal:condition="view/get_partly_resolved_observations"
@@ -429,8 +434,9 @@
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="technical-correction-observations">
             <div>
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               Finalised with 'technical correction'
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
           <tal:block tal:condition="view/get_technical_correction_observations"
@@ -514,8 +520,9 @@
         <div class="finalised-observations inboxSection">
           <div class="collapsibleListTitle" data-list="revised-estimate-observations">
             <div>
+              <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+              <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               Finalised with 'revised estimate'
-              <span class="eea-icon eea-icon-left"></span>
             </div>
           </div>
           <tal:block tal:condition="view/get_revised_estimate_observations"

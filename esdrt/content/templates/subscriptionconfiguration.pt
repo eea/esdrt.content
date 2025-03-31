@@ -19,14 +19,14 @@
       <a href=""
         tal:attributes="href here/absolute_url"
         class="standardButton">
-          <span class="eea-icon"><!-- --></span>
+            <i class="bi bi-chevron-left"></i>
             Back to observation
       </a>
     </div>
     <div class="esdDiv">
       <div class="row" style="margin-top:15px">
         <div class="cell position-0 width-1">
-          <i class="eea-icon eea-icon-4x observation"></i>
+          <i class="bi bi-file-text-fill fs-1"></i>
         </div>
         <div class="cell position-1 width-4 esdLabel">Ref. Number</div>
         <div class="cell position-5 width-11 esdLabel">Observation</div>
@@ -62,8 +62,9 @@
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-details" style="margin-top:15px">
         <div class="cell position-0 width-16">
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation details
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">
@@ -116,8 +117,9 @@
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-workflow" style="margin-top:15px">
         <div class="cell position-0 width-16">
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation history
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <div class="row observation-workflow" style="display:none">
@@ -128,8 +130,9 @@
                 <td
                   tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
                     <span class="border"></span>
-                    <span class="eea-icon eea-icon-lg wfPoint"></span><br/>
-                    <span class="eea-icon eea-icon-lg wfRole"><!-- --></span>
+                    <i class="bi bi-circle-fill wfPoint"></i>
+                    <br/>
+                    <i class="bi bi-person-fill wfRole"></i>
                     <span tal:content="item/role"></span><br/>
                     <a
                       tal:condition="context/is_secretariat"
@@ -137,9 +140,9 @@
                       tal:content="item/author"></a>
                     <br tal:condition="context/is_secretariat"/>
                     <span
-                      tal:attributes="class python: ' '.join(['eea-icon eea-icon-lg wfStep', item['object']])"><!-- --></span>
+                      tal:attributes="class python: ' '.join(['wfStep', item['object']])"><!-- --></span>
                     <span tal:content="item/state"></span><br/>
-                    <span class="eea-icon eea-icon-lg wfTime"><!-- --></span>
+                    <span class="bi bi-clock wfTime"><!-- --></span>
                     <span tal:attributes="title python:toLocalizedTime(item['time'], True)" class="datetimeWF">
                       <span tal:replace="item/time"></span>
                     </span><br/>

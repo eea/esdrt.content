@@ -171,7 +171,7 @@
             <a href=""
               tal:attributes="href string:${parent/absolute_url}/inboxview"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
+                  <i class="bi bi-chevron-left"></i>
                   Back to my view
             </a>
           </li>
@@ -179,7 +179,7 @@
             <a href=""
               tal:attributes="href string:${parent/absolute_url}/view"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
+                  <i class="bi bi-chevron-left"></i>
                   Back to overview list
             </a>
           </li>
@@ -191,21 +191,19 @@
             <a href=""
               tal:attributes="href string:${here/absolute_url}/subscription-configuration"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
                   Configure notifications
             </a>
           </li>
           <li tal:condition="view/can_export_observation">
             <a class="standardButton" href=""
                tal:attributes="href string:${context/absolute_url}/export_as_docx">
-               <i class="eea-icon eea-icon-download">&nbsp;</i> Exports in DOCX
+               <i class="bi bi-cloud-arrow-down-fill"></i> Exports in DOCX
             </a>
           </li>
           <li class="deleteButton" tal:condition="context/is_secretariat">
             <a href=""
               tal:attributes="href string:${here/absolute_url}/delete_confirmation"
               class="standardButton removeButton">
-                <span class="eea-icon"><!-- --></span>
                   Remove observation
             </a>
           </li>
@@ -214,12 +212,13 @@
     </div>
     <div class="visualClear"><!-- --></div>
     <div style="text-align: right;" tal:condition="view/has_local_notifications_settings">
-      <span class="eea-icon eea-icon-exclamation-triangle"> local notifications present</span>
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      local notifications present
     </div>
     <div class="esdDiv">
       <div class="row" style="margin-top:15px">
         <div class="cell position-0 width-1">
-          <i class="eea-icon eea-icon-4x observation"></i>
+          <i class="bi bi-file-text-fill fs-1"></i>
         </div>
         <div class="cell position-1 width-4 esdLabel">Ref. Number</div>
         <!--div class="cell position-5 width-11 esdLabel">Observation</div-->
@@ -255,8 +254,9 @@
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-details" style="margin-top:15px">
         <div class="cell position-0 width-16">
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation details
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">
@@ -294,8 +294,9 @@
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-workflow" style="margin-top:15px">
         <div class="cell position-0 width-16">
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation history
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <div class="row observation-workflow" style="display:none">
@@ -306,17 +307,18 @@
                 <td
                   tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
                     <span class="border"></span>
-                    <span class="eea-icon eea-icon-lg wfPoint"></span><br/>
-                    <span class="eea-icon eea-icon-lg wfRole"><!-- --></span>
+                    <i class="bi bi-circle-fill wfPoint"></i>
+                    <br/>
+                    <i class="bi bi-person-fill wfRole"></i>
                     <span tal:content="item/role"></span><br/>
                     <a
                       tal:attributes="href python:'http://www.eionet.europa.eu/directory/user?uid='+item['actor']"
                       tal:content="item/author"></a>
                     <br/>
                     <span
-                      tal:attributes="class python: ' '.join(['eea-icon eea-icon-lg wfStep', item['object']])"><!-- --></span>
+                      tal:attributes="class python: ' '.join(['wfStep', item['object']])"><!-- --></span>
                     <span tal:content="item/state"></span><br/>
-                    <span class="eea-icon eea-icon-lg wfTime"><!-- --></span>
+                    <span class="bi bi-clock wfTime"><!-- --></span>
                     <span tal:attributes="title python:item['time'].strftime('%d %b %Y, %H:%M CET')" class="datetimeWF">
                       <span tal:replace="item/time"></span>
                     </span><br/>
@@ -526,7 +528,7 @@
           Files:
           <div class="file" tal:repeat="file conclusion/get_files">
             <p>
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
@@ -547,12 +549,6 @@
         <div id="conclusion-discussion-wrapper"
           tal:define="context nocall:conclusion">
         <div class="changes" tal:condition="context/can_edit">
-          <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
-            <div class="cell position-0 width-16">
-              History
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div-->
           <div class="question-history" style="display:none">
             <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
               This object has no revision information.
@@ -648,9 +644,10 @@
             <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-1">
                 <div class="cell position-0 width-16">
+                  <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                  <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                   Internal comments on conclusion between experts/reviewers/QE/LR
                   <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
-                  <span class="eea-icon eea-icon-left"></span>
                 </div>
               </div>
               <div class="conclusion-discussion conclusion-discussion-1" tal:content="structure provider:esdrt.content.commentmanager"  style="display:none"/>
@@ -742,7 +739,7 @@
           Files:
           <div class="file" tal:repeat="file conclusion/get_files">
             <p>
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
@@ -763,12 +760,6 @@
         <div id="conclusion-discussion-wrapper"
           tal:define="context nocall:conclusion">
         <div class="changes" tal:condition="context/can_edit">
-          <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
-            <div class="cell position-0 width-16">
-              History
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div-->
           <div class="question-history" style="display:none">
             <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
               This object has no revision information.
@@ -864,8 +855,9 @@
             <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-2">
                 <div class="cell position-0 width-16">
+                  <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                  <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                   Conclusion comments
-                  <span class="eea-icon eea-icon-left"></span>
                   <span class="tooltipIconBlue" title="The internal commenting loop between team members is not visible for Member States."></span>
                 </div>
               </div>
@@ -999,7 +991,7 @@
           Files:
           <div class="file" tal:repeat="file question/get_files">
             <p>
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
@@ -1022,12 +1014,6 @@
           </div>
         </div>
         <div class="changes" tal:condition="question/can_edit">
-          <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
-            <div class="cell position-0 width-16">
-              History
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div-->
           <div class="question-history" style="display:none">
             <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
               This object has no revision information.
@@ -1125,8 +1111,9 @@
               <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
                   <div class="cell position-0 width-16">
+                    <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                    <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                     Internal comments on question between experts/reviewers/QE/LR
-                    <span class="eea-icon eea-icon-left"></span>
                     <span class="tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart experts/reviewers/QE/LR engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the expert/reviewer should use the default sentence: 'Discussed with ...' in the first text field">&nbsp;</span>
                   </div>
                 </div>
@@ -1135,8 +1122,9 @@
               <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="answer-comments">
                   <div class="cell position-0 width-16">
+                    <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                    <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                     Comments
-                    <span class="eea-icon eea-icon-left"></span>
                     <span class="tooltipIconBlue" title="The internal commenting loop between team members is not visible to the review team."></span>
                   </div>
                 </div>
