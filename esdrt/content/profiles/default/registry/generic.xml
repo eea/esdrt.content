@@ -1,23 +1,6 @@
 <registry>
-  <record name="plone.app.discussion.interfaces.IDiscussionSettings.globally_enabled" interface="plone.app.discussion.interfaces.IDiscussionSettings" field="globally_enabled">
-    <field type="plone.registry.field.Bool">
-      <default>True</default>
-      <description>help_globally_enabled</description>
-      <required>False</required>
-      <title>label_globally_enabled</title>
-    </field>
-    <value>True</value>
-  </record>
-  <record name="plone.app.discussion.interfaces.IDiscussionSettings.show_commenter_image" interface="plone.app.discussion.interfaces.IDiscussionSettings" field="show_commenter_image">
-    <field type="plone.registry.field.Bool">
-      <default>False</default>
-      <description>help_show_commenter_image</description>
-      <required>False</required>
-      <title>label_show_commenter_image</title>
-    </field>
-    <value>False</value>
-  </record>
   <records interface="esdrt.content.crf_code_matching.IEsdrtSettings" />
+  <records interface="esdrt.content.vocabularies.interfaces.IESDRTVocabularies" />
   <record name="esdrt.content.crf_code_matching.IEsdrtSettings.crfcodeMapping">
     <value purge="False">
       <element key="0">sector12|0|0, 6 Cross cutting and other|0 Cross cutting</element>

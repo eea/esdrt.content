@@ -38,7 +38,7 @@ class IConclusion(model.Schema, IImageScaleTraversable):
 
     closing_reason = schema.Choice(
         title=_('Status of observation'),
-        vocabulary='esdrt.content.conclusionreasons',
+        vocabulary='esdrt.content.conclusion_reasons',
         required=True,
 
     )
@@ -74,7 +74,7 @@ def hidden(menuitem):
 class Conclusion(Container):
 
     def reason_value(self):
-        return self._vocabulary_value('esdrt.content.conclusionreasons',
+        return self._vocabulary_value('esdrt.content.conclusion_reasons',
             self.closing_reason
         )
 

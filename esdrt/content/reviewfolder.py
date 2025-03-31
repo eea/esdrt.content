@@ -1892,7 +1892,6 @@ class AddForm(add.DefaultAddForm):
     def create(self, *args, **kwargs):
         folder = super(AddForm, self).create(*args, **kwargs)
         updated = getUtility(ISetupReviewFolderRoles)(folder)
-        updated.reindexObjectSecurity()
         return updated
 
 

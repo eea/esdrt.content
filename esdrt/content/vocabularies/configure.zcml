@@ -53,12 +53,12 @@
     />
 
   <utility
-    name="esdrt.content.conclusionreasons"
+    name="esdrt.content.conclusion_reasons"
     factory=".vocabularies.Conclusions"
     />
 
   <utility
-    name="esdrt.content.conclusionphase2reasons"
+    name="esdrt.content.conclusion_phase2_reasons"
     factory=".vocabularies.ConclusionsPhase2"
     />
 

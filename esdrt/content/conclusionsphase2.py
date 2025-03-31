@@ -66,7 +66,7 @@ class IConclusionsPhase2(model.Schema, IImageScaleTraversable):
 
     closing_reason = schema.Choice(
         title=_('Final Status of Observation'),
-        vocabulary='esdrt.content.conclusionphase2reasons',
+        vocabulary='esdrt.content.conclusion_phase2_reasons',
         required=True,
     )
 
@@ -103,7 +103,7 @@ class ConclusionsPhase2(Container):
 
     def reason_value(self):
         return self._vocabulary_value(
-            'esdrt.content.conclusionphase2reasons',
+            'esdrt.content.conclusion_phase2_reasons',
             self.closing_reason
         )
 
