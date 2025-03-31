@@ -11,6 +11,16 @@
     <value key="depends"></value>
   </records>
   <records
+    prefix="plone.bundles/esdrt-content-icons"
+    interface="plone.base.interfaces.resources.IBundleRegistry">
+    <value key="enabled">True</value>
+    <value key="jscompilation"></value>
+    <value key="csscompilation">++resource++esdrt.content/icons/bootstrap-icons.min.css</value>
+    <value key="last_compilation"></value>
+    <value key="compile">False</value>
+    <value key="depends"></value>
+  </records>
+  <records
     prefix="plone.bundles/esdrt-content-eea-tabs"
     interface="plone.base.interfaces.resources.IBundleRegistry">
     <value key="enabled">True</value>
