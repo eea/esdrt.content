@@ -204,7 +204,7 @@
         </div>
         <div class="changes" tal:condition="question/can_edit">
           <div class="row" data-panel="question-history">
-            <div class="cell position-0 width-16">
+            <div class="col">
               <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
               <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
               History
@@ -308,7 +308,7 @@
           tal:condition="nocall:context">
           <div class="changes" tal:condition="context/can_edit">
             <div class="row collapsiblePanelTitle" data-panel="question-history">
-              <div class="cell position-0 width-16">
+              <div class="col">
                 <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
                 <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 History
@@ -412,7 +412,7 @@
           tal:condition="nocall:context">
           <div class="changes" tal:condition="context/can_edit">
             <div class="row collapsiblePanelTitle" data-panel="question-history">
-              <div class="cell position-0 width-16">
+              <div class="col">
                 <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
                 <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                 History

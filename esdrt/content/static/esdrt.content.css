@@ -1,13 +1,19 @@
-#edit-bar, .formTabs{
-	display: none;
-}
 .userrole-manager #edit-bar,
 .userrole-manager .formTabs{
 	display: block;
 }
-.portaltype-observation .documentFirstHeading,
-.portaltype-question .documentFirstHeading{
-	display:none;
+.portaltype-reviewfolder,
+.portaltype-observation,
+.portaltype-question {
+    #content .row.managePortlets-row {
+        display: none;
+    }
+}
+.portaltype-observation,
+.portaltype-question {
+    #content h1 {
+        display: none;
+    }
 }
 .esdDiv {
 	overflow: hidden;
@@ -156,13 +162,16 @@
 .old-qa.question {
 	background-color: #dedede;
 }
+.pat-discussion .widget-mode-hidden {
+    display: none;
+}
 .question.comment{
 	margin-left:30px;
 }
 .question.commentanswer{
 	margin-right:30px
 }
-.question div{
+.question > div{
 	padding: 5px;
 }
 .question .from{

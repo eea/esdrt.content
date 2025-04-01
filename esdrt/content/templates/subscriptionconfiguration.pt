@@ -25,78 +25,78 @@
     </div>
     <div class="esdDiv">
       <div class="row" style="margin-top:15px">
-        <div class="cell position-0 width-1">
+        <div class="col">
           <i class="bi bi-file-text-fill fs-1"></i>
         </div>
-        <div class="cell position-1 width-4 esdLabel">Ref. Number</div>
-        <div class="cell position-5 width-11 esdLabel">Observation</div>
+        <div class="col esdLabel">Ref. Number</div>
+        <div class="col esdLabel">Observation</div>
       </div>
       <div class="row">
-        <div class="cell position-1 width-4 value">
+        <div class="col value">
           <span tal:content="context/id">
              UK-WAS-13-001
           </span>
         </div>
-        <div class="cell position-5 width-13 value">
+        <div class="col value">
           <span tal:content="context/title">
              Title
           </span>
         </div>
       </div>
       <div class="row" style="margin-top:15px">
-        <div class="cell position-1 width-2 esdLabel">Country</div>
-        <div class="cell position-3 width-2 esdLabel">Sector</div>
-        <div class="cell position-5 width-2 esdLabel">Gases</div>
-        <div class="cell position-7 width-3 esdLabel">Inventory year</div>
-        <div class="cell position-10 width-3 esdLabel">WF Location</div>
-        <div class="cell position-13 width-3">
+        <div class="col esdLabel">Country</div>
+        <div class="col esdLabel">Sector</div>
+        <div class="col esdLabel">Gases</div>
+        <div class="col esdLabel">Inventory year</div>
+        <div class="col esdLabel">WF Location</div>
+        <div class="col">
           <div tal:attributes="class python:context.observation_phase()">&nbsp;</div>
         </div>
       </div>
       <div class="row">
-        <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>
-        <div class="cell position-3 width-2" tal:content="context/ghg_source_sectors_value">Sector</div>
-        <div class="cell position-5 width-2" tal:content="context/gas_value">Gas</div>
-        <div class="cell position-7 width-3" tal:content="context/year">Year of emission</div>
-        <div class="cell position-10 width-3" tal:content="context/wf_location">Review expert</div>
+        <div class="col" tal:content="context/country_value">Country</div>
+        <div class="col" tal:content="context/ghg_source_sectors_value">Sector</div>
+        <div class="col" tal:content="context/gas_value">Gas</div>
+        <div class="col" tal:content="context/year">Year of emission</div>
+        <div class="col" tal:content="context/wf_location">Review expert</div>
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-details" style="margin-top:15px">
-        <div class="cell position-0 width-16">
+        <div class="col">
           <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
           <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation details
         </div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">
-        <div class="cell position-0 width-8 esdLabel">CRF code</div>
-        <div class="cell position-12 width-4 esdLabel">Parameter</div>
+        <div class="col esdLabel">CRF code</div>
+        <div class="col esdLabel">Parameter</div>
       </div>
       <div class="row observation-details" style="display:none">
-        <div class="cell position-0 width-8" tal:content="context/crf_code_value">CRF code</div>
-        <div class="cell position-12 width-4" tal:content="context/parameter_value">Parameter</div>
+        <div class="col" tal:content="context/crf_code_value">CRF code</div>
+        <div class="col" tal:content="context/parameter_value">Parameter</div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">
-        <div class="cell position-0 width-4 esdLabel">Review Year</div>
-        <div class="cell position-4 width-4 esdLabel">Key category</div>
-        <div class="cell position-8 width-4 esdLabel">Key flags</div>
-        <div class="cell position-12 width-4 esdLabel">Last update</div>
+        <div class="col esdLabel">Review Year</div>
+        <div class="col esdLabel">Key category</div>
+        <div class="col esdLabel">Key flags</div>
+        <div class="col esdLabel">Last update</div>
       </div>
       <div class="row observation-details" style="display:none">
-        <div class="cell position-0 width-4" tal:content="context/review_year">Year</div>
-        <div class="cell position-4 width-4" tal:content="context/ghg_source_sectors_value">Key category</div>
-        <div class="cell position-8 width-4" tal:content="context/highlight_value">Status flag</div>
-        <div class="cell position-12 width-4" tal:content="python:toLocalizedTime(context.modified(), True)">Last update</div>
+        <div class="col" tal:content="context/review_year">Year</div>
+        <div class="col" tal:content="context/ghg_source_sectors_value">Key category</div>
+        <div class="col" tal:content="context/highlight_value">Status flag</div>
+        <div class="col" tal:content="python:toLocalizedTime(context.modified(), True)">Last update</div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px" tal:condition="view/show_description">
         <div class="row">
-          <div class="cell position-0 width-4">
+          <div class="col">
             <span tal:condition="here/ms_key_catagory|nothing">
               MS Key category
             </span>
           </div>
         </div>
         <div class="row">
-          <div class="cell position-0 width-4">
+          <div class="col">
             <span tal:condition="here/eu_key_catagory|nothing">
               EU Key category
             </span>
@@ -105,10 +105,10 @@
       </div>
 
       <div class="row observation-details" style="display:none;padding-top:15px" tal:condition="view/show_description">
-        <div class="cell position-0 width-4 esdLabel">Description</div>
+        <div class="col esdLabel">Description</div>
       </div>
       <div class="row observation-details" style="display:none" tal:condition="view/show_description">
-        <div class="cell position-0 width-16">
+        <div class="col">
           <span
             tal:replace="context/text/output|context/text">
               Here goes the description
@@ -116,14 +116,14 @@
         </div>
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-workflow" style="margin-top:15px">
-        <div class="cell position-0 width-16">
+        <div class="col">
           <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
           <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation history
         </div>
       </div>
       <div class="row observation-workflow" style="display:none">
-        <div class="cell position-0 width-16" style="overflow-x:auto">
+        <div class="col" style="overflow-x:auto">
           <table style="table-layout: fixed" id="workflowTable">
             <tr>
               <tal:item tal:repeat="item context/myHistory">

@@ -55,18 +55,18 @@
 
   <div id="filters">
     <div class="row" style="padding-top:30px">
-      <div class="cell position-1 width-9 esdLabel">Free text</div>
-      <div class="cell position-10 width-3 esdLabel">Author</div>
+      <div class="col esdLabel">Free text</div>
+      <div class="col esdLabel">Author</div>
     </div>
     <div class="row">
       <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
-        <div class="cell position-1 width-9">
+        <div class="col">
           <tal:params repeat="req_param python:[x for x in req_params if x[0] not in ['freeText', 'obsAuthor']]">
             <input type="hidden" tal:attributes="name python:req_param[0]; value python:req_param[1]" />
           </tal:params>
           <input type="text" style="width:100%;border-radius:5px;height:21px" name="freeText" tal:attributes="value freeText" />
         </div>
-        <div class="cell position-10 width-3 esdLabel">
+        <div class="col esdLabel">
            <select id="obsAuthorFilter" name="obsAuthor" class="chosen-select" data-placeholder="Select author"
                 tal:define="obsAuthor python:'';
                             obsAuthor request/obsAuthor | obsAuthor">
@@ -78,7 +78,7 @@
               </tal:option>
             </select>
         </div>
-        <div class="cell position-14 width-1">
+        <div class="col">
           <input type="submit" class="standardButton" id="btnFilter" value="Search" />
         </div>
       </form>

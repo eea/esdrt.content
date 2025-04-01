@@ -45,16 +45,16 @@
 
       <div id="filters">
         <div class="row" style="padding-top:30px">
-          <div class="cell position-1 width-3 esdLabel">Free text</div>
+          <div class="col esdLabel">Free text</div>
         </div>
         <div class="row">
-          <div class="cell position-1 width-12 esdLabel">
+          <div class="col esdLabel">
             <input type="text" id="freeTextFilter" style="width:100%;border-radius:5px;height:21px"
                 tal:define="freeText python:'';
                             freeText request/freeText | freeText"
                 tal:attributes="value python:freeText"/>
           </div>
-          <div class="cell position-14 width-1">
+          <div class="col">
             <a class="standardButton" id="btnFilter">Search</a>
           </div>
         </div>
