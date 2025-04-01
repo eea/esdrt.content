@@ -14,6 +14,7 @@ from esdrt.content.comment import IComment
 from esdrt.content.commentanswer import ICommentAnswer
 
 from .observation import IObservation
+from .utils import get_vocabulary_value
 
 
 @indexer(IObservation)
@@ -139,11 +140,13 @@ def index_fields(fields, context):
         if getattr(field, "vocabularyName", None):
             if isinstance(value, (list, tuple)):
                 vals = [
-                    context._vocabulary_value(field.vocabularyName, v)
+                    get_vocabulary_value(context, field.vocabularyName, v)
                     for v in value
                 ]
             else:
-                vals = context._vocabulary_value(field.vocabularyName, value)
+                vals = get_vocabulary_value(
+                    context, field.vocabularyName, value
+                )
             items.extend(to_unicode(vals))
 
         if IRichTextValue.providedBy(value):

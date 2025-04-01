@@ -5,10 +5,12 @@ from typing import cast
 from Acquisition import aq_parent
 from OFS.Traversable import Traversable
 from Products.CMFCore.interfaces._content import IContentish
+from zope.component import getUtility
 from zope.globalrequest import getRequest
 
 import plone.api as api
 from zope.interface.interface import Specification
+from zope.schema.interfaces import IVocabularyFactory
 
 
 def get_userid_name(userid):
@@ -25,6 +27,18 @@ def get_indexed_values_for_index(index_name):
     catalog = api.portal.get_tool("portal_catalog")
     indexes = catalog._catalog.indexes
     return sorted(set(indexes[index_name]._unindex.values()))
+
+
+def get_vocabulary_value(context, vocabulary, term):
+    vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
+    vocabulary = vocab_factory(context)
+    if not term:
+        return ""
+    try:
+        value = vocabulary.getTerm(term)
+        return value.title
+    except LookupError:
+        return term
 
 
 def reduce_text(text, limit):

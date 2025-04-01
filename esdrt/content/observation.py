@@ -1,3 +1,5 @@
+from functools import partial
+
 from Products.Five import BrowserView
 from plone.dexterity.content import Container
 from zope.interface import implementer
@@ -61,7 +63,7 @@ from esdrt.content.constants import ROLE_SE
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
-from esdrt.content.utils import exclude_phase2_actions
+from esdrt.content.utils import exclude_phase2_actions, get_vocabulary_value
 from .comment import IComment
 from .commentanswer import ICommentAnswer
 from .conclusion import IConclusion
@@ -329,6 +331,26 @@ def add_observation(context, event):
             api.content.transition(obj=observation, transition="phase1-approve")
 
 
+def get_join_from_vocab(context, vocab, values):
+    result = ""
+
+    if values:
+        get_value = partial(get_vocabulary_value, context, vocab)
+        result = ", ".join([get_value(v) for v in values if v])
+
+    return result
+
+
+def get_list_from_vocab(context, vocab, values):
+    result = []
+
+    if values:
+        get_value = partial(get_vocabulary_value, context, vocab)
+        result = [get_value(v) for v in values]
+
+    return result
+
+
 @implementer(IObservation)
 class Observation(Container):
 
@@ -364,12 +386,12 @@ class Observation(Container):
         return self.highlight
 
     def country_value(self):
-        return self._vocabulary_value(
+        return get_vocabulary_value(self,
             "esdrt.content.eea_member_states", self.country
         )
 
     def crf_code_value(self):
-        return self._vocabulary_value("esdrt.content.crf_code", self.crf_code)
+        return get_vocabulary_value(self,"esdrt.content.crf_code", self.crf_code)
 
     def ghg_source_category_value(self):
         # Get the value of the sector to be used on the LDAP mapping
@@ -381,47 +403,27 @@ class Observation(Container):
         return get_category_value_from_crf_code(self.crf_code)
 
     def parameter_value(self):
-        parameters = [
-            self._vocabulary_value("esdrt.content.parameter", p)
-            for p in self.parameter
-        ]
-        return ", ".join(parameters)
+        return get_join_from_vocab(self.aq_parent, "esdrt.content.parameter", self.parameter)
 
     def gas_value(self):
-        gases = [
-            self._vocabulary_value("esdrt.content.gas", g) for g in self.gas
-        ]
-
-        return ", ".join(gases)
+        return get_join_from_vocab(self.aq_parent, "esdrt.content.gas", self.gas)
 
     def highlight_value(self):
-        if self.highlight:
-            highlight = [
-                self._vocabulary_value("esdrt.content.highlight", h)
-                for h in self.highlight
-            ]
-            return ", ".join([x for x in highlight if x])
-        return ""
+        return get_join_from_vocab(self.aq_parent, "esdrt.content.highlight", self.highlight)
 
     def finish_reason_value(self):
-        return self._vocabulary_value(
-            "esdrt.content.finishobservationreasons", self.closing_reason
+        return get_vocabulary_value(
+            self.aq_parent,
+            "esdrt.content.finishobservationreasons",
+            self.closing_reason,
         )
 
     def finish_deny_reason_value(self):
-        return self._vocabulary_value(
+        return get_vocabulary_value(
+            self.aq_parent,
             "esdrt.content.finishobservationdenyreasons",
             self.closing_deny_reason,
         )
-
-    def _vocabulary_value(self, vocabulary, term):
-        vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
-        vocabulary = vocab_factory(self)
-        try:
-            value = vocabulary.getTerm(term)
-            return value.title
-        except LookupError:
-            return ""
 
     def get_status(self):
         return api.content.get_state(self)
