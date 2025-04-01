@@ -3,25 +3,25 @@
     i18n_domain="esdrt.content">
 
   <!--  Comment  -->
-  <subscriber
-    for="esdrt.content.comment.IComment
-         zope.lifecycleevent.interfaces.IObjectAddedEvent"
-    handler="esdrt.content.comment.add_comment"
-    />
+<!--  <subscriber-->
+<!--    for="esdrt.content.comment.IComment-->
+<!--         zope.lifecycleevent.interfaces.IObjectAddedEvent"-->
+<!--    handler="esdrt.content.comment.add_comment"-->
+<!--    />-->
 
 
   <!--  Question  -->
-  <subscriber
-    for="esdrt.content.question.IQuestion
-         zope.lifecycleevent.interfaces.IObjectAddedEvent"
-    handler="esdrt.content.question.add_question"
-    />
+<!--  <subscriber-->
+<!--    for="esdrt.content.question.IQuestion-->
+<!--         zope.lifecycleevent.interfaces.IObjectAddedEvent"-->
+<!--    handler="esdrt.content.question.add_question"-->
+<!--    />-->
 
-  <subscriber
-    for="esdrt.content.question.IQuestion
-         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-    handler="esdrt.content.question.modify_question"
-    />
+<!--  <subscriber-->
+<!--    for="esdrt.content.question.IQuestion-->
+<!--         zope.lifecycleevent.interfaces.IObjectModifiedEvent"-->
+<!--    handler="esdrt.content.question.modify_question"-->
+<!--    />-->
 
   <subscriber
     for="esdrt.content.question.IQuestion
@@ -31,23 +31,23 @@
 
   <!--  Observation -->
 
-  <subscriber
-    for="esdrt.content.observation.IObservation
-         zope.lifecycleevent.interfaces.IObjectAddedEvent"
-    handler="esdrt.content.observation.set_title_to_observation"
-    />
+<!--  <subscriber-->
+<!--    for="esdrt.content.observation.IObservation-->
+<!--         zope.lifecycleevent.interfaces.IObjectAddedEvent"-->
+<!--    handler="esdrt.content.observation.set_title_to_observation"-->
+<!--    />-->
 
-  <subscriber
-    for="esdrt.content.observation.IObservation
-         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-    handler="esdrt.content.observation.set_title_to_observation"
-    />
+<!--  <subscriber-->
+<!--    for="esdrt.content.observation.IObservation-->
+<!--         zope.lifecycleevent.interfaces.IObjectModifiedEvent"-->
+<!--    handler="esdrt.content.observation.set_title_to_observation"-->
+<!--    />-->
 
-  <subscriber
-    for="esdrt.content.observation.IObservation
-         zope.lifecycleevent.interfaces.IObjectAddedEvent"
-    handler="esdrt.content.observation.add_observation"
-    />
+<!--  <subscriber-->
+<!--    for="esdrt.content.observation.IObservation-->
+<!--         zope.lifecycleevent.interfaces.IObjectAddedEvent"-->
+<!--    handler="esdrt.content.observation.add_observation"-->
+<!--    />-->
 
   <subscriber
     for="esdrt.content.observation.IObservation
@@ -56,17 +56,17 @@
     />
 
   <!--  Subscribers   -->
-  <subscriber
-    for="esdrt.content.commentanswer.ICommentAnswer
-         plone.app.discussion.interfaces.ICommentAddedEvent"
-    handler="esdrt.content.subscribers.answer_comment_added"
-    />
+<!--  <subscriber-->
+<!--    for="esdrt.content.commentanswer.ICommentAnswer-->
+<!--         plone.app.discussion.interfaces.ICommentAddedEvent"-->
+<!--    handler="esdrt.content.subscribers.answer_comment_added"-->
+<!--    />-->
 
-  <subscriber
-    for="esdrt.content.comment.IComment
-         plone.app.discussion.interfaces.ICommentAddedEvent"
-    handler="esdrt.content.subscribers.question_comment_added"
-    />
+<!--  <subscriber-->
+<!--    for="esdrt.content.comment.IComment-->
+<!--         plone.app.discussion.interfaces.ICommentAddedEvent"-->
+<!--    handler="esdrt.content.subscribers.question_comment_added"-->
+<!--    />-->
 
   <!--  Notifications   -->
   <!--  Question: question_to_ms   -->

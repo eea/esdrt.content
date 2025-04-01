@@ -1,0 +1,13 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  i18n_domain="esdrt.content">
+
+  <browser:page
+    name="esd_import_content"
+    for="zope.interface.Interface"
+    class=".import_content.CustomImportContent"
+    permission="cmf.ManagePortal"
+  />
+
+</configure>
