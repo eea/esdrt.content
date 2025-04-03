@@ -341,7 +341,7 @@
     <div tal:condition="python:context.get_status() == 'phase2-close-requested'"><a href="#tab-finish-observation">Finish observation</a></div>
     <div tal:define="conclusion view/get_conclusion_phase2"
       tal:condition="nocall:conclusion"
-      ><a href="#tab-conclusions">Conclusions Step 2</a></div>
+      ><a href="#tab-conclusions2">Conclusions Step 2</a></div>
     <div tal:define="conclusion view/get_conclusion"
       tal:condition="nocall:conclusion"
         ><a href="#tab-conclusions">Conclusions
@@ -440,7 +440,7 @@
         </tal:block>
       </div>
     </div>
-    <div id="tab-conclusions" class="eea-tabs-panel conclusions-phase2"
+    <div id="tab-conclusions2" class="eea-tabs-panel conclusions-phase2"
         tal:define="conclusion view/get_conclusion_phase2"
         tal:condition="nocall:conclusion">
       <div class="row">
