@@ -17,7 +17,11 @@ SIMPLE_SETTER_FIELDS = {
     "ReviewFolder": [
         "tableau_statistics_roles",
     ],
-    "Conclusions": [
+    "Conclusion": [
+      "ghg_estimations",
+      "closing_reason",
+    ],
+    "ConclusionsPhase2": [
       "ghg_estimations",
       "closing_reason",
     ],
