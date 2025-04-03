@@ -173,7 +173,7 @@ def get_indexed_authors_for_select(context):
     if (user):
         userId = user.getId()
         authors_with_names = [(uid, "Me ({})".format(uname)) if uid == userId else (uid, uname) for uid, uname in authors_with_names]
-    return sorted(authors_with_names, key=lambda x: float("-inf") if x[1][:2] == "Me" else x[1])
+    return sorted(authors_with_names, key=lambda x: "Z" if x[1][:2] == "Me" else x[1])
 
 
 def get_observation_phase(brain):
@@ -414,7 +414,7 @@ class ReviewFolderMixin(BrowserView):
             query["Creator"] = obsAuthor
         if crfCode != "":
             query["crf_code"] = crfCode
-        if gas != "":
+        if gas and gas != "":
             query["Title"] = " OR ".join([g.strip() for g in gas])
 
         return filter_for_ms(catalog(query), context=self.context)
