@@ -10,16 +10,6 @@
     <script type="text/javascript">
       (function($){
 
-        $.fn.setup_review_table = function(selector){
-            $(".observationText", selector).text(function(index, currentText){
-              if (currentText.length > 500){
-                $(this).text(currentText.substr(0, 500) + "...");
-                $(this).attr("title", currentText);
-              }
-            });
-            $('tr', selector).superLink('a:first');
-        }
-
         /* enable reloading of the table for a given selector and set of overrides
          * with optional default event prevention */
 
@@ -81,7 +71,6 @@
                 });
                 $(initializeDnDReorder('#observations-table'));
                 $('html,body').animate({scrollTop: $("#tabs").offset().top}, 0);
-                $('table.observationList').setup_review_table();
             });
         }
 
@@ -101,7 +90,6 @@
                 replaceFolderContentsTable({ "pagenumber": page });
             });
 
-            $('table.observationList').setup_review_table();
             $(".chosen-select").chosen({width: "100%", allow_single_deselect: true});
             $("#btnFilter").click(function(){
               var filter = "";
