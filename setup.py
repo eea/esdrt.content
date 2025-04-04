@@ -40,6 +40,7 @@ setup(
         "collective.monkeypatcher",
         "pas.plugins.ldap",
         "openpyxl",
+        "collective.exportimport",
     ],
     entry_points="""
       # -*- Entry points: -*-
