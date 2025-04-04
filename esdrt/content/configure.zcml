@@ -11,6 +11,7 @@
   <include file="profiles.zcml" />
   <include file="patches.zcml" />
   <include file="import_content.zcml" />
+  <include file="views.zcml" />
   <include package=".vocabularies" />
   <include package=".upgrades" />
   <include package=".adapters" />

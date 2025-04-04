@@ -5,31 +5,13 @@
       lang="en"
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="esdrt.content">
-  <tal:block metal:fill-slot="javascript_head_slot">
-    <script type="text/javascript">
-      $(document).ready(function(){
-        $(".observationText").text(function(index, currentText){
-          if (currentText.length > 500){
-            $(this).text(currentText.substr(0, 500) + "...");
-            $(this).attr("title", currentText);
-          }
-        });
-        $('table.observationList tr').superLink('a:first');
-        $("#btnFilter").click(function(){
-            var filter = "";
-            if ($('#freeTextFilter').val() != ""){
-              if (filter == ""){
-                filter += "?";
-              }else{
-                filter += "&";
-              }
-              filter += "freeText=" + $('#freeTextFilter').val();
-            }
-            window.location.href = window.location.pathname + filter;
-          })
-        });
-    </script>
-  </tal:block>
+<tal:block metal:fill-slot="javascript_head_slot">
+  <script src="${portal_url}/++resource++esdrt.content/cookies.js"></script>
+  <script src="${portal_url}/++resource++esdrt.content/inbox_view.js"></script>
+</tal:block>
+<tal:block metal:fill-slot="style_slot">
+  <link rel="stylesheet" type="text/css" href="${portal_url}/++resource++esdrt.content/inbox_view.css"/>
+</tal:block>
 <body>
 
   <metal:main fill-slot="content-core">

@@ -48,10 +48,6 @@
 	max-width: 100%;
 	width: 100%;
 	overflow: auto;
-	/**border-width: 0px 0px 0px 1px;
-	border-style: dotted;
-	border-left: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;*/
 	border: 1px solid #b6b6b6;
 	color: #666666;
 	line-height: normal;
@@ -134,7 +130,7 @@
 .observationActions .position-0{
 	margin-left: -100%;
 }
-.observationActions .position-1\3a 2 {
+.observationActions .position-1\3a {
     margin-left: -47.75%;
 }
 .observationActions .position-5 {
@@ -151,8 +147,6 @@
 }
 .question {
 	background-color: white;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	border: 1px solid lightgray;
 	position: relative;
@@ -227,6 +221,10 @@
 .observationList {
 	width: 100%;
 	border: 0px;
+	font-size: 80%;
+}
+.observationList a {
+	text-decoration: none;
 }
 .myview .observationList{
 	width: 97%;
@@ -235,8 +233,6 @@
 	cursor: pointer;
 	background-color: #e6eff0 !important;
 	color: #88afb8 !important;
-	/**border: 0.1em solid #e7e7e7;
-	border-style: solid solid none;*/
 	border-right: 1px solid white;
 	padding: 4px;
 	text-transform: uppercase;
@@ -246,20 +242,16 @@
 .observationList th:after{
 	content: ' ';
 }
-.observationList th.asc:after{
-	content: '▼';
-}
-.observationList th.desc:after{
+.sort-order-ascending:after{
 	content: '▲';
 }
-/**.observationList thead tr{
-	border-left: 5px solid #e6eff0;
-}*/
+.sort-order-reverse:after{
+	content: '▼';
+}
 .observationList tr{
 	border-bottom: 0px !important;
 	border-right: 0px !important;
 	border-top: 1px solid #ddd !important;
-	/**border-left: 5px solid white;*/
 }
 .observationList tbody tr:hover{
 	cursor: pointer;
@@ -270,13 +262,7 @@
 	background-color: white !important;
 	vertical-align: middle !important;
 }
-/**.observationList tr.psiBackground,
-.observationList tr.ptcBackground{
-	border-left: 5px solid #F6D18B !important;
-}
-.observationList tr.technicalCorrectionBackground{
-	border-left: 5px solid #FFA500 !important;
-}*/
+
 div.phase1-observation{
 	background: url("++resource++esdrt.content/phase-1.png") no-repeat;
 	width: 61px;
@@ -296,8 +282,6 @@ div.phase2-observation{
 	text-align: center;
 }
 .statusCell span{
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
 	border-radius: 10px;
 	padding: 5px 14px;
 }
@@ -456,12 +440,13 @@ div.phase2-observation{
 	color: black;
 	margin-right: 0.3em;
 }
-#filters .row{
+#filters {
 	background-color: #F3F3F3;
 	padding: 5px 0;
 }
 #filters label{
 	font-weight: normal;
+    font-size: 80%;
 }
 #filters::after {
   content: '';
@@ -477,7 +462,6 @@ div.phase2-observation{
 }
 #observations{
 	background-color: #F3F3F3;
-	padding: 10px 20px !important;
 }
 #observations .actions{
 	margin-top: 0px;
@@ -512,13 +496,9 @@ ul.eea-tabs{
 }
 #visual-portal-wrapper ul.eea-tabs {
 	border-radius: 0px;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
 }
 #visual-portal-wrapper ul.eea-tabs li:first-child > a {
 	border-radius: 0px !important;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
 }
 #visual-portal-wrapper ul.eea-tabs a {
 	border-top: 6px solid transparent !important;
@@ -629,20 +609,8 @@ span.envelope:before{
 	z-index: 4;
 }
 .workflowButton{
-	-webkit-transform: rotate(-90deg);
-	-moz-transform: rotate(-90deg);
-	-ms-transform: rotate(-90deg);
-	-o-transform: rotate(-90deg);
 	transform: rotate(-90deg);
-
-	/* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
-	-webkit-transform-origin: 40% 100%;
-	-moz-transform-origin: 40% 100%;
-	-ms-transform-origin: 40% 100%;
-	-o-transform-origin: 40% 100%;
 	transform-origin: 40% 100%;
-	/* Should be unset in IE9+ I think. */
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 	border-radius: 0px 0px 8px 8px;
 	background-color: #38758a;
 	color: #fff;
@@ -691,8 +659,6 @@ span.envelope:before{
 .potentialTechnicalCorrectionTag,
 .potentialSignificantIssue{
 	background-color: #F6D18B;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	color: #593c05;
 	font-weight: normal !important;
@@ -703,8 +669,6 @@ span.envelope:before{
 }
 .technicalCorrectionTag{
 	background-color: #FFA500;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	color: #593c05;
 	font-weight: normal !important;
@@ -713,10 +677,6 @@ span.envelope:before{
 	margin-top: 4px;
 	text-align: center;
 }
-#btnFilter{
-	top: -10px;
-}
-
 #formfield-form-widgets-eu_key_catagory{
   width: 20%;
   float: right;

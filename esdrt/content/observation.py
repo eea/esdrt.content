@@ -1,3 +1,4 @@
+from enum import Enum
 from functools import partial
 
 from Products.Five import BrowserView
@@ -74,6 +75,12 @@ HIDDEN_ACTIONS = [
     "/content_status_history",
     "/placeful_workflow_configuration",
 ]
+
+
+class StatusIcon(Enum):
+    OBSERVATION = "bi-file-earmark-text"
+    CONCLUSION = "bi-check"
+    QUESTION = "bi-wechat"
 
 
 def hidden(menuitem):
@@ -529,35 +536,35 @@ class Observation(Container):
 
     def wf_status(self):
         if self.get_status() in ["phase1-draft", "phase2-draft"]:
-            return ["Observation created", "observationIcon"]
+            return ["Observation created", StatusIcon.OBSERVATION.value]
         elif self.get_status() in ["phase1-closed", "phase2-closed"]:
-            return ["Observation finished", "observationIcon"]
+            return ["Observation finished", StatusIcon.OBSERVATION.value]
         elif self.get_status() in [
             "phase1-close-requested",
             "phase2-close-requested",
         ]:
-            return ["Observation finish requested", "observationIcon"]
+            return ["Observation finish requested", StatusIcon.OBSERVATION.value]
         elif self.get_status() in ["phase1-conclusions", "phase2-conclusions"]:
-            return ["Conclusion ongoing", "conclusionIcon"]
+            return ["Conclusion ongoing", StatusIcon.CONCLUSION.value]
         elif self.get_status() in [
             "phase1-conclusion-discussion",
             "phase2-conclusion-discussion",
         ]:
-            return ["Counterparts comments requested", "conclusionIcon"]
+            return ["Counterparts comments requested", StatusIcon.CONCLUSION.value]
         else:
             questions = self.get_values_cat("Question")
             if questions:
                 question = questions[-1]
                 state = question.get_state_api()
                 if state in ["phase1-draft", "phase2-draft"]:
-                    return ["Question drafted", "questionIcon"]
+                    return ["Question drafted", StatusIcon.QUESTION.value]
                 elif state in [
                     "phase1-counterpart-comments",
                     "phase2-counterpart-comments",
                 ]:
-                    return ["Counterpart's comments requested", "questionIcon"]
+                    return ["Counterpart's comments requested", StatusIcon.QUESTION.value]
                 elif state in ["phase1-answered", "phase2-answered"]:
-                    return ["Pending question", "questionIcon"]
+                    return ["Pending question", StatusIcon.QUESTION.value]
                 elif state in [
                     "phase1-pending",
                     "phase1-carried-over",
@@ -568,25 +575,25 @@ class Observation(Container):
                     "phase2-pending-answer-drafting",
                     "phase2-recalled-msa",
                 ]:
-                    return ["Open question", "questionIcon"]
+                    return ["Open question", StatusIcon.QUESTION.value]
                 elif state in [
                     "phase1-drafted",
                     "phase1-recalled-lr",
                     "phase2-drafted",
                     "phase2-recalled-lr",
                 ]:
-                    return ["Draft question", "questionIcon"]
+                    return ["Draft question", StatusIcon.QUESTION.value]
                 elif state in [
                     "phase1-expert-comments",
                     "phase2-expert-comments",
                 ]:
-                    return ["MS expert comments requested", "questionIcon"]
+                    return ["MS expert comments requested", StatusIcon.QUESTION.value]
                 elif state in ["phase1-closed", "phase2-closed"]:
-                    return ["Closed question", "questionIcon"]
+                    return ["Closed question", StatusIcon.QUESTION.value]
             else:
-                return ["Observation created", "observationIcon"]
+                return ["Observation created", StatusIcon.OBSERVATION.value]
 
-        return ["Unknown", "observationIcon"]
+        return ["Unknown", StatusIcon.OBSERVATION.value]
 
     def observation_status(self):
         status = self.observation_question_status()
@@ -702,7 +709,7 @@ class Observation(Container):
         question_wf = []
         for item in observation_history:
             item["role"] = item["actor"]
-            item["object"] = "observationIcon"
+            item["object"] = StatusIcon.OBSERVATION.value
             item["author"] = self.get_author_name(item["actor"])
             if item["review_state"] == "phase1-draft":
                 item["state"] = "Draft observation"
@@ -744,7 +751,7 @@ class Observation(Container):
             elif item["review_state"] == "phase1-conclusion-discussion":
                 item["state"] = "Conclusion comments requested"
                 item["role"] = "Sector expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif (
                 item["review_state"] == "phase1-conclusions"
@@ -752,7 +759,7 @@ class Observation(Container):
             ):
                 item["state"] = "Conclusion comments closed"
                 item["role"] = "Sector expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif (
                 item["review_state"] == "phase1-conclusions"
@@ -760,7 +767,7 @@ class Observation(Container):
             ):
                 item["state"] = "Conclusion drafting"
                 item["role"] = "Sector expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif item["action"] == "phase1-send-to-team-2":
                 item["state"] = "Handed to phase 2"
@@ -804,7 +811,7 @@ class Observation(Container):
             elif item["review_state"] == "phase2-conclusion-discussion":
                 item["state"] = "Conclusion comments requested"
                 item["role"] = "Review expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif (
                 item["review_state"] == "phase2-conclusions"
@@ -812,7 +819,7 @@ class Observation(Container):
             ):
                 item["state"] = "Conclusion comments closed"
                 item["role"] = "Review expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif (
                 item["review_state"] == "phase2-conclusions"
@@ -820,7 +827,7 @@ class Observation(Container):
             ):
                 item["state"] = "Conclusion drafting"
                 item["role"] = "Review expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             else:
                 item["state"] = "*" + item["review_state"] + "*"
@@ -836,7 +843,7 @@ class Observation(Container):
             )
             for item in question_history:
                 item["role"] = item["actor"]
-                item["object"] = "questionIcon"
+                item["object"] = StatusIcon.QUESTION.value
                 item["author"] = self.get_author_name(item["actor"])
                 if (
                     item["review_state"] == "phase1-draft"
