@@ -21,6 +21,8 @@ from collective.exportimport.import_other import Comment
 from collective.exportimport.import_other import aq_base
 from collective.exportimport.import_other import IAnnotations
 from collective.exportimport.import_other import DISCUSSION_ANNOTATION_KEY
+from collective.exportimport.import_other import PORTAL_PLACEHOLDER
+from collective.exportimport.import_other import ZLogHandler
 
 
 logger = logging.getLogger(__name__)
@@ -100,4 +102,56 @@ class ImportDiscussion(import_other.ImportDiscussion):
             logger.info("Added {} comments to {}".format(added, obj.absolute_url()))
             results += added
 
+        return results
+
+
+class ImportLocalRoles(import_other.ImportLocalRoles):
+
+    index = ViewPageTemplateFile(
+        "templates/import_discussion.pt",
+        _prefix=os.path.dirname(import_other.__file__),
+    )
+
+    def import_localroles(self, data):
+        results = 0
+        total = len(data)
+        for index, item in enumerate(data, start=1):
+            obj = api.content.get(path=item["@id"])
+            if not obj:
+                if item["uuid"] == PORTAL_PLACEHOLDER:
+                    obj = api.portal.get()
+                else:
+                    logger.info(
+                        "Could not find object to set localroles on. UUID: {} ({})".format(
+                            item["uuid"],
+                            item["@id"],
+                        )
+                    )
+                    continue
+            if item.get("localroles"):
+                localroles = item["localroles"]
+                for userid in localroles:
+                    obj.manage_setLocalRoles(userid=userid, roles=localroles[userid])
+                logger.debug(
+                    u"Set roles on {}: {}".format(obj.absolute_url(), localroles)
+                )
+            if item.get("block"):
+                obj.__ac_local_roles_block__ = 1
+                logger.debug(
+                    u"Disable acquisition of local roles on {}".format(
+                        obj.absolute_url()
+                    )
+                )
+            if not index % 1000:
+                logger.info(
+                    u"Set local roles on {} ({}%) of {} items".format(
+                        index, round(index / total * 100, 2), total
+                    )
+                )
+            results += 1
+        if results:
+            logger.info("Reindexing Security")
+            catalog = api.portal.get_tool("portal_catalog")
+            pghandler = ZLogHandler(1000)
+            catalog.reindexIndex("allowedRolesAndUsers", None, pghandler=pghandler)
         return results

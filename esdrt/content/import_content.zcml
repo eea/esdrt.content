@@ -17,4 +17,11 @@
     permission="cmf.ManagePortal"
   />
 
+  <browser:page
+    name="esd_import_localroles"
+    for="zope.interface.Interface"
+    class=".import_other.ImportLocalRoles"
+    permission="cmf.ManagePortal"
+  />
+
 </configure>
