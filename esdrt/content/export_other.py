@@ -3,6 +3,8 @@ import logging
 
 from zope.component import getMultiAdapter
 
+from Acquisition import aq_base
+
 from Products.CMFCore.interfaces import IContentish
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
@@ -57,4 +59,32 @@ class ExportDiscussion(export_other.ExportDiscussion):
                 )
                 continue
         return results
+
+
+class ExportLocalRoles(export_other.ExportLocalRoles):
+
+    index = ViewPageTemplateFile(
+        "templates/export_other.pt",
+        _prefix=os.path.dirname(export_other.__file__),
+    )
+
+    def _get_localroles(self, obj, uid):
+        localroles = None
+        block = None
+        obj_url = obj.absolute_url()
+        obj = aq_base(obj)
+        if getattr(obj, "__ac_local_roles__", None) is not None:
+            localroles = obj.__ac_local_roles__
+        if getattr(obj, "__ac_local_roles_block__", False):
+            block = obj.__ac_local_roles_block__
+        if localroles or block:
+            item = {"uuid": uid, "@id": obj_url}
+            if localroles:
+                item["localroles"] = localroles
+            if block:
+                item["block"] = 1
+            item = self.item_hook(item)
+            if item is None:
+                return
+            self.results.append(item)
 
