@@ -116,7 +116,9 @@ class ImportLocalRoles(import_other.ImportLocalRoles):
         results = 0
         total = len(data)
         for index, item in enumerate(data, start=1):
-            obj = api.content.get(path=item["@id"])
+            obj_url = unquote(item["@id"])
+            obj_path = urlparse(obj_url).path
+            obj = api.content.get(path=obj_path)
             if not obj:
                 if item["uuid"] == PORTAL_PLACEHOLDER:
                     obj = api.portal.get()
