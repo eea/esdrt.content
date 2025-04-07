@@ -10,4 +10,11 @@
     permission="cmf.ManagePortal"
   />
 
+  <browser:page
+    name="esd_import_discussion"
+    for="zope.interface.Interface"
+    class=".import_other.ImportDiscussion"
+    permission="cmf.ManagePortal"
+  />
+
 </configure>
