@@ -44,7 +44,7 @@ def observation_status_flag(context):
 
 @indexer(IObservation)
 def observation_year(context):
-    return context.year
+    return str(context.year)
 
 
 @indexer(IObservation)
