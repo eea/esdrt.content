@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.77.0 (2025-04-25)
+-------------------
+- Bug: #287109 - Fix hand over to team 2.
+- Task: #260929 - Include dataexport support.
+  [batradav]
+
 1.76.3 (2025-02-25)
 -------------------
 - Task: #284821 - Use owner_info instead of getOwner.
