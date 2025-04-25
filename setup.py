@@ -47,6 +47,7 @@ setup(
         "python-ldap",
         "Products.LDAPUserFolder",
         "openpyxl",
+        "collective.exportimport",
     ],
     entry_points="""
       # -*- Entry points: -*-

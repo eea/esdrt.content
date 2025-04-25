@@ -254,7 +254,7 @@ def observation_transition(observation, event):
                 question = questions[0]
                 api.content.transition(
                     obj=question,
-                    transition='phase2-reopen'
+                    transition='go-to-phase2'
                 )
                 # Refs #84444 - If observation has Q&A
                 # go directly to phase2-open.

@@ -23,6 +23,20 @@
   <include package=".subscriptions" />
   <include package=".notifications" />
 
+  <browser:page
+    name="esd_export_discussion"
+    for="zope.interface.Interface"
+    class=".export_other.ExportDiscussion"
+    permission="cmf.ManagePortal"
+  />
+
+  <browser:page
+    name="esd_export_localroles"
+    for="zope.interface.Interface"
+    class=".export_other.ExportLocalRoles"
+    permission="cmf.ManagePortal"
+  />
+
   <!-- Grok the package to initialise schema interfaces and content classes -->
   <grok:grok package="." />
 
