@@ -3,6 +3,7 @@ import operator
 import itertools
 import time
 from datetime import datetime
+from StringIO import StringIO
 
 from Acquisition import aq_inner
 from z3c.form import button
@@ -43,10 +44,10 @@ from plone.z3cform.layout import wrap_form
 from plone.supermodel import model
 
 import Missing
-import tablib
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
 from eea.cache import cache
+from openpyxl import Workbook
 from esdrt.content import ldap_utils
 from esdrt.content.browser.inbox_sections import SECTIONS
 from esdrt.content.constants import ROLE_LR
@@ -783,8 +784,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             for name in form_data.get("exportFields", [])
             if not user_is_ms or name not in EXCLUDE_FIELDS_FOR_MS
         ]
-        dataset = tablib.Dataset()
-        dataset.title = "Observations"
+
+        dataset = []
 
         catalog = api.portal.get_tool("portal_catalog")
         qa_len = 0
@@ -911,8 +912,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         filtered_export_fields = get_export_fields(self.context)
         headers.extend([filtered_export_fields[k] for k in fields_to_export])
         headers.extend(["Q&A"] * qa_len)
-        dataset.headers = headers
-        return dataset
+        return [headers] + dataset
 
     def extract_qa(self, catalog, observation):
         question_brains = catalog(
@@ -941,19 +941,32 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         """ Export filtered observations in xls
         """
         now = datetime.now()
-        filename = "EMRT-observations-%s-%s.xls" % (
+        filename = "EMRT-observations-%s-%s.xlsx" % (
             self.context.getId(),
             now.strftime("%Y%M%d%H%m"),
         )
 
-        book = tablib.Databook((self.extract_data(data),))
+        wb = Workbook()
+        wb.remove(wb.active)
+        sheet = wb.create_sheet('Observations')
+
+        for row in self.extract_data(data):
+            sheet.append(row)
 
         response = self.request.response
-        response.setHeader("content-type", "application/vnc.ms-excel")
+        response.setHeader(
+            "content-type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
         response.setHeader(
             "Content-disposition", "attachment;filename=" + filename
         )
-        response.write(book.xls)
+
+        xls = StringIO()
+        wb.save(xls)
+        xls.seek(0)
+        response.write(xls.read())
+
         return
 
 
