@@ -317,11 +317,10 @@
           </div>
           <div class="cell position-11 width-5" style="position:absolute;z-index:2">
             <tal:block tal:repeat="item view/get_highlights">
-              <tal:block tal:define="highlights python:'';
-                                     highlights request/highlights | highlights">
+              <tal:block tal:define="highlights python:request.get('highlights', '').split(',');">
                 <input type="checkbox"
                   tal:attributes="value python:item[0];
-                                  checked python:highlights.find(item[0]) >= 0;
+                                  checked python:item[0] in highlights;
                                   id python:item[0]"/>
                 <label tal:attributes="for python:item[0];"
                   tal:content="python:item[1]"></label><br/>
