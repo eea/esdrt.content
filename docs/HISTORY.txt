@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.77.2 (2025-06-02)
+-------------------
+- Task: #287027- Minor change to wording in automated text
+
 1.77.1 (2025-04-28)
 -------------------
 - Bug: #287198 - Fix Excel export.
