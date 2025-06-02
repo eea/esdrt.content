@@ -33,7 +33,7 @@ from zope.event import notify
 from z3c.form import interfaces
 
 
-DEFAULTCONCLUSIONTEXT = u"""For category x and gases a, b, c for year[s]... the TERT noted that...
+DEFAULTCONCLUSIONTEXT = u"""For category x, pool x, and gases a, b, c for year[s]... the TERT noted that...
 In response to a question raised during the review, [the Member State] explained that... [the Member State provided [a] revised estimate[s] for year[s] [and stated that it will be included in the next submission.]]
 The TERT [disagreed][agreed][party agreed] with the [explanation] [revised estimate] provided by [the Member State].
 [The TERT decided to calculate a technical correction.][The TERT noted that the issue is below the threshold of significance for technical correction.]
