@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="esdrt.content">
 
     <browser:page
@@ -9,5 +10,18 @@
       class=".portal_workflow.ApplyAndReindex"
       permission="cmf.ManagePortal"
       />
+
+
+    <genericsetup:upgradeSteps
+      source="2000"
+      destination="2001"
+      profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+        title="Import workflows"
+        import_steps="workflow"
+      />
+
+    </genericsetup:upgradeSteps>
 
 </configure>

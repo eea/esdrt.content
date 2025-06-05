@@ -1325,11 +1325,10 @@
         </tal:block>
       </div>
       <div class="actions" tal:condition="view/can_add_comment">
-        <a href="./++add++Comment"
-          id="add-comment-link"
-          tal:attributes="href string:${here/absolute_url}/++add++Comment"
-          class="standardButton">
-            Add follow up question
+        <a href="${python:context.get_question().absolute_url()}/++add++Comment"
+           id="add-comment-link"
+           class="standardButton">
+          Add follow up question
         </a>
       </div>
       <div class="actions" tal:condition="view/can_add_answer">

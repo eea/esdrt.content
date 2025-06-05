@@ -1,5 +1,6 @@
 from time import time
 
+from zExceptions import Redirect
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -85,9 +86,31 @@ class AddForm(add.DefaultAddForm):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
 
-    def create(self, data={}):
-        # import pdb; pdb.set_trace()
-        # return super(AddForm, self).create(data)
+    def create(self, data=None):
+        if self.context.listFolderContents():
+            return self._create_follow_up(data)
+        return self._create_initial(data)
+
+    def _create_follow_up(self, data=None):
+
+        if api.content.get_state(self.context).startswith('phase1-'):
+            api.content.transition(
+                obj=self.context,
+                transition='phase1-reopen')
+        elif api.content.get_state(self.context).startswith('phase2-'):
+            api.content.transition(
+                obj=self.context,
+                transition='phase2-reopen')
+
+        # If all is well, create the object.
+        if self.context.can_add_comment():
+            return self._create_initial(data)
+
+        # Anything fails raise a Redirect.
+        # So that the transaction is rolled back and we keep the initial state.
+        raise Redirect(self.context.absolute_url())
+
+    def _create_initial(self, data=None):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)

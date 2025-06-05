@@ -64,6 +64,7 @@ from esdrt.content.constants import ROLE_SE
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
+from esdrt.content.utilities.interfaces import IFollowUpPermission
 from esdrt.content.utils import exclude_phase2_actions, get_vocabulary_value
 from .comment import IComment
 from .commentanswer import ICommentAnswer
@@ -914,7 +915,7 @@ class Observation(Container):
                     item["role"] = "Member state coordinator"
                     question_wf.append(item)
                 elif (
-                    item["action"] == "phase1-closed"
+                    item["review_state"] == "phase1-closed"
                     and item["action"] == "phase1-validate-answer-msa"
                 ):
                     item["state"] = "Sector expert"
@@ -1501,26 +1502,7 @@ class ObservationMixin(DefaultView):
         return ""
 
     def can_add_comment(self):
-        sm = getSecurityManager()
-        question = self.question()
-        if question:
-            permission = sm.checkPermission(
-                "esdrt.content: Add Comment", question
-            )
-            questions = [
-                q for q in list(question.values()) if q.portal_type == "Comment"
-            ]
-            answers = [
-                q for q in list(question.values()) if q.portal_type == "CommentAnswer"
-            ]
-            obs_state = self.context.get_status()
-            return (
-                permission
-                and len(questions) == len(answers)
-                and obs_state != "phase1-closed"
-            )
-        else:
-            return False
+        return getUtility(IFollowUpPermission)(self.question())
 
     def can_add_answer(self):
         sm = getSecurityManager()

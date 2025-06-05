@@ -1,3 +1,5 @@
+from zExceptions import Redirect
+
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -9,6 +11,7 @@ from zope.interface import implementer
 
 from esdrt.content import _
 from esdrt.content.comment import IComment
+from esdrt.content.utilities.interfaces import IFollowUpPermission
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.interfaces import IDexterityFTI
@@ -94,6 +97,9 @@ def create_question(context):
 @implementer(IQuestion)
 class Question(Container):
 
+    def can_add_comment(self):
+        return getUtility(IFollowUpPermission)(self)
+
     def get_state_api(self):
         return api.content.get_state(self)
 
@@ -135,10 +141,7 @@ class Question(Container):
 
     def has_answers(self):
         items = list(self.values())
-        questions = [q for q in items if q.portal_type == 'Comment']
-        answers = [q for q in items if q.portal_type == 'CommentAnswer']
-
-        return len(questions) == len(answers)
+        return len(items) and items[-1].portal_type == "CommentAnswer" or False
 
     def can_be_sent_to_lr(self):
         items = list(self.values())
@@ -242,6 +245,10 @@ class AddForm(add.DefaultAddForm):
         self.widgets['text'].rows = 15
 
     def create(self, data=None):
+        existing_question = self.context.listFolderContents({"portal_type": "Question"})
+        # Handle multiple submits, there should be only one Question.
+        if existing_question:
+            raise Redirect(self.context.absolute_url())
         return create_question(self.context)
 
     def add(self, obj):
@@ -446,17 +453,6 @@ class EditAnswerAndCloseComments(BrowserView):
 class AddFollowUpQuestion(BrowserView):
 
     def render(self):
-        if api.content.get_state(self.context).startswith('phase1-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase1-reopen')
-        elif api.content.get_state(self.context).startswith('phase2-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase2-reopen')
-        else:
-            raise ActionExecutionError(Invalid("Invalid context"))
-
         url = '%s/++add++Comment' % self.context.absolute_url()
         return self.request.response.redirect(url)
 
