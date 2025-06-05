@@ -123,8 +123,6 @@
    <permission-role>ReviewerPhase2</permission-role>
    <permission-role>Auditor</permission-role>
   </permission-map>
-  <permission-map name="esdrt.content: Add Comment" acquired="False">
-  </permission-map>
   <permission-map name="esdrt.content: Add CommentAnswer" acquired="False">
   </permission-map>
   <permission-map name="esdrt.content: Add ESDRTFile" acquired="False">
@@ -1320,7 +1318,7 @@
   <action url="%(content_url)s/add-follow-up-question?workflow_action=phase1-add-followup-question" category="workflow" icon="">Add follow up question</action>
   <guard>
    <guard-role>ReviewerPhase1</guard-role>
-   <guard-expression>python:here.has_answers() and here.aq_parent.get_status() not in ['phase1-conclusion-discussion', 'phase1-close-requested']</guard-expression>
+   <guard-expression>python:here.can_add_comment()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="phase1-answer-to-lr" title="Submit Answer" new_state="phase1-answered" trigger="USER" before_script="" after_script="">
@@ -1466,7 +1464,7 @@
   <action url="%(content_url)s/add-follow-up-question?workflow_action=phase2-add-followup-question" category="workflow" icon="">Add follow up question</action>
   <guard>
    <guard-role>ReviewerPhase2</guard-role>
-   <guard-expression>python:here.has_answers() and here.aq_parent.get_status() not in ['phase2-conclusion-discussion', 'phase2-close-requested']</guard-expression>
+   <guard-expression>python:here.can_add_comment()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="phase2-answer-to-lr" title="Submit Answer" new_state="phase2-answered" trigger="USER" before_script="" after_script="">

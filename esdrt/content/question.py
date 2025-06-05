@@ -1,3 +1,5 @@
+from zExceptions import Redirect
+
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -5,6 +7,7 @@ from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
 from esdrt.content import MessageFactory as _
 from esdrt.content.comment import IComment
+from esdrt.content.utilities.interfaces import IFollowUpPermission
 from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
@@ -92,6 +95,9 @@ def create_question(context):
 
 class Question(dexterity.Container):
     grok.implements(IQuestion)    # Add your class methods and properties here
+
+    def can_add_comment(self):
+        return getUtility(IFollowUpPermission)(self)
 
     def get_state_api(self):
         return api.content.get_state(self)
@@ -253,7 +259,12 @@ class AddForm(dexterity.AddForm):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
 
-    def create(self, data={}):
+    def create(self, data=None):
+        existing_question = self.context.listFolderContents({"portal_type": "Question"})
+        # Handle multiple submits, there should be only one Question.
+        if existing_question:
+            raise Redirect(self.context.absolute_url())
+
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -456,17 +467,6 @@ class AddFollowUpQuestion(grok.View):
     grok.require('zope2.View')
 
     def render(self):
-        if api.content.get_state(self.context).startswith('phase1-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase1-reopen')
-        elif api.content.get_state(self.context).startswith('phase2-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase2-reopen')
-        else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
-
         url = '%s/++add++Comment' % self.context.absolute_url()
         return self.request.response.redirect(url)
 
