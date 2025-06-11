@@ -66,6 +66,9 @@
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />
   <adapter name="observation_step" factory=".indexers.observation_step" />
+  <adapter name="phase_timestamp" factory=".indexers.phase_timestamp" />
+  <adapter name="parameter" factory=".indexers.parameter" />
+  <adapter name="qa_extract" factory=".indexers.qa_extract" />
 
   <!-- ReviewFolder custom add form -->
   <adapter

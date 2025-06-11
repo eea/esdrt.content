@@ -242,5 +242,42 @@
     handler="esdrt.content.notifications.conclusion_to_comment.notification_lr"
     />
 
+  <!-- Reindex QA Extract on Q&A Changes. -->
+
+<subscriber
+    for="esdrt.content.commentanswer.ICommentAnswer
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+    />
+
+<subscriber
+    for="esdrt.content.commentanswer.ICommentAnswer
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+    />
+
+<subscriber
+    for="esdrt.content.commentanswer.ICommentAnswer
+         zope.app.form.interfaces.IActionSucceededEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+    />
+
+<subscriber
+    for="esdrt.content.comment.IComment
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+    />
+
+<subscriber
+    for="esdrt.content.comment.IComment
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+    />
+
+<subscriber
+    for="esdrt.content.comment.IComment
+         zope.app.form.interfaces.IActionSucceededEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+    />
 
 </configure>
