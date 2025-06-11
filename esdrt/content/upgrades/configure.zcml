@@ -722,4 +722,23 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+        source="70"
+        destination="71"
+        profile="esdrt.content:default">
+
+      <genericsetup:upgradeDepends
+          title="Update catalog config"
+          description="[refs #288745] New columns added: parameter, qa_extract, phase_timestamp."
+          import_steps="catalog"
+          />
+
+      <genericsetup:upgradeStep
+          title="Reindex observations"
+          description="[refs #288745] New columns added: parameter, qa_extract, phase_timestamp."
+          handler=".70_71.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
+
 </configure>

@@ -11,6 +11,7 @@ from plone import api
 from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.CMFCore.utils import getToolByName
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
+from zope.app.container.interfaces import IObjectAddedEvent
 from plone.app.discussion.interfaces import ICommentAddedEvent
 
 
@@ -316,4 +317,14 @@ def observation_transition(observation, event):
                     transition='ask-approval'
                 )
 
+    observation.reindexObject()
+
+@grok.subscribe(IComment, IActionSucceededEvent)
+@grok.subscribe(ICommentAnswer, IActionSucceededEvent)
+@grok.subscribe(IComment, IObjectModifiedEvent)
+@grok.subscribe(ICommentAnswer, IObjectModifiedEvent)
+@grok.subscribe(IComment, IObjectAddedEvent)
+@grok.subscribe(ICommentAnswer, IObjectAddedEvent)
+def reindex_observation(context, _):
+    observation = context.get_observation()
     observation.reindexObject()

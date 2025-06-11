@@ -102,6 +102,18 @@
     <indexed_attr value="has_closing_remarks" />
  </index>
 
+ <index name="parameter" meta_type="KeywordIndex">
+  <indexed_attr value="parameter"/>
+ </index>
+
+ <index name="phase_timestamp" meta_type="FieldIndex">
+    <indexed_attr value="phase_timestamp" />
+ </index>
+
+ <index name="qa_extract" meta_type="FieldIndex">
+    <indexed_attr value="qa_extract" />
+ </index>
+
  <column value="observation_status" />
  <column value="country" />
  <column value="country_value" />
@@ -137,4 +149,7 @@
  <column value="observation_sent_to_mse" />
  <column value="has_closing_remarks" />
  <column value="gas_value" />
+ <column value="parameter" />
+ <column value="phase_timestamp" />
+ <column value="qa_extract" />
 </object>

@@ -1,9 +1,13 @@
+import json
+
 from types import FloatType
 from types import IntType
 from types import ListType
 from types import StringType
 from types import TupleType
 from types import UnicodeType
+
+import itertools
 
 from zope.schema import getFieldsInOrder
 
@@ -393,3 +397,35 @@ def has_closing_remarks(context):
         return conclusions[0] and bool(conclusions[0].remarks) or False
     except:
         return False
+
+
+@indexer(IObservation)
+def phase_timestamp(context):
+    return context.myHistory()[-1]["time"].asdatetime().isoformat()
+
+
+@indexer(IObservation)
+def parameter(context):
+    return tuple(getattr(context, "parameter", tuple())) or tuple()
+
+
+@indexer(IObservation)
+def qa_extract(context):
+    extract = []
+    with api.env.adopt_roles(['Manager']):
+        questions = context.listFolderContents({"portal_type": "Question"})
+        comments = tuple(
+            itertools.chain(
+                *[question.get_questions() for question in questions]
+            )
+        )
+
+        mapping = dict(Comment="Question", CommentAnswer="Answer")
+        extract = [
+            u"{}: {}".format(
+                mapping[comment.portal_type], safe_unicode(comment.text)
+            )
+            for comment in comments
+        ]
+
+    return json.dumps(extract)
