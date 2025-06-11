@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.77.4 (2025-06-11)
+-------------------
+- Task: #288745 - Add field into EMRT extract. Improve performance.
+- Bug: #288627 - Observation stuck in EMRT-ESD.
+
 1.77.3 (2025-06-02)
 -------------------
 - Task: #287026 - Fix highlights filters.
