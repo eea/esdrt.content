@@ -325,6 +325,6 @@ def observation_transition(observation, event):
 @grok.subscribe(ICommentAnswer, IObjectModifiedEvent)
 @grok.subscribe(IComment, IObjectAddedEvent)
 @grok.subscribe(ICommentAnswer, IObjectAddedEvent)
-def reindex_observation(context, _):
+def reindex_observation_qa_extract(context, _):
     observation = context.get_observation()
-    observation.reindexObject()
+    observation.reindexObject(idxs=['qa_extract'])
