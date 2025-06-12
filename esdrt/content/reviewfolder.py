@@ -1,6 +1,6 @@
 import json
 import logging
-import operator
+from io import BytesIO
 import itertools
 import time
 from datetime import datetime
@@ -42,11 +42,14 @@ from plone.autoform import directives
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.layout import wrap_form
+from plone.z3cform.layout import FormWrapper
 from plone.supermodel import model
 from plone.supermodel.directives import fieldset
 
 import Missing
-import tablib
+
+from openpyxl import Workbook
+
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
 from plone.memoize.ram import cache
@@ -212,7 +215,6 @@ def get_observation_phase(brain):
         result = "Finalised"
 
     return result
-
 
 
 def filter_for_ms(brains, context):
@@ -691,6 +693,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     label = "Export observations in XLS format"
     name = "export-observation-form"
 
+    _downloadable_file = None
+
     def updateWidgets(self):
         super(ExportReviewFolderForm, self).updateWidgets()
         self.widgets["exportFields"].size = 20
@@ -717,7 +721,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             self.status = self.formErrorsMessage
             return
 
-        return self.build_file(data)
+        self._downloadable_file = self.build_file(data)
 
     @button.buttonAndHandler("Back")
     def handleCancel(self, action):
@@ -803,8 +807,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             for name in form_data.get("exportFields", [])
             if not user_is_ms or name not in EXCLUDE_FIELDS_FOR_MS
         ]
-        dataset = tablib.Dataset()
-        dataset.title = "Observations"
+        dataset = []
 
         catalog = api.portal.get_tool("portal_catalog")
         qa_len = 0
@@ -944,8 +947,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         filtered_export_fields = get_export_fields(self.context)
         headers.extend([filtered_export_fields[k] for k in fields_to_export])
         headers.extend(["Q&A"] * qa_len)
-        dataset.headers = headers
-        return dataset
+        return [headers] + dataset
 
     def extract_qa(self, catalog, observation):
         question_brains = catalog(
@@ -979,18 +981,40 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             now.strftime("%Y%M%d%H%m"),
         )
 
-        book = tablib.Databook((self.extract_data(data),))
+        wb = Workbook()
+        wb.remove(wb.active)
+        sheet = wb.create_sheet("Observations")
+
+        for row in self.extract_data(data):
+            sheet.append(row)
 
         response = self.request.response
-        response.setHeader("content-type", "application/vnc.ms-excel")
         response.setHeader(
-            "Content-disposition", "attachment;filename=" + filename
+            "Content-type",
+            "application/vnd.ms-excel; charset=utf-8",
         )
-        response.write(book.xls)
-        return
+        response.setHeader(
+            "Content-Disposition",
+            f"attachment; filename={filename}",
+        )
+
+        xls = BytesIO()
+        wb.save(xls)
+        xls.seek(0)
+        return xls
 
 
-ExportReviewFolderFormView = wrap_form(ExportReviewFolderForm)
+class DownloadableFormWrapper(FormWrapper):
+    def render(self):
+        if self.form_instance._downloadable_file:
+            return self.form_instance._downloadable_file
+        return super(DownloadableFormWrapper, self).render()
+
+
+ExportReviewFolderFormView = wrap_form(
+    ExportReviewFolderForm,
+    __wrapper_class=DownloadableFormWrapper,
+)
 
 
 def _item_user(fun, self, user, item):
