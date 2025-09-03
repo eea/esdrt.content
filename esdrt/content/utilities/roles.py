@@ -35,6 +35,9 @@ QUERY_LDAP_ROLES = ldap_utils.format_or(
 
 
 def f_start(pat, s):
+    if isinstance(s, bytes) and not isinstance(pat, bytes):
+        pat = pat.encode("utf-8")
+
     return s.startswith(pat)
 
 
