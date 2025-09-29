@@ -55,7 +55,7 @@
     name="esdrt.content.conclusion"
     />
 
-  <class class=".conclusions.AddView">
+  <class class=".conclusion.AddView">
     <require
       permission="esdrt.content.AddConclusion"
       interface="zope.publisher.interfaces.browser.IBrowserPage"

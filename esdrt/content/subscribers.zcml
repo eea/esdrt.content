@@ -258,7 +258,7 @@
 
 <subscriber
     for="esdrt.content.commentanswer.ICommentAnswer
-         zope.app.form.interfaces.IActionSucceededEvent"
+         Products.CMFCore.interfaces.IActionSucceededEvent"
     handler=".subscribers.reindex_observation_qa_extract"
     />
 
@@ -276,7 +276,7 @@
 
 <subscriber
     for="esdrt.content.comment.IComment
-         zope.app.form.interfaces.IActionSucceededEvent"
+         Products.CMFCore.interfaces.IActionSucceededEvent"
     handler=".subscribers.reindex_observation_qa_extract"
     />
 

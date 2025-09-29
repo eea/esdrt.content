@@ -142,7 +142,7 @@ class DenyFinishObservationReasonForm(Form):
                     workflow_action='phase2-deny-finishing-observation',
                 )
 
-        return self.response.redirect(self.context.absolute_url())
+        return self.request.RESPONSE.redirect(self.context.absolute_url())
 
     def updateWidgets(self):
         super(DenyFinishObservationReasonForm, self).updateWidgets()
@@ -475,7 +475,7 @@ class RequestRedraftReasonForm(Form):
                     workflow_action='phase2-redraft',
                 )
 
-        return self.response.redirect(self.context.absolute_url())
+        return self.request.RESPONSE.redirect(self.context.absolute_url())
 
     def updateWidgets(self):
         super(RequestRedraftReasonForm, self).updateWidgets()
