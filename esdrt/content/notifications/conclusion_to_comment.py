@@ -1,5 +1,5 @@
 
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from .utils import notify
 
 
@@ -8,7 +8,7 @@ def notification_cp(context, event):
     To:     CounterParts
     When:   New draft conclusion to comment on
     """
-    _temp = PageTemplateFile('conclusion_to_comment.pt')
+    _temp = ViewPageTemplateFile('conclusion_to_comment.pt')
 
     if event.action in ['phase1-request-comments', 'phase2-request-comments']:
         observation = context
@@ -27,7 +27,7 @@ def notification_qe(context, event):
     To:     QualityExpert
     When:   New draft conclusion to comment on
     """
-    _temp = PageTemplateFile('conclusion_to_comment.pt')
+    _temp = ViewPageTemplateFile('conclusion_to_comment.pt')
 
     if event.action in ['phase1-request-comments']:
         observation = context
@@ -46,7 +46,7 @@ def notification_lr(context, event):
     To:     LeadReviewer
     When:   New draft question to comment on
     """
-    _temp = PageTemplateFile('conclusion_to_comment.pt')
+    _temp = ViewPageTemplateFile('conclusion_to_comment.pt')
 
     if event.action in ['phase2-request-comments']:
         observation = context

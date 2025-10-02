@@ -158,7 +158,7 @@
 
 <metal:main fill-slot="content-core">
   <metal:content-core define-macro="content-core"
-      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; show_internal_notes view/show_internal_notes">
+      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; show_internal_notes view/show_internal_notes; auth_token context/@@authenticator/token|nothing">
 
   <metal:observation define-macro="observation-info"
     tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
@@ -932,14 +932,14 @@
         <a href="./content_status_modify?workflow_action=close"
           tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase1-observation'"
           id="observation-finish"
-          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase1-draft-conclusions"
+          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase1-draft-conclusions&_authenticator=${auth_token}"
           class="standardButton">
           Go to conclusions
         </a>
        <a href="./content_status_modify?workflow_action=close"
           tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase2-observation'"
           id="observation-finish"
-          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase2-draft-conclusions"
+          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase2-draft-conclusions&_authenticator=${auth_token}"
           class="standardButton">
           Go to conclusions
         </a>

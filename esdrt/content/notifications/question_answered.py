@@ -1,5 +1,5 @@
 from Acquisition import aq_parent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from .utils import notify
 
 
@@ -8,7 +8,7 @@ def notification_qe(context, event):
     To:     QualityExpert
     When:   New answer from country
     """
-    _temp = PageTemplateFile('question_answered_lr_msg.pt')
+    _temp = ViewPageTemplateFile('question_answered_lr_msg.pt')
 
     if event.action in ['phase1-answer-to-lr']:
         observation = aq_parent(context)
@@ -27,7 +27,7 @@ def notification_lr(context, event):
     To:     LeadReviewer
     When:   New answer from country
     """
-    _temp = PageTemplateFile('question_answered_lr_msg.pt')
+    _temp = ViewPageTemplateFile('question_answered_lr_msg.pt')
 
     if event.action in ['phase2-answer-to-lr']:
         observation = aq_parent(context)
@@ -46,7 +46,7 @@ def notification_rev_ph1(context, event):
     To:     ReviewerPhase1
     When:   New answer from country
     """
-    _temp = PageTemplateFile('question_answered_rev_msg.pt')
+    _temp = ViewPageTemplateFile('question_answered_rev_msg.pt')
 
     if event.action in ['phase1-answer-to-lr']:
         observation = aq_parent(context)
@@ -65,7 +65,7 @@ def notification_rev_ph2(context, event):
     To:     ReviewerPhase2
     When:   New answer from country
     """
-    _temp = PageTemplateFile('question_answered_rev_msg.pt')
+    _temp = ViewPageTemplateFile('question_answered_rev_msg.pt')
 
     if event.action in ['phase2-answer-to-lr']:
         observation = aq_parent(context)
@@ -84,7 +84,7 @@ def notification_rev_msexperts(context, event):
     To:     MSExperts
     When:   New answer from country
     """
-    _temp = PageTemplateFile('question_answered_msexperts_msg.pt')
+    _temp = ViewPageTemplateFile('question_answered_msexperts_msg.pt')
 
     if event.action in ['phase1-answer-to-lr', 'phase2-answer-to-lr']:
         observation = aq_parent(context)

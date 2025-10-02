@@ -1,4 +1,4 @@
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from .utils import notify
 
 
@@ -7,8 +7,8 @@ def notification_ms(context, event):
     To:     MSAuthority
     When:   Observation was finalised
     """
-    _temp = PageTemplateFile('observation_finalised.pt')
-    _temp_remarks = PageTemplateFile('observation_finalised_ms_remarks.pt')
+    _temp = ViewPageTemplateFile('observation_finalised.pt')
+    _temp_remarks = ViewPageTemplateFile('observation_finalised_ms_remarks.pt')
 
     _subj = 'An observation for your country was finalised'
     _subj_remarks = 'Observation finalised with a concluding remark'
@@ -48,7 +48,7 @@ def notification_rev_ph1(context, event):
     To:     ReviewerPhase1
     When:   Observation finalised
     """
-    _temp = PageTemplateFile('observation_finalised_rev_msg.pt')
+    _temp = ViewPageTemplateFile('observation_finalised_rev_msg.pt')
     if event.action in ['phase1-close']:
         observation = context
         subject = 'Your observation was finalised'
@@ -66,7 +66,7 @@ def notification_rev_ph2(context, event):
     To:     ReviewerPhase2
     When:   Observation finalised
     """
-    _temp = PageTemplateFile('observation_finalised_rev_msg.pt')
+    _temp = ViewPageTemplateFile('observation_finalised_rev_msg.pt')
     if event.action in ['phase2-confirm-finishing-observation']:
         observation = context
         subject = 'Your observation was finalised'
