@@ -1373,6 +1373,7 @@
         var parent = el.parentNode;
         var resetInput = document.createElement('button');
         resetInput.textContent = 'Delete attached file';
+        resetInput.classList.add("btn", "btn-secondary")
         resetInput.addEventListener('click', function(evt){
           evt.preventDefault();
           el.value = '';

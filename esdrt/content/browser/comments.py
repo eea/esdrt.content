@@ -1,3 +1,4 @@
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.discussion.browser.comments import CommentForm as BaseForm
 from plone.app.discussion.browser.comments import CommentsViewlet as BaseViewlet
 
@@ -17,4 +18,5 @@ class CommentForm(BaseForm):
 
 
 class CommentsViewlet(BaseViewlet):
+    index = ViewPageTemplateFile("./templates/comments.pt")
     form = CommentForm
