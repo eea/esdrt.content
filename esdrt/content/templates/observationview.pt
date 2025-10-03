@@ -1332,9 +1332,8 @@
         </a>
       </div>
       <div class="actions" tal:condition="view/can_add_answer">
-        <a href="./++add++CommentAnswer"
+        <a href="${python:context.get_question().absolute_url()}/++add++CommentAnswer"
           id="add-answer-link"
-          tal:attributes="href string:${here/absolute_url}/++add++CommentAnswer"
           title="To draft an answer and save it.You can request comments on your draft answer from your Member States expert(s) if needed or send your answer back to the review team without consulting your experts."
           class="standardButton defaultWFButton">
             Create answer
