@@ -20,9 +20,6 @@ from esdrt.content.constants import ROLE_CP
 from esdrt.content.constants import ROLE_MSE
 from esdrt.content.notifications.utils import get_ldap_group_member_ids
 from esdrt.content.notifications.utils import notify
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from plone.memoize.ram import cache
-from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
 
 from esdrt.content.reviewfolder import IReviewFolder
@@ -425,7 +422,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
             url = self.context.absolute_url()
 
             subject = 'New draft question to comment'
-            _temp = PageTemplateFile('../notifications/question_to_counterpart.pt')
+            _temp = ViewPageTemplateFile('../notifications/question_to_counterpart.pt')
             notify(
                 target,
                 _temp,
