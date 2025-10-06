@@ -17,6 +17,12 @@
 
     $(document).ready(function(){
 
+      //avoid duplicate 'Add follow up question' buttons
+      var followup = $(".standardButton:contains('follow up')");
+      if (followup.length > 1) {
+        $("#add-comment-link").hide();
+      }
+
         update_display = function() {
             var style = $(this).attr('value');
             if (! this.checked) {
@@ -142,9 +148,6 @@
           $(".standardButton:contains('Edit answer')").addClass("defaultWFButton");
           $(".standardButton:contains('Submit Answer')").removeClass("defaultWFButton")
         }
-
-
-
 
     });
 
@@ -1338,9 +1341,8 @@
           class="standardButton defaultWFButton">
             Create answer
         </a>
-        <a href="./add-answer-and-request-comments"
+        <a href="${here/absolute_url}/add-answer-and-request-comments?_authenticator=${auth_token}"
           id="no-answer-link"
-          tal:attributes="href string:${here/absolute_url}/add-answer-and-request-comments"
           title="To consult your Member States expert(s) without drafting an answer first. You ask your Member states experts to suggest an answer and you draft the answer after your discussions."
           class="standardButton">
             Request input for answer
