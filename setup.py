@@ -40,6 +40,14 @@ setup(
         "collective.monkeypatcher",
         "pas.plugins.ldap",
         "openpyxl",
+        "collective.exportimport",
+        # pins to avoid https://github.com/conestack/yafowil/issues/49
+        "yafowil==3.1.1",
+        "yafowil.bootstrap==2.0.0a2",
+        "yafowil.plone==5.0.0a2",
+        "yafowil.widget.array==1.7",
+        "yafowil.widget.dict==1.8",
+        "yafowil.yaml==2.0",
     ],
     entry_points="""
       # -*- Entry points: -*-
