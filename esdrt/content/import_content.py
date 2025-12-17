@@ -47,6 +47,7 @@ class CustomImportContent(ImportContent):
         self.SEEN_UIDS = set()
 
     def global_dict_hook(self, item):
+        logger.info("Processing %s...", item.get("@id", item.get("id")))
         simple = {}
         # for fieldname in SIMPLE_SETTER_FIELDS.get("ALL", []):
         #     if fieldname in item:
