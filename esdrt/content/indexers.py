@@ -406,8 +406,9 @@ def phase_timestamp(context):
 
 @indexer(IObservation)
 def parameter(context):
-    logger.info(context, getattr(context, "parameter"))
-    return tuple(getattr(context, "parameter", tuple())) or tuple()
+    value = getattr(context, "parameter") or []
+    value = [v for v in value if v]
+    return tuple(value)
 
 
 @indexer(IObservation)
