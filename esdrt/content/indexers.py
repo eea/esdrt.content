@@ -19,6 +19,10 @@ from esdrt.content.commentanswer import ICommentAnswer
 from .observation import IObservation
 from .utils import get_vocabulary_value
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 @indexer(IObservation)
 def observation_country(context):
@@ -402,6 +406,7 @@ def phase_timestamp(context):
 
 @indexer(IObservation)
 def parameter(context):
+    logger.info(context, getattr(context, "parameter"))
     return tuple(getattr(context, "parameter", tuple())) or tuple()
 
 
