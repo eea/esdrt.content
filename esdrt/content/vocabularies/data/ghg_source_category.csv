@@ -1,13 +1,13 @@
-sector1,1A1
-sector2,1A2, 1A4, 1A5
-sector3,1A3
-sector4,1B, 1C
-sector5,2A, 2B
-sector6,2C, 2D, 2H
-sector7,2E, 2F, 2G
-sector8,3A, 3B
-sector9,3C-3J
-sector10,LULUCF
-sector11,5A-5E
-sector12,6
-sector13,Reference approach
+sector1,"1A1 Energy industries"
+sector2,"1A2, 1A4, 1A5 Other energy sector"
+sector3,"1A3, 1D Transport and memo items (energy)"
+sector4,"1B, 1C Fugitive emissions, CO2 transport and storage"
+sector5,"2A, 2B Mineral and chemical industries"
+sector6,"2C, 2D, 2H Metal industry, non-energy products from fuels, solvent use and other industrial processes"
+sector7,"2E, 2F, 2G Electronics industry, product uses as ODS substitutes, and other products manufacture and use"
+sector8,"3A, 3B Agriculture (livestock)"
+sector9,"3C-3J Agriculture (land)"
+sector10,"4, 7 LULUCF"
+sector11,"5 Waste"
+sector12,"0, 6 Cross cutting and other"
+sector13,"1AB Reference approach"
