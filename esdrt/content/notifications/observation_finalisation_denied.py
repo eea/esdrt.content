@@ -1,5 +1,5 @@
 
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from .utils import notify
 
 
@@ -8,7 +8,7 @@ def notification_rev_ph1(context, event):
     To:     ReviewerPhase1
     When:   Observation finalisation denied
     """
-    _temp = PageTemplateFile('observation_finalisation_denied.pt')
+    _temp = ViewPageTemplateFile('observation_finalisation_denied.pt')
 
     if event.action in ['phase1-deny-closure']:
         observation = context
@@ -27,7 +27,7 @@ def notification_rev_ph2(context, event):
     To:     ReviewerPhase2
     When:   Observation finalisation denied
     """
-    _temp = PageTemplateFile('observation_finalisation_denied.pt')
+    _temp = ViewPageTemplateFile('observation_finalisation_denied.pt')
 
     if event.action in ['phase2-deny-finishing-observation']:
         observation = context

@@ -447,14 +447,13 @@
             <div class="row">
               <div class="col">
                 <tal:block tal:repeat="item view/get_highlights">
-                  <tal:block tal:define="highlights python:'';
-                    highlights request/highlights | highlights">
+                  <tal:block tal:define="highlights python:request.get('highlights', '').split(',');">
                     <input type="checkbox"
-                       tal:attributes="value python:item[0];
-                        checked python:highlights.find(item[0]) >= 0;
-                        id python:item[0]"/>
+                           tal:attributes="value python:item[0];
+                                           checked python:item[0] in highlights;
+                                           id python:item[0]"/>
                     <label tal:attributes="for python:item[0];"
-                       tal:content="python:item[1]"></label><br/>
+                           tal:content="python:item[1]"></label><br/>
                     <br tal:condition="python:item[0]=='ur'"/>
                     <div tal:condition="python:item[0]=='ur'" class="esdLabel">Draft/final conclusion flags</div>
 

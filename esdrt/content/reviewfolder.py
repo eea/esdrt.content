@@ -1,5 +1,6 @@
+import json
 import logging
-import operator
+from io import BytesIO
 import itertools
 import time
 from datetime import datetime
@@ -41,11 +42,14 @@ from plone.autoform import directives
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.layout import wrap_form
+from plone.z3cform.layout import FormWrapper
 from plone.supermodel import model
 from plone.supermodel.directives import fieldset
 
 import Missing
-import tablib
+
+from openpyxl import Workbook
+
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
 from plone.memoize.ram import cache
@@ -211,7 +215,6 @@ def get_observation_phase(brain):
         result = "Finalised"
 
     return result
-
 
 
 def filter_for_ms(brains, context):
@@ -601,6 +604,7 @@ EXPORT_FIELDS = OrderedDict(
         ("year", "Inventory year"),
         ("gas_value", "GAS"),
         ("get_highlight", "Description flags"),
+        ("parameter", "Parameter"),
         ("overview_status", "Status"),
         ("observation_phase", "Step"),
         ("observation_finalisation_reason_step1", "Conclusion step 1"),
@@ -689,6 +693,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     label = "Export observations in XLS format"
     name = "export-observation-form"
 
+    _downloadable_file = None
+
     def updateWidgets(self):
         super(ExportReviewFolderForm, self).updateWidgets()
         self.widgets["exportFields"].size = 20
@@ -715,7 +721,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             self.status = self.formErrorsMessage
             return
 
-        return self.build_file(data)
+        self._downloadable_file = self.build_file(data)
 
     @button.buttonAndHandler("Back")
     def handleCancel(self, action):
@@ -739,6 +745,21 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             for highlight in highlights
         ]
         return [v for v in values if v]
+
+    def translate_parameters(self, parameters):
+        result = []
+
+        vocab_factory = getUtility(IVocabularyFactory, name="esdrt.content.parameter")
+        vocabulary = vocab_factory(self)
+
+        for parameter in parameters:
+            try:
+                value = vocabulary.getTerm(parameter)
+                result.append(value.title)
+            except LookupError:
+                result.append(parameter)
+
+        return result
 
     def _highlight_vocabulary_value(self, vocabulary, term):
         vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
@@ -777,7 +798,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     def extract_data(self, form_data):
         """ Create xls file
         """
-        observations = self.get_questions()
+        observation_brains = self.get_questions()
 
         user_is_ms = getUtility(IUserIsMS)(self.context)
 
@@ -786,8 +807,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             for name in form_data.get("exportFields", [])
             if not user_is_ms or name not in EXCLUDE_FIELDS_FOR_MS
         ]
-        dataset = tablib.Dataset()
-        dataset.title = "Observations"
+        dataset = []
 
         catalog = api.portal.get_tool("portal_catalog")
         qa_len = 0
@@ -804,23 +824,33 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                 api.portal.get(), LDAP_QUERY_GROUPS
             )
 
-        for observation in observations:
-            row = [observation.getId]
+        for obs_brain in observation_brains:
+            row = [obs_brain.getId]
             for key in fields_to_export:
                 if key in [
                     "observation_is_potential_significant_issue",
                     "observation_is_potential_technical_correction",
                     "observation_is_technical_correction",
                 ]:
-                    row.append(observation[key] and "Yes" or "No")
+                    row.append(obs_brain[key] and "Yes" or "No")
                 elif key == "getURL":
-                    row.append(observation.getURL())
+                    row.append(obs_brain.getURL())
                 elif key == "get_highlight":
                     row.append(
                         safe_unicode(
                             ", ".join(
                                 self.translate_highlights(
-                                    observation[key] or []
+                                    obs_brain[key] or []
+                                )
+                            )
+                        )
+                    )
+                elif key == "parameter":
+                    row.append(
+                        safe_unicode(
+                            ", ".join(
+                                self.translate_parameters(
+                                    obs_brain[key] or []
                                 )
                             )
                         )
@@ -832,7 +862,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                                 (str(idx), QUESTION_WORKFLOW_MAP.get(val, val))
                             )
                             for idx, val in enumerate(
-                                observation[key], start=1
+                                obs_brain[key], start=1
                             )
                         ]
                     )
@@ -840,11 +870,11 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         row_val
                         if row_val
                         else QUESTION_WORKFLOW_MAP.get(
-                            observation["observation_status"], "unknown"
+                            obs_brain["observation_status"], "unknown"
                         )
                     )
                 elif key == "last_question_workflow":
-                    q_wfs = observation["observation_questions_workflow"]
+                    q_wfs = obs_brain["observation_questions_workflow"]
                     last_q_wf = q_wfs[-1] if q_wfs else None
                     row_val = (
                         QUESTION_WORKFLOW_MAP.get(last_q_wf, last_q_wf)
@@ -855,34 +885,36 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         row_val
                         if row_val
                         else QUESTION_WORKFLOW_MAP.get(
-                            observation["observation_status"], "unknown"
+                            obs_brain["observation_status"], "unknown"
                         )
                     )
                 elif key == "get_name_qe":
-                    names = self._get_ldap_names(observation, TPL_LDAP_QE)
+                    names = self._get_ldap_names(obs_brain, TPL_LDAP_QE)
                     row.append(", ".join(names))
                 elif key == "get_name_lr":
-                    names = self._get_ldap_names(observation, TPL_LDAP_LR)
+                    names = self._get_ldap_names(obs_brain, TPL_LDAP_LR)
                     row.append(", ".join(names))
                 elif key == "get_name_se":
-                    names = self._get_ldap_names(observation, TPL_LDAP_SE)
+                    names = self._get_ldap_names(obs_brain, TPL_LDAP_SE)
                     row.append(", ".join(names))
                 elif key == "get_name_re":
-                    names = self._get_ldap_names(observation, TPL_LDAP_RE)
+                    names = self._get_ldap_names(obs_brain, TPL_LDAP_RE)
                     row.append(", ".join(names))
                 elif key == "export_date":
                     row.append(datetime.now().strftime("%d/%m/%Y"))
                 elif key == "export_time":
                     row.append(datetime.now().strftime("%H:%M:%S"))
                 elif key == "phase":
-                    phase = get_observation_phase(observation)
+                    phase = get_observation_phase(obs_brain)
                     row.append(phase)
                 elif key == "phase_timestamp":
-                    row.append(
-                        observation.getObject()
+                    phase_timestamp = obs_brain[key]
+                    if phase_timestamp == Missing.Value:
+                        phase_timestamp = (obs_brain.getObject()
                             .myHistory()[-1]["time"].asdatetime().isoformat())
+                    row.append(phase_timestamp)
                 else:
-                    _val = observation[key]
+                    _val = obs_brain[key]
                     if _val == Missing.Value:
                         _val = ""
                     row.append(safe_unicode(_val))
@@ -892,11 +924,12 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
             if form_data.get("include_qa") and self.can_export_qa():
                 # Include Q&A threads if user is Manager
-                extracted_qa = self.extract_qa(catalog, observation)
+                if obs_brain["qa_extract"] != Missing.Value:
+                    extracted_qa = json.loads(obs_brain["qa_extract"])
+                else:
+                    extracted_qa = self.extract_qa(catalog, obs_brain)
                 extracted_qa_len = len(extracted_qa)
-                qa_len = (
-                    extracted_qa_len if extracted_qa_len > qa_len else qa_len
-                )
+                qa_len = extracted_qa_len if extracted_qa_len > qa_len else qa_len
                 row.extend(extracted_qa)
 
             rows.append(row)
@@ -914,8 +947,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         filtered_export_fields = get_export_fields(self.context)
         headers.extend([filtered_export_fields[k] for k in fields_to_export])
         headers.extend(["Q&A"] * qa_len)
-        dataset.headers = headers
-        return dataset
+        return [headers] + dataset
 
     def extract_qa(self, catalog, observation):
         question_brains = catalog(
@@ -949,18 +981,40 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             now.strftime("%Y%M%d%H%m"),
         )
 
-        book = tablib.Databook((self.extract_data(data),))
+        wb = Workbook()
+        wb.remove(wb.active)
+        sheet = wb.create_sheet("Observations")
+
+        for row in self.extract_data(data):
+            sheet.append(row)
 
         response = self.request.response
-        response.setHeader("content-type", "application/vnc.ms-excel")
         response.setHeader(
-            "Content-disposition", "attachment;filename=" + filename
+            "Content-type",
+            "application/vnd.ms-excel; charset=utf-8",
         )
-        response.write(book.xls)
-        return
+        response.setHeader(
+            "Content-Disposition",
+            f"attachment; filename={filename}",
+        )
+
+        xls = BytesIO()
+        wb.save(xls)
+        xls.seek(0)
+        return xls
 
 
-ExportReviewFolderFormView = wrap_form(ExportReviewFolderForm)
+class DownloadableFormWrapper(FormWrapper):
+    def render(self):
+        if self.form_instance._downloadable_file:
+            return self.form_instance._downloadable_file
+        return super(DownloadableFormWrapper, self).render()
+
+
+ExportReviewFolderFormView = wrap_form(
+    ExportReviewFolderForm,
+    __wrapper_class=DownloadableFormWrapper,
+)
 
 
 def _item_user(fun, self, user, item):

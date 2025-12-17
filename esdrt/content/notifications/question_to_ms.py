@@ -1,6 +1,6 @@
 import plone.api as api
 from Acquisition import aq_parent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from esdrt.content.question import IQuestion
 from .utils import notify
@@ -35,7 +35,7 @@ def notification_ms(context, event):
     To:     MSAuthority
     When:   New question for your country
     """
-    _temp = PageTemplateFile('question_to_ms.pt')
+    _temp = ViewPageTemplateFile('question_to_ms.pt')
 
     if event.action in ['phase1-approve-question', 'phase2-approve-question']:
         observation = aq_parent(context)
@@ -55,7 +55,7 @@ def notification_rev_ph1(context, event):
     To:     ReviewerPhase1
     When:   Your question was sent to MS
     """
-    _temp = PageTemplateFile('question_to_ms_rev_msg.pt')
+    _temp = ViewPageTemplateFile('question_to_ms_rev_msg.pt')
 
     if event.action in ['phase1-approve-question']:
         observation = aq_parent(context)
@@ -74,7 +74,7 @@ def notification_rev_ph2(context, event):
     To:     ReviewerPhase2
     When:   Your question was sent to MS
     """
-    _temp = PageTemplateFile('question_to_ms_rev_msg.pt')
+    _temp = ViewPageTemplateFile('question_to_ms_rev_msg.pt')
 
     if event.action in ['phase2-approve-question']:
         observation = aq_parent(context)

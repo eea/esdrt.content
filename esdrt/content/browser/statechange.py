@@ -20,9 +20,6 @@ from esdrt.content.constants import ROLE_CP
 from esdrt.content.constants import ROLE_MSE
 from esdrt.content.notifications.utils import get_ldap_group_member_ids
 from esdrt.content.notifications.utils import notify
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from plone.memoize.ram import cache
-from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
 
 from esdrt.content.reviewfolder import IReviewFolder
@@ -91,13 +88,13 @@ class FinishObservationReasonForm(Form):
         with api.env.adopt_roles(['Manager']):
             if api.content.get_state(self.context) == 'phase1-conclusions':
                 self.context.closing_comments = comments
-                return self.context.content_status_modify(
-                    workflow_action='phase1-request-close',
+                api.content.transition(
+                    obj=self.context, transition="phase1-request-close"
                 )
             elif api.content.get_state(self.context) == 'phase2-conclusions':
                 self.context.closing_comments_phase2 = comments
-                return self.context.content_status_modify(
-                    workflow_action='phase2-finish-observation',
+                api.content.transition(
+                    obj=self.context, transition="phase2-finish-observation"
                 )
 
         self.request.response.redirect(self.context.absolute_url())
@@ -133,16 +130,16 @@ class DenyFinishObservationReasonForm(Form):
         with api.env.adopt_roles(['Manager']):
             if api.content.get_state(self.context) == 'phase1-close-requested':
                 self.context.closing_deny_comments = comments
-                return self.context.content_status_modify(
-                    workflow_action='phase1-deny-closure',
+                api.content.transition(
+                    obj=self.context, transition="phase1-deny-closure"
                 )
             elif api.content.get_state(self.context) == 'phase2-close-requested':
                 self.context.closing_deny_comments_phase2 = comments
-                return self.context.content_status_modify(
-                    workflow_action='phase2-deny-finishing-observation',
+                api.content.transition(
+                    obj=self.context, transition="phase2-deny-finishing-observation"
                 )
 
-        return self.response.redirect(self.context.absolute_url())
+        return self.request.RESPONSE.redirect(self.context.absolute_url())
 
     def updateWidgets(self):
         super(DenyFinishObservationReasonForm, self).updateWidgets()
@@ -425,7 +422,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
             url = self.context.absolute_url()
 
             subject = 'New draft question to comment'
-            _temp = PageTemplateFile('../notifications/question_to_counterpart.pt')
+            _temp = ViewPageTemplateFile('../notifications/question_to_counterpart.pt')
             notify(
                 target,
                 _temp,
@@ -466,16 +463,17 @@ class RequestRedraftReasonForm(Form):
             cur_state = api.content.get_state(self.context)
             if cur_state.startswith('phase1'):
                 self.context.request_redraft_comments = comments
-                return self.context.content_status_modify(
-                    workflow_action='phase1-redraft',
-                )
-            elif cur_state.startswith('phase2'):
-                self.context.request_redraft_comments_phase2 = comments
-                return self.context.content_status_modify(
-                    workflow_action='phase2-redraft',
+                api.content.transition(
+                    obj=self.context, transition="phase1-redraft"
                 )
 
-        return self.response.redirect(self.context.absolute_url())
+            elif cur_state.startswith('phase2'):
+                self.context.request_redraft_comments_phase2 = comments
+                api.content.transition(
+                    obj=self.context, transition="phase2-redraft"
+                )
+
+        return self.request.RESPONSE.redirect(self.context.absolute_url())
 
     def updateWidgets(self):
         super(RequestRedraftReasonForm, self).updateWidgets()

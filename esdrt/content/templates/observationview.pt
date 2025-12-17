@@ -17,6 +17,12 @@
 
     $(document).ready(function(){
 
+      //avoid duplicate 'Add follow up question' buttons
+      var followup = $(".standardButton:contains('follow up')");
+      if (followup.length > 1) {
+        $("#add-comment-link").hide();
+      }
+
         update_display = function() {
             var style = $(this).attr('value');
             if (! this.checked) {
@@ -143,9 +149,6 @@
           $(".standardButton:contains('Submit Answer')").removeClass("defaultWFButton")
         }
 
-
-
-
     });
 
 
@@ -158,7 +161,7 @@
 
 <metal:main fill-slot="content-core">
   <metal:content-core define-macro="content-core"
-      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; show_internal_notes view/show_internal_notes">
+      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; show_internal_notes view/show_internal_notes; auth_token context/@@authenticator/token|nothing">
 
   <metal:observation define-macro="observation-info"
     tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
@@ -932,14 +935,14 @@
         <a href="./content_status_modify?workflow_action=close"
           tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase1-observation'"
           id="observation-finish"
-          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase1-draft-conclusions"
+          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase1-draft-conclusions&_authenticator=${auth_token}"
           class="standardButton">
           Go to conclusions
         </a>
        <a href="./content_status_modify?workflow_action=close"
           tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase2-observation'"
           id="observation-finish"
-          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase2-draft-conclusions"
+          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase2-draft-conclusions&_authenticator=${auth_token}"
           class="standardButton">
           Go to conclusions
         </a>
@@ -1325,24 +1328,21 @@
         </tal:block>
       </div>
       <div class="actions" tal:condition="view/can_add_comment">
-        <a href="./++add++Comment"
-          id="add-comment-link"
-          tal:attributes="href string:${here/absolute_url}/++add++Comment"
-          class="standardButton">
-            Add follow up question
+        <a href="${python:context.get_question().absolute_url()}/++add++Comment"
+           id="add-comment-link"
+           class="standardButton">
+          Add follow up question
         </a>
       </div>
       <div class="actions" tal:condition="view/can_add_answer">
-        <a href="./++add++CommentAnswer"
+        <a href="${python:context.get_question().absolute_url()}/++add++CommentAnswer"
           id="add-answer-link"
-          tal:attributes="href string:${here/absolute_url}/++add++CommentAnswer"
           title="To draft an answer and save it.You can request comments on your draft answer from your Member States expert(s) if needed or send your answer back to the review team without consulting your experts."
           class="standardButton defaultWFButton">
             Create answer
         </a>
-        <a href="./add-answer-and-request-comments"
+        <a href="${here/absolute_url}/add-answer-and-request-comments?_authenticator=${auth_token}"
           id="no-answer-link"
-          tal:attributes="href string:${here/absolute_url}/add-answer-and-request-comments"
           title="To consult your Member States expert(s) without drafting an answer first. You ask your Member states experts to suggest an answer and you draft the answer after your discussions."
           class="standardButton">
             Request input for answer
@@ -1374,6 +1374,7 @@
         var parent = el.parentNode;
         var resetInput = document.createElement('button');
         resetInput.textContent = 'Delete attached file';
+        resetInput.classList.add("btn", "btn-secondary")
         resetInput.addEventListener('click', function(evt){
           evt.preventDefault();
           el.value = '';

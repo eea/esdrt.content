@@ -21,6 +21,12 @@
       template="templates/reviewfolderview.pt"
   />
 
+  <browser:page
+      name="reindex_context"
+      for="*"
+      class=".management.ReindexContext"
+      permission="cmf.ManagePortal"
+    />
 
   <browser:page
       name="get_table"

@@ -1,4 +1,4 @@
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from .utils import notify
 
 
@@ -7,7 +7,7 @@ def notification_qe(context, event):
     To:     QualityExpert
     When:   Observation finalisation request
     """
-    _temp = PageTemplateFile('observation_finalisation_request.pt')
+    _temp = ViewPageTemplateFile('observation_finalisation_request.pt')
 
     if event.action in ['phase1-request-close']:
         observation = context
@@ -26,7 +26,7 @@ def notification_lr(context, event):
     To:     LeadReviewer
     When:   Observation finalisation request
     """
-    _temp = PageTemplateFile('observation_finalisation_request.pt')
+    _temp = ViewPageTemplateFile('observation_finalisation_request.pt')
 
     if event.action in ['phase2-finish-observation']:
         observation = context

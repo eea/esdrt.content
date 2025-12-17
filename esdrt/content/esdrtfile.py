@@ -85,4 +85,4 @@ class ESDRTFileView(BrowserView):
 
     def render(self):
         url = aq_parent(self.context).absolute_url()
-        return self.response.redirect(url)
+        return self.request.RESPONSE.redirect(url)

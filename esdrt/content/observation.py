@@ -64,6 +64,7 @@ from esdrt.content.constants import ROLE_SE
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
+from esdrt.content.utilities.interfaces import IFollowUpPermission
 from esdrt.content.utils import exclude_phase2_actions, get_vocabulary_value
 from .comment import IComment
 from .commentanswer import ICommentAnswer
@@ -914,7 +915,7 @@ class Observation(Container):
                     item["role"] = "Member state coordinator"
                     question_wf.append(item)
                 elif (
-                    item["action"] == "phase1-closed"
+                    item["review_state"] == "phase1-closed"
                     and item["action"] == "phase1-validate-answer-msa"
                 ):
                     item["state"] = "Sector expert"
@@ -1221,6 +1222,38 @@ def exclude_terms_from_widget_vocabulary(widget, to_exclude):
     widget.update()
 
 
+def set_form_widgets(form_instance, context=None):
+    fields = form_instance.fields
+    widgets = form_instance.widgets
+
+    if context is None:
+        context = form_instance.context
+
+    if "IDublinCore.title" in list(fields.keys()):
+        fields["IDublinCore.title"].field.required = False
+        widgets["IDublinCore.title"].mode = interfaces.HIDDEN_MODE
+        widgets["IDublinCore.description"].mode = interfaces.HIDDEN_MODE
+
+    if "review_year" in widgets and not Observation.is_secretariat():
+        widgets["review_year"].readonly = "readonly"
+
+    # [refs #159091]
+    if not context.enable_key_category:
+        del widgets["eu_key_catagory"]
+        del widgets["ms_key_catagory"]
+
+    # [refs #159096]
+    if not context.enable_steps:
+        wids = [
+            "closing_comments_phase2",
+            "closing_deny_comments_phase2",
+        ]
+        for wid in wids:
+            widget = widgets.get(wid)
+            if widget:
+                widget.mode = interfaces.HIDDEN_MODE
+
+
 class AddForm(add.DefaultAddForm):
 
     label = "Observation"
@@ -1228,12 +1261,8 @@ class AddForm(add.DefaultAddForm):
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
-        self.fields["IDublinCore.title"].field.required = False
-        self.widgets["IDublinCore.title"].mode = interfaces.HIDDEN_MODE
-        self.widgets["IDublinCore.description"].mode = interfaces.HIDDEN_MODE
+        set_form_widgets(self)
         self.widgets["text"].rows = 15
-        if not Observation.is_secretariat():
-            self.widgets["review_year"].readonly = "readonly"
         self.groups = [
             g for g in self.groups if g.label == "label_schema_default"
         ]
@@ -1245,22 +1274,6 @@ class AddForm(add.DefaultAddForm):
             getattr(self.context, "internal_highlights") or [],
         )
 
-        # [refs #159091]
-        if not self.context.enable_key_category:
-            del self.widgets["eu_key_catagory"]
-            del self.widgets["ms_key_catagory"]
-
-        # [refs #159096]
-        if not self.context.enable_steps:
-            wids = [
-                "closing_comments_phase2",
-                "closing_deny_comments_phase2",
-            ]
-            for wid in wids:
-                widget = self.widgets.get(wid)
-                if widget:
-                    widget.mode = interfaces.HIDDEN_MODE
-
     def updateActions(self):
         super(AddForm, self).updateActions()
         self.actions["save"].title = "Save Observation"
@@ -1270,6 +1283,9 @@ class AddForm(add.DefaultAddForm):
         for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
+    def create(self, data):
+        data["IDublinCore.title"] = str(int(time()))
+        return super().create(data)
 
 class AddView(add.DefaultAddView):
     form_instance: AddForm
@@ -1501,26 +1517,7 @@ class ObservationMixin(DefaultView):
         return ""
 
     def can_add_comment(self):
-        sm = getSecurityManager()
-        question = self.question()
-        if question:
-            permission = sm.checkPermission(
-                "esdrt.content: Add Comment", question
-            )
-            questions = [
-                q for q in list(question.values()) if q.portal_type == "Comment"
-            ]
-            answers = [
-                q for q in list(question.values()) if q.portal_type == "CommentAnswer"
-            ]
-            obs_state = self.context.get_status()
-            return (
-                permission
-                and len(questions) == len(answers)
-                and obs_state != "phase1-closed"
-            )
-        else:
-            return False
+        return getUtility(IFollowUpPermission)(self.question())
 
     def can_add_answer(self):
         sm = getSecurityManager()
@@ -1734,7 +1731,7 @@ class ExportAsDocView(ObservationMixin):
     def strip_special_chars(self, s):
         """ return s without special chars
         """
-        return re.sub("\s+", " ", s)
+        return re.sub(r"\s+", " ", s)
 
     def build_file(self):
         document = Document()
@@ -2041,24 +2038,8 @@ class EditForm(edit.DefaultEditForm):
 
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
-        if "review_year" in self.widgets and not Observation.is_secretariat():
-            self.widgets["review_year"].readonly = "readonly"
+        set_form_widgets(self, aq_parent(self.context))
 
-        # [refs #159091]
-        if not aq_parent(self.context).enable_key_category:
-            del self.widgets["eu_key_catagory"]
-            del self.widgets["ms_key_catagory"]
-
-        # [refs #159096]
-        if not aq_parent(self.context).enable_steps:
-            wids = [
-                "closing_comments_phase2",
-                "closing_deny_comments_phase2",
-            ]
-            for wid in wids:
-                widget = self.widgets.get(wid)
-                if widget:
-                    widget.mode = interfaces.HIDDEN_MODE
 
     def updateActions(self):
         super(EditForm, self).updateActions()

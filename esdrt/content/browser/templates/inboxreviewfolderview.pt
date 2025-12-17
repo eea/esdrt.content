@@ -54,19 +54,20 @@
   </div>
 
   <div id="filters">
-    <div class="row" style="padding-top:30px">
-      <div class="col esdLabel">Free text</div>
-      <div class="col esdLabel">Author</div>
-    </div>
-    <div class="row">
-      <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
-        <div class="col">
+    <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
+      <div class="container">
+      <div class="row" style="padding-top:30px">
+        <div class="col-10 esdLabel">Free text</div>
+        <div class="col-2 esdLabel">Author</div>
+      </div>
+      <div class="row">
+        <div class="col-10">
           <tal:params repeat="req_param python:[x for x in req_params if x[0] not in ['freeText', 'obsAuthor']]">
             <input type="hidden" tal:attributes="name python:req_param[0]; value python:req_param[1]" />
           </tal:params>
           <input type="text" style="width:100%;border-radius:5px;height:21px" name="freeText" tal:attributes="value freeText" />
         </div>
-        <div class="col esdLabel">
+        <div class="col-2 esdLabel">
            <select id="obsAuthorFilter" name="obsAuthor" class="chosen-select" data-placeholder="Select author"
                 tal:define="obsAuthor python:'';
                             obsAuthor request/obsAuthor | obsAuthor">
@@ -78,13 +79,16 @@
               </tal:option>
             </select>
         </div>
-        <div class="col">
-          <input type="submit" class="standardButton" id="btnFilter" value="Search" />
+        <div class="row" style="padding-top:30px">
+          <div class="col">
+            <input type="submit" class="standardButton" id="btnFilter" value="Search" />
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+      </div>
+    </form>
   </div>
-  <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
+  <div id="observations" class="myview p-2" tal:condition="not:here/@@plone_portal_state/anonymous">
     <div class="page-content">
       <div class="menu">
         <button class="pull-right" style="display: none" id="toggleEmpty">Collapse view</button>
@@ -94,7 +98,7 @@
               <span class="section-role" tal:content="role/title"></span>
               <ul class="menu-section">
                 <li tal:repeat="action python:role['actions']">
-                  <span class="section-title"tal:content="action/title"></span>
+                  <span class="section-title" tal:content="action/title"></span>
                   <ul class="menu-subsection">
                     <tal:subsec repeat="subsec action/sec">
                     <tal:subsec-def define="current python:subsec['slug'] == sec_cur; num_obs subsec/num_obs">

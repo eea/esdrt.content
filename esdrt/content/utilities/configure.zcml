@@ -14,4 +14,9 @@
       provides=".interfaces.ISetupReviewFolderRoles"
   />
 
+  <utility
+    factory=".question.FollowUpPermission"
+    provides=".interfaces.IFollowUpPermission"
+    />
+
 </configure>

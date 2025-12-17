@@ -95,7 +95,7 @@ def prepend_qa(target, source):
 def add_to_wh(wf, obj, action, state, actor):
     wh = obj.workflow_history
     wf_id = wf.getId()
-    wh[wf_id] = wh[wf_id] + (
+    wh[wf_id] = tuple(wh[wf_id]) + (
         {
             "comments": "Carryover force state",
             "actor": actor,

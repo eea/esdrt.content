@@ -34,7 +34,7 @@ QUERY_LDAP_ROLES = ldap_utils.format_or(
 )
 
 
-def f_start(pat, s):
+def f_start(pat: str, s: str):
     return s.startswith(pat)
 
 
@@ -52,7 +52,7 @@ def setup_reviewfolder_roles(folder):
     with ldap_utils.get_query_utility()(acl, paged=True) as q_ldap:
         q_groups = q_ldap.query_groups(QUERY_LDAP_ROLES, ('cn',))
 
-    groups = [r[1]['cn'][0] for r in q_groups]
+    groups = [r[1]['cn'][0].decode() for r in q_groups]
 
     grant = chain(
         product([ROLE_RP1], list(filter(f_start_sr, groups))),

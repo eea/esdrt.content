@@ -166,23 +166,12 @@ class AddForm(add.DefaultAddForm):
         widget_highlight = self.widgets['highlight']
         context_highlight = self.context.highlight or []
 
-        if isinstance(type(widget_highlight).items, property):
-            # newer z3c.form
-            def is_checked(term):
-                return term.value in context_highlight
+        def is_checked(term):
+            return term.value in context_highlight
 
-            # Monkey patch isChecked method since we can't
-            # override .items anymore. It's now a @property.
-            widget_highlight.isChecked = is_checked
-        else:
-            # older z3c.form
-            def set_checked(item):
-                updated_item = copy(item)
-                updated_item['checked'] = (
-                    updated_item['value'] in (self.context.highlight or [])
-                )
-                return updated_item
-        widget_highlight.items = list(map(set_checked, widget_highlight.items))
+        # Monkey patch isChecked method since we can't
+        # override .items anymore. It's now a @property.
+        widget_highlight.isChecked = is_checked
 
     def create(self, data={}):
         # import pdb; pdb.set_trace()

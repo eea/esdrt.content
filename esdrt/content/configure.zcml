@@ -12,6 +12,8 @@
   <include file="patches.zcml" />
   <include file="import_content.zcml" />
   <include file="views.zcml" />
+  <include file="forms.zcml" />
+  <include file="subscribers.zcml" />
   <include package=".vocabularies" />
   <include package=".upgrades" />
   <include package=".adapters" />
@@ -67,6 +69,9 @@
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />
   <adapter name="observation_step" factory=".indexers.observation_step" />
+  <adapter name="phase_timestamp" factory=".indexers.phase_timestamp" />
+  <adapter name="parameter" factory=".indexers.parameter" />
+  <adapter name="qa_extract" factory=".indexers.qa_extract" />
 
   <!-- ReviewFolder custom add form -->
   <adapter

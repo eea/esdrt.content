@@ -1,4 +1,4 @@
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from .utils import notify
 
 
@@ -7,7 +7,7 @@ def notification_lr(context, event):
     To:     LeadReviewer
     When:   Observation handed over to phase 2
     """
-    _temp = PageTemplateFile('observation_to_phase2.pt')
+    _temp = ViewPageTemplateFile('observation_to_phase2.pt')
 
     if event.action in ['phase1-send-to-team-2']:
         observation = context
@@ -26,7 +26,7 @@ def notification_rev_ph2(context, event):
     To:     ReviewerPhase2
     When:   Observation handed over to phase 2
     """
-    _temp = PageTemplateFile('observation_to_phase2_rev_msg.pt')
+    _temp = ViewPageTemplateFile('observation_to_phase2_rev_msg.pt')
 
     if event.action in ['phase1-send-to-team-2']:
         observation = context

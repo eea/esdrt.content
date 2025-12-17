@@ -302,3 +302,8 @@ def observation_transition(observation, event):
                 )
 
     observation.reindexObject()
+
+
+def reindex_observation_qa_extract(context, _):
+    observation = context.get_observation()
+    observation.reindexObject(idxs=['qa_extract'])
