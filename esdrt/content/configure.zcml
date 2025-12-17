@@ -13,7 +13,7 @@
   <include file="import_content.zcml" />
   <include file="views.zcml" />
   <include file="forms.zcml" />
-  <include file="subscribers.zcml" />
+  <!--include file="subscribers.zcml" /-->
   <include package=".vocabularies" />
   <include package=".upgrades" />
   <include package=".adapters" />

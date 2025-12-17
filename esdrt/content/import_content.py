@@ -79,7 +79,6 @@ class CustomImportContent(ImportContent):
         if simple:
             item["exportimport.simplesetter"] = simple
 
-        logger.info("%s", item)
         return item
 
     def get_parent_as_container(self, item):
