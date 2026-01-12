@@ -12,7 +12,7 @@
   <element key="uniqueMember" type="string">uniqueMember</element>
  </element>
  <element key="groups.baseDN"
-    type="string">cn=extranet-necd,cn=extranet,ou=Roles,o=EIONET,l=Europe</element>
+    type="string">cn=extranet-esd,cn=extranet,ou=Roles,o=EIONET,l=Europe</element>
  <element key="groups.memberOfExternalGroupDNs" type="list"/>
  <element key="groups.memberOfSupport" type="bool">False</element>
  <element key="groups.objectClasses" type="list">
