@@ -1,3 +1,5 @@
+from operator import methodcaller
+
 from zExceptions import Redirect
 
 from AccessControl import getSecurityManager
@@ -140,7 +142,7 @@ class Question(Container):
         return aq_parent(aq_inner(self))
 
     def has_answers(self):
-        items = list(self.values())
+        items = sorted(self.values(), key=methodcaller("created"))
         return len(items) and items[-1].portal_type == "CommentAnswer" or False
 
     def can_be_sent_to_lr(self):

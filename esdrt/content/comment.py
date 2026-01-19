@@ -92,12 +92,12 @@ class AddForm(add.DefaultAddForm):
         return self._create_initial(data)
 
     def _create_follow_up(self, data=None):
-
-        if api.content.get_state(self.context).startswith('phase1-'):
+        current_state = api.content.get_state(self.context)
+        if current_state.startswith('phase1-') and current_state != "phase1-draft":
             api.content.transition(
                 obj=self.context,
                 transition='phase1-reopen')
-        elif api.content.get_state(self.context).startswith('phase2-'):
+        elif current_state.startswith('phase2-') and current_state != "phase2-draft":
             api.content.transition(
                 obj=self.context,
                 transition='phase2-reopen')

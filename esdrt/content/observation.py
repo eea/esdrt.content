@@ -1,5 +1,6 @@
 from enum import Enum
 from functools import partial
+from operator import methodcaller
 
 from Products.Five import BrowserView
 from plone.dexterity.content import Container
@@ -1479,7 +1480,7 @@ class ObservationMixin(DefaultView):
                 v for v in list(question.values()) if sm.checkPermission("View", v)
             ]
             # return question.values()
-            return values
+            return sorted(values, key=methodcaller("created"))
 
     def is_old_qa(self, comment):
         return comment.creation_date.year() < datetime.datetime.now().year
