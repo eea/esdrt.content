@@ -256,22 +256,6 @@ def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
 
 
-def redirect_for_author(context, request):
-    obsAuthor = request.get("obsAuthor", None)
-    missing_author_filter = obsAuthor is None
-    user = api.user.get_current()
-    is_user = not api.user.is_anonymous() and "Manager" not in user.getRoles()
-    if missing_author_filter and is_user:
-        user_id = user.getId()
-        if user_id in get_indexed_authors(context):
-            new_url = "%s?%s&obsAuthor=%s" % (
-                request["ACTUAL_URL"],
-                request["QUERY_STRING"],
-                user_id,
-            )
-            return request.response.redirect(new_url)
-
-
 class IReviewFolder(model.Schema, IImageScaleTraversable):
     """
     Folder to have all observations together
@@ -577,7 +561,6 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
         return table.render(table)
 
     def render(self):
-        redirect_for_author(self.context, self.request)
         sort_on = self.request.get("sort_on", "modified")
         sort_order = self.request.get("sort_order", "reverse")
         pagenumber = self.request.get("pagenumber", "1")
@@ -1144,7 +1127,6 @@ class InboxReviewFolderView(BrowserView):
 
     def __call__(self):
         self.rolemap_observations = {}
-        redirect_for_author(self.context, self.request)
         return super(InboxReviewFolderView, self).__call__()
 
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
