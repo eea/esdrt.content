@@ -2,19 +2,16 @@ from functools import partial
 from itertools import takewhile
 from logging import getLogger
 
-from zope.component.hooks import getSite
-
+import openpyxl
+import plone.api as api
+from DateTime import DateTime
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
+from zope.component.hooks import getSite
 
-from Products.CMFCore.utils import getToolByName
-
-import openpyxl
-from DateTime import DateTime
 from esdrt.content.roles.localrolesubscriber import grant_local_roles
-
-import plone.api as api
 
 LOG = getLogger("esdrt.content.carryover")
 
@@ -29,12 +26,12 @@ def _clear_local_roles(obj):
 
 
 def clear_and_grant_roles(obj):
-    """ Clear any local roles already granted and grant just those
-        that make sense in the current review folder context.
+    """Clear any local roles already granted and grant just those
+    that make sense in the current review folder context.
 
-        [refs #105604] This makes sure that users that were granted
-        local roles on the old observation will not continue to
-        have them (e.g. CounterPart).
+    [refs #105604] This makes sure that users that were granted
+    local roles on the old observation will not continue to
+    have them (e.g. CounterPart).
     """
     _clear_local_roles(obj)
     grant_local_roles(obj)
@@ -56,7 +53,9 @@ def _copy_and_flag(context, obj, new_id=None):
     ob.review_year = int(year)
 
     LOG.info(
-        "Copied %s -> %s", obj.absolute_url(1), ob.absolute_url(1),
+        "Copied %s -> %s",
+        obj.absolute_url(1),
+        ob.absolute_url(1),
     )
 
     return ob
@@ -70,9 +69,7 @@ def _obj_from_url(context, site_url, url):
 def replace_conclusion_text(workflows, obj, text):
     wft = workflows["tool"]
     in_phase2 = wft.getInfoFor(obj, "review_state").startswith("phase2")
-    conclusion = (
-        obj.get_conclusion_phase2() if in_phase2 else obj.get_conclusion()
-    )
+    conclusion = obj.get_conclusion_phase2() if in_phase2 else obj.get_conclusion()
     if text and conclusion:
         conclusion.text = text
 
@@ -107,10 +104,10 @@ def add_to_wh(wf, obj, action, state, actor):
     wf.updateRoleMappingsFor(obj)
 
 
-def reopen_with_qa(workflows, obj, actor):
+def reopen_with_qa(workflows, obj, actor, has_step2=True):
     wft = workflows["tool"]
     in_phase2 = wft.getInfoFor(obj, "review_state").startswith("phase2")
-    if in_phase2:
+    if has_step2 and in_phase2:
         action_obj = "phase2-reopen-qa-chat"
         action_question = "phase2-reopen"
         new_state_obj = "phase2-carried-over"
@@ -150,7 +147,12 @@ def override_owner(obj, owner):
             userid = user.getId()
             obj.changeOwnership(user)
             obj.setCreators([userid])
-            obj.manage_setLocalRoles(userid, ["Owner", ])
+            obj.manage_setLocalRoles(
+                userid,
+                [
+                    "Owner",
+                ],
+            )
 
 
 def catalog_with_children(catalog, obj):
@@ -171,7 +173,7 @@ def copy_direct(context, catalog, workflows, obj_from_url, row):
 
     replace_conclusion_text(workflows, ob, conclusion_text)
     clear_and_grant_roles(ob)
-    reopen_with_qa(workflows, ob, actor)
+    reopen_with_qa(workflows, ob, actor, has_step2=context.enable_steps)
 
     catalog_with_children(catalog, ob)
 
@@ -192,7 +194,7 @@ def copy_complex(context, catalog, workflows, obj_from_url, row):
     replace_conclusion_text(workflows, ob, conclusion_text)
     prepend_qa(ob, older_obj)
     clear_and_grant_roles(ob)
-    reopen_with_qa(workflows, ob, actor)
+    reopen_with_qa(workflows, ob, actor, has_step2=context.enable_steps)
 
     catalog_with_children(catalog, ob)
 
@@ -211,9 +213,7 @@ class CarryOverView(BrowserView):
         sheet_rows = sheet.rows
         next(sheet_rows)  # skip first row (header)
         # extract rows with values
-        valid_rows = tuple(
-            takewhile(lambda row: any(c.value for c in row), sheet_rows)
-        )
+        valid_rows = tuple(takewhile(lambda row: any(c.value for c in row), sheet_rows))
 
         context = self.context
         site_url = portal.absolute_url()
@@ -224,9 +224,7 @@ class CarryOverView(BrowserView):
         wf_obs = wft.getWorkflowById(wft.getChainFor("Observation")[0])
         wf_question = wft.getWorkflowById(wft.getChainFor("Question")[0])
         wf_conclusion = wft.getWorkflowById(wft.getChainFor("Conclusion")[0])
-        wf_conclusion2 = wft.getWorkflowById(
-            wft.getChainFor("ConclusionsPhase2")[0]
-        )
+        wf_conclusion2 = wft.getWorkflowById(wft.getChainFor("ConclusionsPhase2")[0])
 
         actions = dict(direct=copy_direct, complex=copy_complex)
         workflows = dict(
@@ -237,18 +235,18 @@ class CarryOverView(BrowserView):
             conclusion2=wf_conclusion2,
         )
         copy_func = partial(
-            actions[action], context, catalog, workflows, obj_from_url,
+            actions[action],
+            context,
+            catalog,
+            workflows,
+            obj_from_url,
         )
 
         for row in valid_rows:
             copy_func(row)
 
         if len(valid_rows) > 0:
-            (
-                IStatusMessage(self.request).add(
-                    "Carryover successfull!", type="info"
-                )
-            )
+            (IStatusMessage(self.request).add("Carryover successfull!", type="info"))
         else:
             (IStatusMessage(self.request).add("No data provided!", type="warn"))
         self.request.RESPONSE.redirect(context.absolute_url())
