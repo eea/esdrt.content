@@ -104,19 +104,14 @@ def add_to_wh(wf, obj, action, state, actor):
     wf.updateRoleMappingsFor(obj)
 
 
-def reopen_with_qa(workflows, obj, actor, has_step2=True):
+def reopen_with_qa(workflows, obj, actor):
     wft = workflows["tool"]
     in_phase2 = wft.getInfoFor(obj, "review_state").startswith("phase2")
-    if has_step2 and in_phase2:
-        action_obj = "phase2-reopen-qa-chat"
-        action_question = "phase2-reopen"
-        new_state_obj = "phase2-carried-over"
-        new_state_question = "phase2-draft"
-    else:
-        action_obj = "phase1-reopen"
-        action_question = "phase1-reopen"
-        new_state_obj = "phase1-carried-over"
-        new_state_question = "phase1-draft"
+
+    action_obj = "phase1-reopen"
+    action_question = "phase1-reopen"
+    new_state_obj = "phase1-carried-over"
+    new_state_question = "phase1-draft"
 
     add_to_wh(workflows["observation"], obj, action_obj, new_state_obj, actor)
     question = obj.get_question()
