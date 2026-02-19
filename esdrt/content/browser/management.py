@@ -2,12 +2,16 @@ import logging
 from collections import Counter
 from copy import deepcopy
 
-import plone.api as api
 import transaction
-from plone.protect.interfaces import IDisableCSRFProtection
-from Products.Five.browser import BrowserView
+
 from zope.interface import alsoProvides
 
+from Products.Five.browser import BrowserView
+
+import plone.api as api
+from plone.protect.interfaces import IDisableCSRFProtection
+
+from esdrt.content.browser.carryover import add_to_wh
 from esdrt.content.browser.carryover import catalog_with_children
 
 logger = logging.getLogger(__name__)
@@ -38,17 +42,33 @@ class FixCarryover(BrowserView):
 
         return old_value, new_value
 
+    def get_candidates(self):
+        observations = (
+            o
+            for o in self.context.values()
+            if hasattr(o, "carryover_from")
+            and "closed" not in api.content.get_state(o)
+        )
+        for obs in observations:
+            conclusion = obs.get_conclusion()
+            if conclusion and api.content.get_state(conclusion) == "published":
+                yield obs
+
+    def get_actor(self, obs, wf):
+        wh = obs.workflow_history
+        wf_id = wf.getId()
+        for entry in reversed(wh[wf_id]):
+            if entry["review_state"] == "phase1-carried-over":
+                return entry["actor"]
+
+        return api.user.get_current().getId()
+
     def __call__(self):
         if self.context.getId() != "2026":
             return "Wrong year!"
         alsoProvides(self.request, IDisableCSRFProtection)
 
-        candidates = [
-            o
-            for o in self.context.values()
-            if hasattr(o, "carryover_from")
-            and api.content.get_state(o) == "phase2-carried-over"
-        ]
+        candidates = list(self.get_candidates())
         count = Counter([o.carryover_from for o in candidates])
         state_count = Counter([api.content.get_state(o) for o in candidates])
         logger.info(count)
@@ -56,31 +76,15 @@ class FixCarryover(BrowserView):
 
         wft = api.portal.get_tool("portal_workflow")
         wf_obs = wft.getWorkflowById(wft.getChainFor("Observation")[0])
-        wf_question = wft.getWorkflowById(wft.getChainFor("Question")[0])
+        wf_conclusion = wft.getWorkflowById(wft.getChainFor("Conclusion")[0])
 
         catalog = api.portal.get_tool("portal_catalog")
 
-        action_obj = "phase1-reopen"
-        action_question = "phase1-reopen"
-        new_state_obj = "phase1-carried-over"
-        new_state_question = "phase1-draft"
-
         for idx, obs in enumerate(candidates, start=1):
             logger.info("Updating %s...", obs.absolute_url(1))
-            old_value, new_value = self.fiddle_wf(
-                wf_obs, obs, action_obj, new_state_obj
-            )
-            logger.info("OLD: %s, NEW: %s", old_value, new_value)
-            question = obs.get_question()
-            if question:
-                logger.info("Updating %s...", question.absolute_url(1))
-                old_value, new_value = self.fiddle_wf(
-                    wf_question,
-                    question,
-                    action_question,
-                    new_state_question,
-                )
-                logger.info("OLD: %s, NEW: %s", old_value, new_value)
+            conclusion = obs.get_conclusion()
+            actor = self.get_actor(obs, wf_obs)
+            add_to_wh(wf_conclusion, conclusion, "redraft", "draft", actor)
             catalog_with_children(catalog, obs)
 
             if idx % 50 == 0:
