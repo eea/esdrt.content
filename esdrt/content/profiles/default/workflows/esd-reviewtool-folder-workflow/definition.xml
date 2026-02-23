@@ -12,7 +12,7 @@
   <exit-transition transition_id="reject"/>
   <exit-transition transition_id="start-phase2"/>
   <permission-map name="Access contents information" acquired="False">
-   <permission-role>Anonymous</permission-role>
+   <permission-role>Authenticated</permission-role>
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -51,7 +51,7 @@
    <permission-role>Owner</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
-   <permission-role>Anonymous</permission-role>
+   <permission-role>Authenticated</permission-role>
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -73,7 +73,7 @@
  <state state_id="ongoing-review-phase2" title="Ongoing review (Phase 2)">
   <exit-transition transition_id="end-review"/>
   <permission-map name="Access contents information" acquired="False">
-   <permission-role>Anonymous</permission-role>
+   <permission-role>Authenticated</permission-role>
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -112,7 +112,7 @@
    <permission-role>Owner</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
-   <permission-role>Anonymous</permission-role>
+   <permission-role>Authenticated</permission-role>
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -214,7 +214,7 @@
   <exit-transition transition_id="retract"/>
   <exit-transition transition_id="start-review"/>
   <permission-map name="Access contents information" acquired="False">
-   <permission-role>Anonymous</permission-role>
+   <permission-role>Authenticated</permission-role>
    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="Add portal content" acquired="True">
@@ -239,7 +239,7 @@
    <permission-role>Owner</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
-   <permission-role>Anonymous</permission-role>
+   <permission-role>Authenticated</permission-role>
    <permission-role>Auditor</permission-role>
   </permission-map>
   <permission-map name="esdrt.content: Add Observation" acquired="False">
