@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+from collections import defaultdict
 from itertools import cycle
 from functools import partial
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
+from openpyxl.utils import get_column_letter
 from operator import attrgetter
 from Products.Five.browser import BrowserView
-from io import StringIO
+from io import BytesIO
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -39,8 +41,46 @@ def _get_vocabulary(context, name):
     return factory(context)
 
 
-class GetSampleXLS(BrowserView):
+def adjust_column_widths(worksheet):
+    """Resize columns to match header text width."""
+    widths: T.Dict[str, int] = defaultdict(int)
 
+    for row in worksheet:
+        for col, cell in enumerate(row, 1):
+            if type(cell).__name__ == "MergedCell":
+                continue  # ignore
+            letter = get_column_letter(col)
+            value = str(cell.value)
+            width = len(value)
+            if width > widths[letter]:
+                widths[letter] = width
+
+    for letter, width in widths.items():
+        worksheet.column_dimensions[letter].width = width
+
+
+def adjust_row_heights(worksheet):
+    for idx, row in enumerate(worksheet, 1):
+        for col, cell in enumerate(row, 1):
+            if type(cell).__name__ == "MergedCell":
+                continue  # ignore
+            letter = get_column_letter(col)
+            # calculate height based on text length compared to columnwidth
+            width = int(worksheet.column_dimensions[letter].width)
+            text_length = len(str(cell.value)) if cell.value is not None else 0
+            lines_estimate = (round(text_length / width) + 1) + str(
+                cell.value
+            ).count("\n")
+            calculated_height = (
+                round(lines_estimate * cell.font.size) if lines_estimate else 0
+            )
+            # update height if needed (default is 12.75pt)
+            current_height = worksheet.row_dimensions[idx].height or 20
+            if current_height < calculated_height:
+                worksheet.row_dimensions[idx].height = calculated_height
+
+
+class GetSampleXLS(BrowserView):
     def populate_cells(self, sheet):
         get_vocabulary = partial(_get_vocabulary, self.context)
         get_title = attrgetter('title')
@@ -106,22 +146,10 @@ class GetSampleXLS(BrowserView):
 
         self.populate_cells(sheet)
 
-        # wrap text for multi line cells and set max width
-        for column in sheet.columns:
-            length = []
+        adjust_column_widths(sheet)
+        adjust_row_heights(sheet)
 
-            for cell in column:
-                if cell.value:
-                    multi_lines_length = [
-                        len(c.rstrip())
-                        for c in cell.value.splitlines()
-                    ]
-                    length.append(max(multi_lines_length))
-                    cell.alignment = Alignment(wrap_text=True)
-
-            sheet.column_dimensions[column[0].column].width = max(length)
-
-        xls = StringIO()
+        xls = BytesIO()
 
         wb.save(xls)
 
