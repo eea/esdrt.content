@@ -177,9 +177,6 @@ class AssignFormMixin(BrowserView):
     def _target_groupnames(self):
         raise NotImplementedError
 
-    def _extra_usernames(self, target):
-        return []
-
     def _is_managed_role(self, username):
         return self._managed_role in api.user.get_roles(
             username=username, obj=self._assignation_target(), inherit=False
@@ -238,7 +235,6 @@ class AssignFormMixin(BrowserView):
 
             self.revoke_all_roles()
 
-            usernames.extend(self._extra_usernames(target))
             for username in usernames:
                 api.user.grant_roles(
                     username=username, roles=[self._managed_role], obj=target
@@ -289,10 +285,6 @@ class AssignAnswererForm(AssignFormMixin):
     def _assignation_target(self):
         return aq_parent(aq_inner(self.context))
 
-    def _extra_usernames(self, target):
-        country = target.country
-        return ["necd_eea_{}_exp".format(country)]
-
     def _target_groupnames(self):
         context = aq_inner(self.context)
         observation = aq_parent(context)
@@ -321,7 +313,6 @@ class ReAssignMSExpertsForm(AssignAnswererForm):
 
             self.revoke_all_roles()
 
-            usernames.extend(self._extra_usernames(target))
             for username in usernames:
                 api.user.grant_roles(
                     username=username, roles=[self._managed_role], obj=target
@@ -376,11 +367,9 @@ class AssignCounterPartForm(AssignFormMixin):
         local_roles = target.get_local_roles()
         users = [u[0] for u in local_roles if self._managed_role in u[1]]
 
-        skipped_extra_users = self._extra_usernames(target)
         return [
             api.user.get(user)
             for user in users
-            if user not in skipped_extra_users
         ]
 
 
