@@ -43,4 +43,17 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+      source="2002"
+      destination="2003"
+      profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+          title="Reindex observations"
+          description="[refs #297940] Reindex qa_extract to ensure correct order."
+          handler=".evolve_2003.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
+
 </configure>

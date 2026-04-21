@@ -410,10 +410,11 @@ def qa_extract(context):
     extract = []
     with api.env.adopt_roles(['Manager']):
         questions = context.listFolderContents({"portal_type": "Question"})
-        comments = tuple(
+        comments = sorted(
             itertools.chain(
                 *[question.get_questions() for question in questions]
-            )
+            ),
+            key=lambda c: int(c.id),
         )
 
         mapping = dict(Comment="Question", CommentAnswer="Answer")
