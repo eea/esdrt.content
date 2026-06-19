@@ -624,9 +624,7 @@ EXPORT_FIELDS_NO_STEPS = {
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
     "observation_finalisation_text_step1",
-    "observation_finalisation_remarks_step1",
     "observation_finalisation_text_step2",
-    "observation_finalisation_remarks_step2",
 )
 
 
