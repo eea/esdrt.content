@@ -1,13 +1,19 @@
-#edit-bar, .formTabs{
-	display: none;
-}
 .userrole-manager #edit-bar,
 .userrole-manager .formTabs{
 	display: block;
 }
-.portaltype-observation .documentFirstHeading,
-.portaltype-question .documentFirstHeading{
-	display:none;
+.portaltype-reviewfolder,
+.portaltype-observation,
+.portaltype-question {
+    #content .row.managePortlets-row {
+        display: none;
+    }
+}
+.portaltype-observation,
+.portaltype-question {
+    #content h1 {
+        display: none;
+    }
 }
 .esdDiv {
 	overflow: hidden;
@@ -42,10 +48,6 @@
 	max-width: 100%;
 	width: 100%;
 	overflow: auto;
-	/**border-width: 0px 0px 0px 1px;
-	border-style: dotted;
-	border-left: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;*/
 	border: 1px solid #b6b6b6;
 	color: #666666;
 	line-height: normal;
@@ -77,24 +79,18 @@
 }
 .standardButton{
 	background-color: #38758a;
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
 	border-radius: 8px;
 	padding: 10px 13px;
-	font-weight: bold;
 	color:#fff !important;
 	position: relative;
 	display: inline-block;
 	border: 1px solid #346F83;
+	text-decoration: none;
 }
 .standardButton.removeButton,
 .standardButton.defaultWFButton {
 	background-color:#f6a800 !important;
 	border-color: #999999;
-	-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-ms-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-o-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 }
 .standardButton:hover,
@@ -103,10 +99,6 @@
 	color: #FFFFFF !important;
 	cursor:pointer;
 	border-color: #999999;
-	-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-ms-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-o-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	text-shadow: none;
 }
@@ -119,16 +111,10 @@
 .standardButton a, .standardButton a:hover, .standardButton a:visited {
 	color: #FFFFFF !important;
 }
-.backButton .eea-icon:before{
-  content: "\f053";
-}
-
 .removeButton{
 	color: #d9534f;
 }
-.removeButton .eea-icon:before{
-  content: "\f00d";
-}
+
 .configurationButton{
 	text-align: center;
 }
@@ -144,7 +130,7 @@
 .observationActions .position-0{
 	margin-left: -100%;
 }
-.observationActions .position-1\3a 2 {
+.observationActions .position-1\3a {
     margin-left: -47.75%;
 }
 .observationActions .position-5 {
@@ -161,8 +147,6 @@
 }
 .question {
 	background-color: white;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	border: 1px solid lightgray;
 	position: relative;
@@ -172,13 +156,16 @@
 .old-qa.question {
 	background-color: #dedede;
 }
+.pat-discussion .widget-mode-hidden {
+    display: none;
+}
 .question.comment{
 	margin-left:30px;
 }
 .question.commentanswer{
 	margin-right:30px
 }
-.question div{
+.question > div{
 	padding: 5px;
 }
 .question .from{
@@ -234,6 +221,10 @@
 .observationList {
 	width: 100%;
 	border: 0px;
+	font-size: 80%;
+}
+.observationList a {
+	text-decoration: none;
 }
 .myview .observationList{
 	width: 97%;
@@ -242,8 +233,6 @@
 	cursor: pointer;
 	background-color: #e6eff0 !important;
 	color: #88afb8 !important;
-	/**border: 0.1em solid #e7e7e7;
-	border-style: solid solid none;*/
 	border-right: 1px solid white;
 	padding: 4px;
 	text-transform: uppercase;
@@ -253,20 +242,16 @@
 .observationList th:after{
 	content: ' ';
 }
-.observationList th.asc:after{
-	content: '▼';
-}
-.observationList th.desc:after{
+.sort-order-ascending:after{
 	content: '▲';
 }
-/**.observationList thead tr{
-	border-left: 5px solid #e6eff0;
-}*/
+.sort-order-reverse:after{
+	content: '▼';
+}
 .observationList tr{
 	border-bottom: 0px !important;
 	border-right: 0px !important;
 	border-top: 1px solid #ddd !important;
-	/**border-left: 5px solid white;*/
 }
 .observationList tbody tr:hover{
 	cursor: pointer;
@@ -277,13 +262,7 @@
 	background-color: white !important;
 	vertical-align: middle !important;
 }
-/**.observationList tr.psiBackground,
-.observationList tr.ptcBackground{
-	border-left: 5px solid #F6D18B !important;
-}
-.observationList tr.technicalCorrectionBackground{
-	border-left: 5px solid #FFA500 !important;
-}*/
+
 div.phase1-observation{
 	background: url("++resource++esdrt.content/phase-1.png") no-repeat;
 	width: 61px;
@@ -303,8 +282,6 @@ div.phase2-observation{
 	text-align: center;
 }
 .statusCell span{
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
 	border-radius: 10px;
 	padding: 5px 14px;
 }
@@ -385,9 +362,7 @@ div.phase2-observation{
 	content: "\f023";
 }
 .collapsiblePanelTitle {
-	/**background-color:#2c8da2; */
 	line-height:30px;
-	/**color:white; */
 	cursor:pointer;
 	margin-top:10px;
 	font-weight: bold;
@@ -395,25 +370,31 @@ div.phase2-observation{
 .collapsiblePanelTitle.collapsed {
 	margin-bottom: 10px;
 }
-.collapsiblePanelTitle .eea-icon-left:before {
-	content: "\f077";
-	color:#2c8da2;
+
+.collapsiblePanelTitle.collapsed .icon-expanded {
+	display: none;
 }
-.collapsiblePanelTitle.collapsed .eea-icon-left:before {
-	content: "\f078";
-	color:#2c8da2;
+
+.collapsiblePanelTitle.collapsed .icon-collapsed {
+	display: unset;
 }
+
+.collapsiblePanelTitle .collapsible-icon:before {
+	font-weight: bold !important;
+}
+
+.collapsiblePanelTitle .icon-expanded {
+	display: unset;
+}
+
+.collapsiblePanelTitle .icon-collapsed {
+	display: none;
+}
+
 .collapsibleListTitle {
 	cursor:pointer;
 }
-.collapsibleListTitle .eea-icon-left:before {
-	content: "\f077";
-}
-.collapsibleListTitle.collapsed .eea-icon-left:before {
-	content: "\f078";
-	color: black;
-	background-color: white;
-}
+
 .collapsibleListTitle.collapsed span {
 	color: black;
 	background-color: white !important;
@@ -426,8 +407,6 @@ div.phase2-observation{
 }
 .tabs {
 	overflow: hidden;
-	//*-webkit-box-shadow: 0 1px 0 #FFF inset; -moz-box-shadow: 0 1px 0 #FFF inset;
-	//box-shadow: 0 1px 0 #FFF inset;*/
 	background-color: #FBFBFB;
 }
 .tabs>div {
@@ -439,9 +418,6 @@ div.phase2-observation{
 	text-shadow: 0 1px 0 #FFF;
 	position: relative;
 	overflow: hidden;
-	/**background: #e1e1e1;
-	background: -moz-linear-gradient(center top , #f2f2f2, #e1e1e1);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f2f2), color-stop(100%,#e1e1e1)); */
 	border-top: 6px solid transparent;
 }
 .tabs>div.active{
@@ -452,25 +428,25 @@ div.phase2-observation{
 .tabs>div:first-child{
 	margin-left: 10px;
 }
-.tabs div a{
+.tabs div a {
 	border-bottom: 0px !important;
+	text-decoration: none;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
-.tabs div a.overview:before{
-	content: "\f06e";
-	font-size: 30px;
+.tabs i {
+	font-size: 22pt;
 	color: black;
+	margin-right: 0.3em;
 }
-.tabs a.inbox:before{
-	content: "\f01c";
-	font-size: 30px;
-	color: black;
-}
-#filters .row{
+#filters {
 	background-color: #F3F3F3;
 	padding: 5px 0;
 }
 #filters label{
 	font-weight: normal;
+    font-size: 80%;
 }
 #filters::after {
   content: '';
@@ -486,7 +462,6 @@ div.phase2-observation{
 }
 #observations{
 	background-color: #F3F3F3;
-	padding: 10px 20px !important;
 }
 #observations .actions{
 	margin-top: 0px;
@@ -500,9 +475,7 @@ div.phase2-observation{
 #observations .collapsiblePanelTitle span{
 	background-color: #fff;
 }
-#observations .collapsiblePanelTitle.collapsed .eea-icon-left:before {
-	color:#fff;
-}
+
 #observations .collapsed span{
 	background-color: #2d8da1;
 	color: #fff;
@@ -523,13 +496,9 @@ ul.eea-tabs{
 }
 #visual-portal-wrapper ul.eea-tabs {
 	border-radius: 0px;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
 }
 #visual-portal-wrapper ul.eea-tabs li:first-child > a {
 	border-radius: 0px !important;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
 }
 #visual-portal-wrapper ul.eea-tabs a {
 	border-top: 6px solid transparent !important;
@@ -640,20 +609,8 @@ span.envelope:before{
 	z-index: 4;
 }
 .workflowButton{
-	-webkit-transform: rotate(-90deg);
-	-moz-transform: rotate(-90deg);
-	-ms-transform: rotate(-90deg);
-	-o-transform: rotate(-90deg);
 	transform: rotate(-90deg);
-
-	/* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
-	-webkit-transform-origin: 40% 100%;
-	-moz-transform-origin: 40% 100%;
-	-ms-transform-origin: 40% 100%;
-	-o-transform-origin: 40% 100%;
 	transform-origin: 40% 100%;
-	/* Should be unset in IE9+ I think. */
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 	border-radius: 0px 0px 8px 8px;
 	background-color: #38758a;
 	color: #fff;
@@ -679,9 +636,7 @@ span.envelope:before{
 	background-color: #2d8da1;
 	color: #fff;
 }
-.esdDiv .collapsiblePanelTitle.collapsed .eea-icon-left:before {
-	color:#fff;
-}
+
 #comment-discussion-wrapper{
 	overflow: hidden;
 }
@@ -704,8 +659,6 @@ span.envelope:before{
 .potentialTechnicalCorrectionTag,
 .potentialSignificantIssue{
 	background-color: #F6D18B;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	color: #593c05;
 	font-weight: normal !important;
@@ -716,8 +669,6 @@ span.envelope:before{
 }
 .technicalCorrectionTag{
 	background-color: #FFA500;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	color: #593c05;
 	font-weight: normal !important;
@@ -726,44 +677,14 @@ span.envelope:before{
 	margin-top: 4px;
 	text-align: center;
 }
-#btnFilter{
-	top: -10px;
-}
-
 #formfield-form-widgets-eu_key_catagory{
   width: 20%;
   float: right;
   margin-top: -30px;
   margin-right: 678px;
 }
-.tooltipIcon:after {
-	display: inline-block;
-	font-family: 'FontAwesome';
-	font-weight: normal;
-	font-style: normal;
-	line-height: inherit;
-	text-decoration: inherit;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	speak: none;
-	margin: 0 .3em;
-	color: white;
-	content: "\f05a";
-	cursor: help;
-}
-.tooltipIconBlue:after {
-	display: inline-block;
-	font-family: 'FontAwesome';
-	font-weight: normal;
-	font-style: normal;
-	line-height: inherit;
-	text-decoration: inherit;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	speak: none;
-	margin: 0 .3em;
+.tooltipIconBlue {
 	color: #427597;
-	content: "\f05a";
 	cursor: help;
 }
 #rolesList li{

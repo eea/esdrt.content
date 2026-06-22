@@ -6,20 +6,29 @@
   <include package="collective.monkeypatcher" />
 
   <monkey:patch
-    description="Add eea.cache for Products.LDAPUserFolder.LDAPUserFolder._lookupuserbyattr"
-    class="Products.LDAPUserFolder.LDAPUserFolder.LDAPUserFolder"
-    original="_lookupuserbyattr"
-    replacement=".patches._lookupuserbyattr"
+    description="Patch node.ext.ldap.ugm._api.Group.existing_member_ids to return the members instead of querying ldap for all users."
+    class="node.ext.ldap.ugm._api.Group"
+    original="existing_member_ids"
+    replacement=".patches.Group_existing_member_ids"
+    preserveOriginal="false"
+    />
+
+  <monkey:patch
+    description="Patch pas.plugins.ldap.sheet.LDAPUserPropertySheet.__init__ to join fullname if it's a list."
+    class="pas.plugins.ldap.sheet.LDAPUserPropertySheet"
+    original="__init__"
+    replacement=".patches.LDAPUserPropertySheet__init__"
     preserveOriginal="true"
     />
 
   <monkey:patch
-    description="Add eea.cache for Products.LDAPUserFolder.LDAPDelegate.search"
-    class="Products.LDAPUserFolder.LDAPDelegate.LDAPDelegate"
+    description="Add cache for node.ext.ldap._node.LDAPNode."
+    class="node.ext.ldap._node.LDAPNode"
     original="search"
-    replacement=".patches.LDAPDelegate_search"
+    replacement=".patches.LDAPPrincipals_search"
     preserveOriginal="true"
     />
+
 
 </configure>
 

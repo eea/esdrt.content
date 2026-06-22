@@ -32,6 +32,5 @@ class ISetupReviewFolderRoles(Interface):
     """ Grant local, Zope roles to certain LDAP groups.
     """
 
-
 class IFollowUpPermission(Interface):
     """Permission check for adding a follow up question."""

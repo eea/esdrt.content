@@ -4,13 +4,17 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
-from esdrt.content import MessageFactory as _
-from five import grok
+from Products.Five import BrowserView
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
+from plone.dexterity.content import Container
+from zope.interface import implementer
+
+from esdrt.content import _
 from plone import api
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.app.discussion.behavior import IAllowDiscussion
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import dexterity
-from plone.directives import form
+from plone.supermodel import model
 from plone.namedfile.interfaces import IImageScaleTraversable
 from time import time
 from z3c.form import field
@@ -21,34 +25,32 @@ from zope.component import createObject
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 from zope.schema.interfaces import IVocabularyFactory
-from types import ListType
-from types import TupleType
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
 
 from esdrt.content.utils import exclude_phase2_actions
 
 
-class IConclusion(form.Schema, IImageScaleTraversable):
+class IConclusion(model.Schema, IImageScaleTraversable):
     """
     Conclusions of this observation
     """
 
     closing_reason = schema.Choice(
-        title=_(u'Status of observation'),
-        vocabulary='esdrt.content.conclusionreasons',
+        title=_('Status of observation'),
+        vocabulary='esdrt.content.conclusion_reasons',
         required=True,
 
     )
 
     text = schema.Text(
-        title=_(u'Internal note for expert/reviewers'),
+        title=_('Internal note for expert/reviewers'),
         required=True,
         )
 
     remarks = schema.Text(
-        title=_(u'Concluding remark'),
-        description=_(u'(visible to MS when observation finalised)'),
+        title=_('Concluding remark'),
+        description=_('(visible to MS when observation finalised)'),
         required=False,
         )
 
@@ -68,16 +70,11 @@ def hidden(menuitem):
     return False
 
 
-# Custom content-type class; objects created for this content type will
-# be instances of this class. Use this class to add content-type specific
-# methods and properties. Put methods that are mainly useful for rendering
-# in separate view classes.
-class Conclusion(dexterity.Container):
-    grok.implements(IConclusion)
-    # Add your class methods and properties here
+@implementer(IConclusion)
+class Conclusion(Container):
 
     def reason_value(self):
-        return self._vocabulary_value('esdrt.content.conclusionreasons',
+        return self._vocabulary_value('esdrt.content.conclusion_reasons',
             self.closing_reason
         )
 
@@ -85,7 +82,7 @@ class Conclusion(dexterity.Container):
         vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
         vocabulary = vocab_factory(self)
         if not term:
-            return u''
+            return ''
         try:
             value = vocabulary.getTerm(term)
             return value.title
@@ -123,25 +120,12 @@ class Conclusion(dexterity.Container):
         return [mitem for mitem in menu_items if not hidden(mitem)]
 
     def get_files(self):
-        items = self.values()
+        items = list(self.values())
         mtool = api.portal.get_tool('portal_membership')
         return [item for item in items if mtool.checkPermission('View', item)]
 
-# View class
-# The view will automatically use a similarly named template in
-# templates called conclusionview.pt .
-# Template filenames should be all lower case.
-# The view will render when you request a content object with this
-# interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
-# This will make this view the default view for your content-type
-grok.templatedir('templates')
 
-
-class ConclusionView(grok.View):
-    grok.context(IConclusion)
-    grok.require('zope2.View')
-    grok.name('view')
+class ConclusionView(BrowserView):
 
     def render(self):
         context = aq_inner(self.context)
@@ -151,10 +135,7 @@ class ConclusionView(grok.View):
         return self.request.response.redirect(url)
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('esdrt.content.conclusion')
-    grok.context(IConclusion)
-    grok.require('esdrt.content.AddConclusion')
+class AddForm(add.DefaultAddForm):
 
     label = 'Conclusions Step 1'
     description = ''
@@ -185,23 +166,12 @@ class AddForm(dexterity.AddForm):
         widget_highlight = self.widgets['highlight']
         context_highlight = self.context.highlight or []
 
-        if isinstance(type(widget_highlight).items, property):
-            # newer z3c.form
-            def is_checked(term):
-                return term.value in context_highlight
+        def is_checked(term):
+            return term.value in context_highlight
 
-            # Monkey patch isChecked method since we can't
-            # override .items anymore. It's now a @property.
-            widget_highlight.isChecked = is_checked
-        else:
-            # older z3c.form
-            def set_checked(item):
-                updated_item = copy(item)
-                updated_item['checked'] = (
-                    updated_item['value'] in (self.context.highlight or [])
-                )
-                return updated_item
-        widget_highlight.items = map(set_checked, widget_highlight.items)
+        # Monkey patch isChecked method since we can't
+        # override .items anymore. It's now a @property.
+        widget_highlight.isChecked = is_checked
 
     def create(self, data={}):
         # import pdb; pdb.set_trace()
@@ -242,14 +212,16 @@ class AddForm(dexterity.AddForm):
     def updateActions(self):
         super(AddForm, self).updateActions()
         self.actions['save'].addClass('defaultWFButton')
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
-class EditForm(dexterity.EditForm):
-    grok.name('edit')
-    grok.context(IConclusion)
-    grok.require('cmf.ModifyPortalContent')
+class AddView(add.DefaultAddView):
+    form_instance: AddForm
+    form = AddForm
+
+
+class EditForm(edit.DefaultEditForm):
 
     label = 'Conclusions Step 1'
     description = ''
@@ -261,7 +233,7 @@ class EditForm(dexterity.EditForm):
         data = {}
         data['text'] = context.text
         data['remarks'] = context.remarks
-        if type(context.closing_reason) in (ListType, TupleType):
+        if isinstance(context.closing_reason, (list, tuple)):
             data['closing_reason'] = context.closing_reason[0]
         else:
             data['closing_reason'] = context.closing_reason
@@ -291,7 +263,7 @@ class EditForm(dexterity.EditForm):
 
     def updateActions(self):
         super(EditForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
     def applyChanges(self, data):
@@ -303,7 +275,7 @@ class EditForm(dexterity.EditForm):
         closing_reason = self.request.form.get('form.widgets.closing_reason')
         context.text = text
         context.remarks = remarks
-        if type(closing_reason) in (ListType, TupleType):
+        if isinstance(closing_reason, (list, tuple)):
             context.closing_reason = closing_reason[0]
         highlight = self.request.form.get('form.widgets.highlight')
         container.highlight = highlight

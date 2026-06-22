@@ -21,14 +21,14 @@ QUERIES = (
 
 
 def get_indexed_values(indexes, index_name):
-    return sorted(set(indexes[index_name]._unindex.itervalues()))
+    return sorted(set(indexes[index_name]._unindex.values()))
 
 
 def get_workflow_type_mapping(wft):
     default_wf = wft._default_chain[0]
     return {
         k: v[0] if v else default_wf
-        for k, v in wft._chains_by_type.items()
+        for k, v in list(wft._chains_by_type.items())
     }
 
 
@@ -62,7 +62,7 @@ def upgrade(wft, catalog, type_mapping, queries):
     reindex = []
     for _query in queries:
         # filter 'reindex_self_only', which is not an index
-        query = {k: v for k, v in _query.items() if k != 'reindex_self_only'}
+        query = {k: v for k, v in list(_query.items()) if k != 'reindex_self_only'}
         ctwf = wft.getWorkflowById(type_mapping[query['portal_type']])
         brains = catalog(**query)
 

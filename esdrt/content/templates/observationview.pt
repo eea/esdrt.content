@@ -17,6 +17,12 @@
 
     $(document).ready(function(){
 
+      //avoid duplicate 'Add follow up question' buttons
+      var followup = $(".standardButton:contains('follow up')");
+      if (followup.length > 1) {
+        $("#add-comment-link").hide();
+      }
+
         update_display = function() {
             var style = $(this).attr('value');
             if (! this.checked) {
@@ -143,9 +149,6 @@
           $(".standardButton:contains('Submit Answer')").removeClass("defaultWFButton")
         }
 
-
-
-
     });
 
 
@@ -158,12 +161,12 @@
 
 <metal:main fill-slot="content-core">
   <metal:content-core define-macro="content-core"
-      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; show_internal_notes view/show_internal_notes">
+      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; show_internal_notes view/show_internal_notes; auth_token context/@@authenticator/token|nothing">
 
   <metal:observation define-macro="observation-info"
     tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
     <div class="observationActions row">
-      <div class="cell position-0 width-1:2">
+      <div class="col">
         <ul class="observationNavigationMenu visualNoMarker"
           tal:define="pcp here/@@plone_context_state;
                       parent pcp/parent">
@@ -171,7 +174,7 @@
             <a href=""
               tal:attributes="href string:${parent/absolute_url}/inboxview"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
+                  <i class="bi bi-chevron-left"></i>
                   Back to my view
             </a>
           </li>
@@ -179,33 +182,31 @@
             <a href=""
               tal:attributes="href string:${parent/absolute_url}/view"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
+                  <i class="bi bi-chevron-left"></i>
                   Back to overview list
             </a>
           </li>
         </ul>
       </div>
-      <div class="cell position-5 width-11">
+      <div class="col">
         <ul class="observationActionsMenu visualNoMarker">
           <li class="configurationButton">
             <a href=""
               tal:attributes="href string:${here/absolute_url}/subscription-configuration"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
                   Configure notifications
             </a>
           </li>
           <li tal:condition="view/can_export_observation">
             <a class="standardButton" href=""
                tal:attributes="href string:${context/absolute_url}/export_as_docx">
-               <i class="eea-icon eea-icon-download">&nbsp;</i> Exports in DOCX
+               <i class="bi bi-cloud-arrow-down-fill"></i> Exports in DOCX
             </a>
           </li>
           <li class="deleteButton" tal:condition="context/is_secretariat">
             <a href=""
               tal:attributes="href string:${here/absolute_url}/delete_confirmation"
               class="standardButton removeButton">
-                <span class="eea-icon"><!-- --></span>
                   Remove observation
             </a>
           </li>
@@ -214,61 +215,62 @@
     </div>
     <div class="visualClear"><!-- --></div>
     <div style="text-align: right;" tal:condition="view/has_local_notifications_settings">
-      <span class="eea-icon eea-icon-exclamation-triangle"> local notifications present</span>
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      local notifications present
     </div>
     <div class="esdDiv">
-      <div class="row" style="margin-top:15px">
-        <div class="cell position-0 width-1">
-          <i class="eea-icon eea-icon-4x observation"></i>
-        </div>
-        <div class="cell position-1 width-4 esdLabel">Ref. Number</div>
-        <!--div class="cell position-5 width-11 esdLabel">Observation</div-->
-      </div>
       <div class="row">
-        <div class="cell position-1 width-4 value">
-          <span tal:content="context/id">
-             UK-WAS-13-001
-          </span>
+        <div class="col-1 d-flex justify-content-center align-items-center">
+          <i class="bi bi-file-text-fill fs-1"></i>
         </div>
-        <!--div class="cell position-5 width-13 value">
-          <span tal:content="context/title">
-             Title
-          </span>
-        </div-->
-      </div>
-      <div class="row" style="margin-top:15px">
-        <div class="cell position-1 width-2 esdLabel">Country</div>
-        <div class="cell position-3 width-5 esdLabel">Sector</div>
-        <div class="cell position-8 width-2 esdLabel">Gases</div>
-        <div class="cell position-10 width-1 esdLabel">Fuel</div>
-        <div class="cell position-11 width-2 esdLabel">Inventory year</div>
-        <div class="cell position-13 width-3" tal:condition="python:context.are_steps_enabled()">
-          <div tal:attributes="class python:context.observation_phase()">&nbsp;</div>
+        <div class="col-11">
+          <div class="row">
+            <div class="col esdLabel">Ref. Number</div>
+          </div>
+          <div class="row">
+            <div class="col value">
+              <span tal:content="context/id">
+                 UK-WAS-13-001
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col esdLabel">Country</div>
+            <div class="col esdLabel">Sector</div>
+            <div class="col esdLabel">Gases</div>
+            <div class="col esdLabel">Fuel</div>
+            <div class="col esdLabel">Inventory year</div>
+            <div class="col" tal:condition="python:context.are_steps_enabled()">
+              <div tal:attributes="class python:context.observation_phase()">&nbsp;</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col" tal:content="context/country_value">Country</div>
+            <div class="col" tal:content="context/ghg_source_sectors_value">Sector</div>
+            <div class="col" tal:content="context/gas_value">Gas</div>
+            <div class="col" tal:content="context/fuel">Fuel</div>
+            <div class="col" tal:content="context/year">Year of emission</div>
+          </div>
+
         </div>
-      </div>
-      <div class="row">
-        <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>
-        <div class="cell position-3 width-5" tal:content="context/ghg_source_sectors_value">Sector</div>
-        <div class="cell position-8 width-2" tal:content="context/gas_value">Gas</div>
-        <div class="cell position-10 width-1" tal:content="context/fuel">Fuel</div>
-        <div class="cell position-11 width-2" tal:content="context/year">Year of emission</div>
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-details" style="margin-top:15px">
-        <div class="cell position-0 width-16">
+        <div class="col">
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation details
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">
-        <div class="cell position-0 width-2 esdLabel">Review Year</div>
-        <div class="cell position-2 width-5 esdLabel">Parameter</div>
-        <div class="cell position-7 width-4 esdLabel" tal:condition="view/is_key_category_enabled">Key category</div>
-        <div class="cell position-11 width-4 esdLabel">Last update</div>
+        <div class="col esdLabel">Review Year</div>
+        <div class="col esdLabel">Parameter</div>
+        <div class="col esdLabel" tal:condition="view/is_key_category_enabled">Key category</div>
+        <div class="col esdLabel">Last update</div>
       </div>
       <div class="row observation-details" style="display:none">
-        <div class="cell position-0 width-2" tal:content="context/review_year">Year</div>
-        <div class="cell position-2 width-5" tal:content="context/parameter_value">Parameter</div>
-        <div class="cell position-7 width-4" tal:condition="view/is_key_category_enabled">
+        <div class="col" tal:content="context/review_year">Year</div>
+        <div class="col" tal:content="context/parameter_value">Parameter</div>
+        <div class="col" tal:condition="view/is_key_category_enabled">
           <span tal:condition="here/ms_key_catagory|nothing">
               MS Key category
           </span><br tal:condition="here/ms_key_catagory|nothing"/>
@@ -276,47 +278,49 @@
               EU Key category
           </span>
         </div>
-        <div class="cell position-11 width-4" tal:content="python:context.modified().strftime('%d %b %Y, %H:%M CET')">Last update</div>
+        <div class="col" tal:content="python:context.modified().strftime('%d %b %Y, %H:%M CET')">Last update</div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">
-        <div class="cell position-0 width-16 esdLabel">Description flags</div>
+        <div class="col esdLabel">Description flags</div>
       </div>
       <div class="row observation-details" style="display:none">
-        <div class="cell position-0 width-16" tal:content="context/highlight_value">Status flag</div>
+        <div class="col" tal:content="context/highlight_value">Status flag</div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px" tal:condition="view/show_description">
-        <div class="cell position-0 width-4 esdLabel">Observation title by expert</div>
+        <div class="col esdLabel">Observation title by expert</div>
       </div>
       <div class="row observation-details" style="display:none" tal:condition="view/show_description">
-        <div class="cell position-0 width-16">
+        <div class="col">
           <span tal:replace="context/text/output|context/text">Here goes the description</span>
         </div>
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-workflow" style="margin-top:15px">
-        <div class="cell position-0 width-16">
+        <div class="col">
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation history
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <div class="row observation-workflow" style="display:none">
-        <div class="cell position-0 width-16" style="overflow-x:auto">
+        <div class="col" style="overflow-x:auto">
           <table style="table-layout: fixed" id="workflowTable">
             <tr>
               <tal:item tal:repeat="item context/myHistory">
                 <td
                   tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
                     <span class="border"></span>
-                    <span class="eea-icon eea-icon-lg wfPoint"></span><br/>
-                    <span class="eea-icon eea-icon-lg wfRole"><!-- --></span>
+                    <i class="bi bi-circle-fill wfPoint"></i>
+                    <br/>
+                    <i class="bi bi-person-fill wfRole"></i>
                     <span tal:content="item/role"></span><br/>
                     <a
                       tal:attributes="href python:'http://www.eionet.europa.eu/directory/user?uid='+item['actor']"
                       tal:content="item/author"></a>
                     <br/>
                     <span
-                      tal:attributes="class python: ' '.join(['eea-icon eea-icon-lg wfStep', item['object']])"><!-- --></span>
+                      tal:attributes="class python: ' '.join(['wfStep', item['object']])"><!-- --></span>
                     <span tal:content="item/state"></span><br/>
-                    <span class="eea-icon eea-icon-lg wfTime"><!-- --></span>
+                    <span class="bi bi-clock wfTime"><!-- --></span>
                     <span tal:attributes="title python:item['time'].strftime('%d %b %Y, %H:%M CET')" class="datetimeWF">
                       <span tal:replace="item/time"></span>
                     </span><br/>
@@ -335,25 +339,22 @@
     });
   </script>
 
-  <ul class="eea-tabs">
-    <li style="width:165px;max-width:165px"
-      tal:condition="python:context.get_status() == 'phase1-close-requested'">Finish observation</li>
-    <li style="width:165px;max-width:165px"
-      tal:condition="python:context.get_status() == 'phase2-close-requested'">Finish observation</li>
-    <li style="width:165px;max-width:165px"
-      tal:define="conclusion view/get_conclusion_phase2"
+  <div class="eea-tabs tabs">
+    <div tal:condition="python:context.get_status() == 'phase1-close-requested'"><a href="#tab-finish-observation">Finish observation</a></div>
+    <div tal:condition="python:context.get_status() == 'phase2-close-requested'"><a href="#tab-finish-observation">Finish observation</a></div>
+    <div tal:define="conclusion view/get_conclusion_phase2"
       tal:condition="nocall:conclusion"
-      >Conclusions Step 2</li>
-    <li style="width:165px;max-width:165px"
-      tal:define="conclusion view/get_conclusion"
+      ><a href="#tab-conclusions2">Conclusions Step 2</a></div>
+    <div tal:define="conclusion view/get_conclusion"
       tal:condition="nocall:conclusion"
-        >Conclusions <tal:step condition="python:context.are_steps_enabled()">Step 1</tal:step></li>
-    <li style="width:200px;max-width:200px"
-      id="questionChatRoom">Q&amp;A</li>
-  </ul>
+        ><a href="#tab-conclusions">Conclusions
+      <tal:step condition="python:context.are_steps_enabled()">Step 1</tal:step>
+    </a></div>
+    <div id="questionChatRoom"><a href="#tab-questions">Q&amp;A</a></div>
+  </div>
 
   <div class="eea-tabs-panels" style="overflow:hidden">
-    <div class="eea-tabs-panel finish-observation"
+    <div id="tab-finish-observation" class="eea-tabs-panel finish-observation"
       tal:condition="python:context.get_status() == 'phase1-close-requested'">
         <dl>
           <dt>Observation Finish Requested</dt>
@@ -404,7 +405,7 @@
         </tal:block>
       </div>
     </div>
-    <div class="eea-tabs-panel finish-observation"
+    <div id="tab-finish-observation" class="eea-tabs-panel finish-observation"
       tal:condition="python:context.get_status() == 'phase2-close-requested'">
         <dl>
           <dt>Observation Finish Requested</dt>
@@ -442,7 +443,7 @@
         </tal:block>
       </div>
     </div>
-    <div class="eea-tabs-panel conclusions-phase2"
+    <div id="tab-conclusions2" class="eea-tabs-panel conclusions-phase2"
         tal:define="conclusion view/get_conclusion_phase2"
         tal:condition="nocall:conclusion">
       <div class="row">
@@ -457,7 +458,7 @@
             <tal:block condition="show_internal_notes">
             <dt>
               Recommendation:
-              <span class="tooltipIconBlue" title="Draft Recommendation for Review Report. Not visible to Member States."></span>
+              <i class="bi bi-info-circle-fill tooltipIconBlue" title="Draft Recommendation for Review Report. Not visible to Member States."></i>
             </dt>
             <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
             <tal:comment replace="nothing">
@@ -515,7 +516,7 @@
         <div tal:condition="python:view.can_view_conclusion_remarks_phase2()">
           <tal:remarks define="remarks conclusion/remarks/output|conclusion/remarks|nothing">
             <tal:if condition="remarks">
-              <dt>Concluding remark <span class="tooltipIconBlue" title="Concluding remark sent to Member State when observation is finalised"></span></dt>
+              <dt>Concluding remark <i class="bi bi-info-circle-fill tooltipIconBlue" title="Concluding remark sent to Member State when observation is finalised"></i></dt>
               <dd><span tal:replace="remarks" /></dd>
             </tal:if>
           </tal:remarks>
@@ -526,7 +527,7 @@
           Files:
           <div class="file" tal:repeat="file conclusion/get_files">
             <p>
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
@@ -547,12 +548,6 @@
         <div id="conclusion-discussion-wrapper"
           tal:define="context nocall:conclusion">
         <div class="changes" tal:condition="context/can_edit">
-          <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
-            <div class="cell position-0 width-16">
-              History
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div-->
           <div class="question-history" style="display:none">
             <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
               This object has no revision information.
@@ -647,10 +642,11 @@
 
             <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-1">
-                <div class="cell position-0 width-16">
+                <div class="col">
+                  <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                  <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                   Internal comments on conclusion between experts/reviewers/QE/LR
-                  <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
-                  <span class="eea-icon eea-icon-left"></span>
+                  <i class="bi bi-info-circle-fill tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></i>
                 </div>
               </div>
               <div class="conclusion-discussion conclusion-discussion-1" tal:content="structure provider:esdrt.content.commentmanager"  style="display:none"/>
@@ -693,7 +689,7 @@
         </div>
       </div>
     </div>
-    <div class="eea-tabs-panel conclusions"
+    <div id="tab-conclusions" class="eea-tabs-panel conclusions"
         tal:define="conclusion view/get_conclusion"
         tal:condition="nocall:conclusion">
       <div class="row">
@@ -708,7 +704,7 @@
             <tal:block condition="show_internal_notes">
             <dt>
               Internal Note:
-              <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
+              <i class="bi bi-info-circle-fill tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></i>
             </dt>
             <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
             </tal:block>
@@ -718,7 +714,7 @@
         <div tal:condition="python:view.can_view_conclusion_remarks_phase1()">
           <tal:remarks define="remarks conclusion/remarks/output|conclusion/remarks|nothing">
             <tal:if condition="remarks">
-              <dt>Concluding remark <span class="tooltipIconBlue" title="Concluding remark sent to Member State when observation is finalised"></span></dt>
+              <dt>Concluding remark <i class="bi bi-info-circle-fill tooltipIconBlue" title="Concluding remark sent to Member State when observation is finalised"></i></dt>
               <dd><span tal:replace="remarks" /></dd>
             </tal:if>
           </tal:remarks>
@@ -731,7 +727,7 @@
             <tal:block condition="show_internal_notes">
             <dt>
               QE comments on conclusion:
-              <span class="tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></span>
+              <i class="bi bi-info-circle-fill tooltipIconBlue" title="The internal notes for the conclusion are not visible for Member States."></i>
             </dt>
             <dd><span tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
             </tal:block>
@@ -742,7 +738,7 @@
           Files:
           <div class="file" tal:repeat="file conclusion/get_files">
             <p>
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
@@ -763,12 +759,6 @@
         <div id="conclusion-discussion-wrapper"
           tal:define="context nocall:conclusion">
         <div class="changes" tal:condition="context/can_edit">
-          <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
-            <div class="cell position-0 width-16">
-              History
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div-->
           <div class="question-history" style="display:none">
             <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
               This object has no revision information.
@@ -863,10 +853,11 @@
 
             <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-2">
-                <div class="cell position-0 width-16">
+                <div class="col">
+                  <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                  <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                   Conclusion comments
-                  <span class="eea-icon eea-icon-left"></span>
-                  <span class="tooltipIconBlue" title="The internal commenting loop between team members is not visible for Member States."></span>
+                  <i class="bi bi-info-circle-fill tooltipIconBlue" title="The internal commenting loop between team members is not visible for Member States."></i>
                 </div>
               </div>
               <div class="conclusion-discussion conclusion-discussion-2" tal:content="structure provider:esdrt.content.commentmanager"  style="display:none"/>
@@ -907,7 +898,7 @@
         </div>
       </div>
     </div>
-    <div class="eea-tabs-panel questions">
+    <div id="tab-questions" class="eea-tabs-panel questions">
       <tal:qactions condition="python:(not view.in_conclusions_phase1()) and (not view.in_conclusions_phase2())">
       <div class="actions"
         tal:condition="python:not view.get_questions() and view.can_add_conclusion()">
@@ -928,7 +919,7 @@
         </a>
         <tal:block condition="view/can_edit">
           <a href=""
-              tal:attributes="href string:${here/absolute_url}/modifications"
+              tal:attributes="href string:${here/absolute_url}/edit"
               class="standardButton">
               Edit observation
           </a>
@@ -944,14 +935,14 @@
         <a href="./content_status_modify?workflow_action=close"
           tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase1-observation'"
           id="observation-finish"
-          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase1-draft-conclusions"
+          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase1-draft-conclusions&_authenticator=${auth_token}"
           class="standardButton">
           Go to conclusions
         </a>
        <a href="./content_status_modify?workflow_action=close"
           tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase2-observation'"
           id="observation-finish"
-          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase2-draft-conclusions"
+          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase2-draft-conclusions&_authenticator=${auth_token}"
           class="standardButton">
           Go to conclusions
         </a>
@@ -980,7 +971,7 @@
           <span class="esdLabel">to</span>
           <span class="value" tal:condition="python:portalType == 'comment'">Member State</span>
           <span class="value" tal:condition="python:portalType == 'commentanswer'">expert/reviewer</span>
-          <span class="tooltipIconBlue" tal:condition="python:portalType == 'comment'" title="Draft a question for the MS. MS can only see the question once it has been approved and sent by the QE/LR">&nbsp;</span>
+          <i class="bi bi-info-circle-fill tooltipIconBlue" tal:condition="python:portalType == 'comment'" title="Draft a question for the MS. MS can only see the question once it has been approved and sent by the QE/LR">&nbsp;</i>
           <!--span class="value" tal:content="python:view.get_user_name(question.Creator(), question)">John Smith</span-->
           <span class="messageDate">
             <tal:effective condition="question/effective_date">
@@ -999,7 +990,7 @@
           Files:
           <div class="file" tal:repeat="file question/get_files">
             <p>
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
@@ -1022,12 +1013,6 @@
           </div>
         </div>
         <div class="changes" tal:condition="question/can_edit">
-          <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
-            <div class="cell position-0 width-16">
-              History
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div-->
           <div class="question-history" style="display:none">
             <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
               This object has no revision information.
@@ -1124,20 +1109,22 @@
             <tal:block tal:define="portalType question/portal_type/lower">
               <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
-                  <div class="cell position-0 width-16">
+                  <div class="col">
+                    <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                    <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                     Internal comments on question between experts/reviewers/QE/LR
-                    <span class="eea-icon eea-icon-left"></span>
-                    <span class="tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart experts/reviewers/QE/LR engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the expert/reviewer should use the default sentence: 'Discussed with ...' in the first text field">&nbsp;</span>
+                    <i class="bi bi-info-circle-fill tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart experts/reviewers/QE/LR engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the expert/reviewer should use the default sentence: 'Discussed with ...' in the first text field">&nbsp;</i>
                   </div>
                 </div>
                 <div class="question-comments" tal:content="structure provider:esdrt.content.commentmanager" style="display:none" />
               </tal:block>
               <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="answer-comments">
-                  <div class="cell position-0 width-16">
+                  <div class="col">
+                    <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                    <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                     Comments
-                    <span class="eea-icon eea-icon-left"></span>
-                    <span class="tooltipIconBlue" title="The internal commenting loop between team members is not visible to the review team."></span>
+                    <i class="bi bi-info-circle-fill tooltipIconBlue" title="The internal commenting loop between team members is not visible to the review team."></i>
                   </div>
                 </div>
                 <div class="answer-comments" tal:content="structure provider:esdrt.content.commentmanager" style="display:none" />
@@ -1341,24 +1328,21 @@
         </tal:block>
       </div>
       <div class="actions" tal:condition="view/can_add_comment">
-        <a href="./++add++Comment"
-          id="add-comment-link"
-          tal:attributes="href string:${here/absolute_url}/++add++Comment"
-          class="standardButton">
-            Add follow up question
+        <a href="${python:context.get_question().absolute_url()}/++add++Comment"
+           id="add-comment-link"
+           class="standardButton">
+          Add follow up question
         </a>
       </div>
       <div class="actions" tal:condition="view/can_add_answer">
-        <a href="./++add++CommentAnswer"
+        <a href="${python:context.get_question().absolute_url()}/++add++CommentAnswer"
           id="add-answer-link"
-          tal:attributes="href string:${here/absolute_url}/++add++CommentAnswer"
           title="To draft an answer and save it.You can request comments on your draft answer from your Member States expert(s) if needed or send your answer back to the review team without consulting your experts."
           class="standardButton defaultWFButton">
             Create answer
         </a>
-        <a href="./add-answer-and-request-comments"
+        <a href="${here/absolute_url}/add-answer-and-request-comments?_authenticator=${auth_token}"
           id="no-answer-link"
-          tal:attributes="href string:${here/absolute_url}/add-answer-and-request-comments"
           title="To consult your Member States expert(s) without drafting an answer first. You ask your Member states experts to suggest an answer and you draft the answer after your discussions."
           class="standardButton">
             Request input for answer
@@ -1390,6 +1374,7 @@
         var parent = el.parentNode;
         var resetInput = document.createElement('button');
         resetInput.textContent = 'Delete attached file';
+        resetInput.classList.add("btn", "btn-secondary")
         resetInput.addEventListener('click', function(evt){
           evt.preventDefault();
           el.value = '';

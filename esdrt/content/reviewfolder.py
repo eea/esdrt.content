@@ -1,10 +1,11 @@
 import json
 import logging
-import operator
+from io import BytesIO
 import itertools
 import time
 from datetime import datetime
-from StringIO import StringIO
+from typing import Tuple
+from typing import cast
 
 from Acquisition import aq_inner
 from z3c.form import button
@@ -12,7 +13,7 @@ from z3c.form import field
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
-from zc.dict import OrderedDict
+from collections import OrderedDict
 from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
@@ -24,31 +25,34 @@ from zope.schema import Text
 from zope.schema import TextLine
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 
-import plone.directives
 from plone import api
 from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
 from plone.dexterity.browser import add
 from plone.dexterity.content import Container
-from plone.memoize import ram
+from plone.autoform import directives
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.layout import wrap_form
+from plone.z3cform.layout import FormWrapper
 from plone.supermodel import model
+from plone.supermodel.directives import fieldset
 
 import Missing
+
+from openpyxl import Workbook
+
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
-from eea.cache import cache
-from openpyxl import Workbook
+from plone.memoize.ram import cache
 from esdrt.content import ldap_utils
 from esdrt.content.browser.inbox_sections import SECTIONS
 from esdrt.content.constants import ROLE_LR
@@ -88,6 +92,68 @@ LDAP_QUERY_GROUPS = (
     ")"
 )
 
+def get_vocabulary(context: "ReviewFolder", name: str) -> SimpleVocabulary:
+    factory = getUtility(IVocabularyFactory, name=name)
+    return factory(context)
+
+
+def get_vocabulary_items(
+    context: "ReviewFolder", name: str
+) -> list[Tuple[str, str]]:
+    """Given a vocabulary, returns a list of (token, title)."""
+    voc: SimpleVocabulary = get_vocabulary(context, name)
+    terms: list[SimpleTerm] = iter(voc)
+    return [(cast(str, term.token), cast(str, term.title)) for term in terms]
+
+
+def get_necd_vocabulary_items(context: "ReviewFolder", name: str):
+    """Helper function to avoid using the whole dotted name.
+
+    Prepends esdrt.content. to `name`.
+    """
+    return get_vocabulary_items(context, f"esdrt.content.{name}")
+
+
+def get_finalisation_reasons(reviewfolder: "ReviewFolder"):
+    """Vocabularies are used to fetch available reasons.
+
+    This used to have hardcoded values for 2015 and 2016.
+    Currently it works like this:
+        - try to get vocabulary values that end
+          in the current folder title (e.g. "resolved2016")
+        - if no values match, get the values which don't
+          end in an year (e.g. "resolved")
+    This covers the previous functionality while also supporting
+    any number of upcoming years, as well as "Test"-type
+    review folders.
+    """
+    reasons: List[Tuple[str, str]] = [("open", "open")]
+
+    context_title = reviewfolder.Title().strip()
+
+    vocab_ids = ("conclusion_reasons", "conclusion_phase2_reasons")
+
+    to_add: List[Tuple[str, str]] = []
+    all_terms: List[Tuple[str, str]] = []
+
+    for vocab_id in vocab_ids:
+        all_terms.extend(get_necd_vocabulary_items(reviewfolder, vocab_id))
+
+    # if term ends in the review folder title (e.g. 2016)
+    for term_key, term_title in all_terms:
+        if term_key.endswith(context_title):
+            to_add.append((term_key, term_title))
+
+    # if no matching term keys were found,
+    # use those that don't end in a year
+    if not to_add:
+        for term_key, term_title in all_terms:
+            if not term_key[-4:].isdigit():
+                to_add.append((term_key, term_title))
+
+    reasons.extend(to_add)
+    return reasons
+
 
 def get_indexed_authors(context):
     catalog = api.portal.get_tool("portal_catalog")
@@ -111,7 +177,7 @@ def get_indexed_authors_for_select(context):
     if (user):
         userId = user.getId()
         authors_with_names = [(uid, "Me ({})".format(uname)) if uid == userId else (uid, uname) for uid, uname in authors_with_names]
-    return sorted(authors_with_names, key=lambda x: float("-inf") if x[1][:2] == "Me" else x[1])
+    return sorted(authors_with_names, key=lambda x: "Z" if x[1][:2] == "Me" else x[1])
 
 
 def get_observation_phase(brain):
@@ -190,38 +256,22 @@ def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
 
 
-def redirect_for_author(context, request):
-    obsAuthor = request.get("obsAuthor", None)
-    missing_author_filter = obsAuthor is None
-    user = api.user.get_current()
-    is_user = not api.user.is_anonymous() and "Manager" not in user.getRoles()
-    if missing_author_filter and is_user:
-        user_id = user.getId()
-        if user_id in get_indexed_authors(context):
-            new_url = "%s?%s&obsAuthor=%s" % (
-                request["ACTUAL_URL"],
-                request["QUERY_STRING"],
-                user_id,
-            )
-            return request.response.redirect(new_url)
-
-
-class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
+class IReviewFolder(model.Schema, IImageScaleTraversable):
     """
     Folder to have all observations together
     """
 
     tableau_statistics = Text(
-        title=u"Tableau statistics embed code", required=False,
+        title="Tableau statistics embed code", required=False,
     )
 
-    plone.directives.form.widget(tableau_statistics_roles=CheckBoxFieldWidget)
+    directives.widget("tableau_statistics_roles", CheckBoxFieldWidget)
     tableau_statistics_roles = List(
-        title=u"Roles that can access the statistics",
+        title="Roles that can access the statistics",
         value_type=Choice(vocabulary="esdrt.content.roles"),
     )
 
-    model.fieldset(
+    fieldset(
         "year_options",
         label="Year options",
         fields=[
@@ -234,40 +284,40 @@ class IReviewFolder(plone.directives.form.Schema, IImageScaleTraversable):
     )
     # [refs #159094]
     excluded_highlights = List(
-        title=u"Excluded highlights",
-        description=u"Unused highlights but kept for previous years.",
+        title="Excluded highlights",
+        description="Unused highlights but kept for previous years.",
         value_type=Choice(vocabulary="esdrt.content.highlight_select"),
         required=False,
     )
 
     # [refs #159093]
     internal_highlights = List(
-        title=u"Mark these highlights as internal",
-        description=u"Visible only to SE/QE/LR and Secretariat",
+        title="Mark these highlights as internal",
+        description="Visible only to SE/QE/LR and Secretariat",
         value_type=Choice(vocabulary="esdrt.content.highlight_select"),
         required=False,
     )
 
     # [refs #261305 #261306]
     highlights_access_roles = Text(
-        title=u"Protect highlights with required role",
-        description=u"One per line, space separated between highlight id and roles, roles are comma separated.",
-        default=u"",
+        title="Protect highlights with required role",
+        description="One per line, space separated between highlight id and roles, roles are comma separated.",
+        default="",
         required=False,
     )
 
     # [refs #159091]
     enable_key_category = Bool(
-        title=u"Show 'Key category'",
-        description=u"Show the 'Key category' field.",
+        title="Show 'Key category'",
+        description="Show the 'Key category' field.",
         required=False,
         default=True,
     )
 
     # [refs #159096]
     enable_steps = Bool(
-        title=u"Enable step 1, step 2",
-        description=u"Show the observation steps and Step filter.",
+        title="Enable step 1, step 2",
+        description="Show the observation steps and Step filter.",
         required=False,
         default=True,
     )
@@ -351,7 +401,7 @@ class ReviewFolderMixin(BrowserView):
             query["Creator"] = obsAuthor
         if crfCode != "":
             query["crf_code"] = crfCode
-        if gas != "":
+        if gas and gas != "":
             query["Title"] = " OR ".join([g.strip() for g in gas])
 
         return filter_for_ms(catalog(query), context=self.context)
@@ -407,28 +457,17 @@ class ReviewFolderMixin(BrowserView):
         )
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_highlights(self):
-        vocab_factory = getUtility(
-            IVocabularyFactory, name="esdrt.content.highlight"
-        )
-        vocabulary = vocab_factory(self.context)
-        return [(t.value, t.title) for t in vocabulary]
+        return get_necd_vocabulary_items(self.context, "highlight")
 
     def get_review_years(self):
         catalog = api.portal.get_tool("portal_catalog")
         return [
             c
             for c in catalog.uniqueValuesFor("review_year")
-            if isinstance(c, basestring)
+            if isinstance(c, str)
         ]
 
     def get_inventory_years(self):
@@ -437,63 +476,13 @@ class ReviewFolderMixin(BrowserView):
         return inventory_years
 
     def get_crf_categories(self):
-        vocab_factory = getUtility(
-            IVocabularyFactory, name="esdrt.content.crf_code"
-        )
-        vocabulary = vocab_factory(self.context)
-        return [(x.value, x.title) for x in vocabulary]
+        return get_necd_vocabulary_items(self.context, "crf_code")
 
     def get_gases(self):
-        vocab_factory = getUtility(
-            IVocabularyFactory, name="esdrt.content.gas"
-        )
-        vocabulary = vocab_factory(self.context)
-        return [(x.value, x.title) for x in vocabulary]
+        return get_necd_vocabulary_items(self.context, "gas")
 
     def get_finalisation_reasons(self):
-        """ Vocabularies are used to fetch available reasons.
-            This used to have hardcoded values for 2015 and 2016.
-            Currently it works like this:
-
-                - try to get vocabulary values that end
-                  in the current folder title (e.g. "resolved2016")
-
-                - if no values match, get the values which don't
-                  end in an year (e.g. "resolved")
-
-            This covers the previous functionality while also supporting
-            any number of upcoming years, as well as "Test"-type
-            review folders.
-        """
-        vtool = getToolByName(self, "portal_vocabularies")
-        reasons = [("open", "open")]
-
-        context_title = self.context.Title().strip()
-
-        vocab_ids = ("conclusion_reasons", "conclusion_phase2_reasons")
-
-        to_add = []
-        all_terms = []
-
-        for vocab_id in vocab_ids:
-            voc = vtool.getVocabularyByName(vocab_id)
-            voc_terms = voc.getDisplayList(self).items()
-            all_terms.extend(voc_terms)
-
-        # if term ends in the review folder title (e.g. 2016)
-        for term_key, term_title in all_terms:
-            if term_key.endswith(context_title):
-                to_add.append((term_key, term_title))
-
-        # if no matching term keys were found,
-        # use those that don't end in a year
-        if not to_add:
-            for term_key, term_title in all_terms:
-                if not term_key[-4:].isdigit():
-                    to_add.append((term_key, term_title))
-
-        reasons.extend(to_add)
-        return list(set(reasons))
+        return get_finalisation_reasons(self.context)
 
     @staticmethod
     def is_member_state_coordinator():
@@ -572,7 +561,6 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
         return table.render(table)
 
     def render(self):
-        redirect_for_author(self.context, self.request)
         sort_on = self.request.get("sort_on", "modified")
         sort_order = self.request.get("sort_order", "reverse")
         pagenumber = self.request.get("pagenumber", "1")
@@ -636,9 +624,7 @@ EXPORT_FIELDS_NO_STEPS = {
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
     "observation_finalisation_text_step1",
-    "observation_finalisation_remarks_step1",
     "observation_finalisation_text_step2",
-    "observation_finalisation_remarks_step2",
 )
 
 
@@ -647,7 +633,7 @@ def get_export_fields(context):
     result = OrderedDict(EXPORT_FIELDS)
 
     if not context.enable_steps:
-        for key, value in EXPORT_FIELDS_NO_STEPS.items():
+        for key, value in list(EXPORT_FIELDS_NO_STEPS.items()):
             if value is False:
                 del result[key]
             else:
@@ -660,7 +646,7 @@ def get_export_fields(context):
 def fields_vocabulary_factory(context):
     terms = []
     user_is_ms = getUtility(IUserIsMS)(context)
-    for key, value in get_export_fields(context).items():
+    for key, value in list(get_export_fields(context).items()):
         if user_is_ms and key in EXCLUDE_FIELDS_FOR_MS:
             continue
         terms.append(SimpleVocabulary.createTerm(key, key, value))
@@ -669,15 +655,15 @@ def fields_vocabulary_factory(context):
 
 class IExportForm(Interface):
     exportFields = List(
-        title=u"Fields to export",
-        description=u"Select which fields you want to add into XLS",
+        title="Fields to export",
+        description="Select which fields you want to add into XLS",
         required=False,
         value_type=Choice(source=fields_vocabulary_factory),
     )
 
-    include_qa = Bool(title=u"Include Q&A threads.", required=False)
+    include_qa = Bool(title="Include Q&A threads.", required=False)
 
-    come_from = TextLine(title=u"Come from")
+    come_from = TextLine(title="Come from")
 
 
 class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
@@ -685,8 +671,10 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     fields = field.Fields(IExportForm)
     ignoreContext = True
 
-    label = u"Export observations in XLS format"
-    name = u"export-observation-form"
+    label = "Export observations in XLS format"
+    name = "export-observation-form"
+
+    _downloadable_file = None
 
     def updateWidgets(self):
         super(ExportReviewFolderForm, self).updateWidgets()
@@ -706,7 +694,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             self.request["QUERY_STRING"],
         )
 
-    @button.buttonAndHandler(u"Export")
+    @button.buttonAndHandler("Export")
     def handleExport(self, action):
         data, errors = self.extractData()
 
@@ -714,9 +702,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             self.status = self.formErrorsMessage
             return
 
-        return self.build_file(data)
+        self._downloadable_file = self.build_file(data)
 
-    @button.buttonAndHandler(u"Back")
+    @button.buttonAndHandler("Back")
     def handleCancel(self, action):
         return self.request.response.redirect(
             "%s?%s"
@@ -725,7 +713,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
     def updateActions(self):
         super(ExportReviewFolderForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
     def render(self):
@@ -758,7 +746,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
         vocabulary = vocab_factory(self)
         if not term:
-            return u""
+            return ""
         try:
             value = vocabulary.getTerm(term)
             return value.title
@@ -769,7 +757,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
         vocabulary = vocab_factory(self)
         if not term:
-            return u""
+            return ""
         try:
             value = vocabulary.getTerm(term)
             return value.title
@@ -800,7 +788,6 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             for name in form_data.get("exportFields", [])
             if not user_is_ms or name not in EXCLUDE_FIELDS_FOR_MS
         ]
-
         dataset = []
 
         catalog = api.portal.get_tool("portal_catalog")
@@ -950,16 +937,17 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         questions = tuple([brain.getObject() for brain in question_brains])
 
-        comments = tuple(
+        comments = sorted(
             itertools.chain(
                 *[question.get_questions() for question in questions]
-            )
+            ),
+            key=lambda c: int(c.id),
         )
 
         mapping = dict(Comment="Question", CommentAnswer="Answer")
         return tuple(
             [
-                u"{}: {}".format(
+                "{}: {}".format(
                     mapping[comment.portal_type], safe_unicode(comment.text)
                 )
                 for comment in comments
@@ -970,36 +958,45 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         """ Export filtered observations in xls
         """
         now = datetime.now()
-        filename = "EMRT-observations-%s-%s.xlsx" % (
+        filename = "EMRT-observations-%s-%s.xls" % (
             self.context.getId(),
             now.strftime("%Y%M%d%H%m"),
         )
 
         wb = Workbook()
         wb.remove(wb.active)
-        sheet = wb.create_sheet('Observations')
+        sheet = wb.create_sheet("Observations")
 
         for row in self.extract_data(data):
             sheet.append(row)
 
         response = self.request.response
         response.setHeader(
-            "content-type",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            "Content-type",
+            "application/vnd.ms-excel; charset=utf-8",
         )
         response.setHeader(
-            "Content-disposition", "attachment;filename=" + filename
+            "Content-Disposition",
+            f"attachment; filename={filename}",
         )
 
-        xls = StringIO()
+        xls = BytesIO()
         wb.save(xls)
         xls.seek(0)
-        response.write(xls.read())
-
-        return
+        return xls
 
 
-ExportReviewFolderFormView = wrap_form(ExportReviewFolderForm)
+class DownloadableFormWrapper(FormWrapper):
+    def render(self):
+        if self.form_instance._downloadable_file:
+            return self.form_instance._downloadable_file
+        return super(DownloadableFormWrapper, self).render()
+
+
+ExportReviewFolderFormView = wrap_form(
+    ExportReviewFolderForm,
+    __wrapper_class=DownloadableFormWrapper,
+)
 
 
 def _item_user(fun, self, user, item):
@@ -1129,7 +1126,6 @@ class InboxReviewFolderView(BrowserView):
 
     def __call__(self):
         self.rolemap_observations = {}
-        redirect_for_author(self.context, self.request)
         return super(InboxReviewFolderView, self).__call__()
 
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
@@ -1198,7 +1194,7 @@ class InboxReviewFolderView(BrowserView):
 
         filterfunc = makefilter(rolecheck)
 
-        return filter(filterfunc, observations)
+        return list(filter(filterfunc, observations))
 
     @timeit
     def get_draft_observations(self):
@@ -1738,24 +1734,10 @@ class InboxReviewFolderView(BrowserView):
         return user.getProperty("fullname", userid)
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_sectors(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("ghg_source_sectors")
-        sectors = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            sectors.append((term[0], term[1]))
-
-        return sectors
+        return get_necd_vocabulary_items(self.context, "ghg_source_sectors")
 
     @staticmethod
     def is_sector_expert_or_review_expert():
@@ -1811,9 +1793,9 @@ class FinalisedFolderView(BrowserView):
         if freeText != "":
             query["SearchableText"] = freeText
 
-        return map(
+        return list(map(
             decorate, [b.getObject() for b in catalog.searchResults(query)]
-        )
+        ))
 
     def get_observations(self, **kw):
         freeText = self.request.form.get("freeText", "")
@@ -1909,24 +1891,10 @@ class FinalisedFolderView(BrowserView):
         return user.getProperty("fullname", userid)
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_sectors(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("ghg_source_sectors")
-        sectors = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            sectors.append((term[0], term[1]))
-
-        return sectors
+        return get_necd_vocabulary_items(self.context, "ghg_source_sectors")
 
     @staticmethod
     def is_sector_expert_or_review_expert():
@@ -1959,7 +1927,6 @@ class AddForm(add.DefaultAddForm):
     def create(self, *args, **kwargs):
         folder = super(AddForm, self).create(*args, **kwargs)
         updated = getUtility(ISetupReviewFolderRoles)(folder)
-        updated.reindexObjectSecurity()
         return updated
 
 

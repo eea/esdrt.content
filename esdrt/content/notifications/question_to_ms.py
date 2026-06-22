@@ -1,11 +1,9 @@
 import plone.api as api
 from Acquisition import aq_parent
-from Products.CMFCore.interfaces import IActionSucceededEvent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from five import grok
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from esdrt.content.question import IQuestion
-from utils import notify
+from .utils import notify
 
 
 def make_sure_observation_is_pending(observation):
@@ -32,18 +30,17 @@ def make_sure_observation_is_pending(observation):
         observation.reindexObjectSecurity()
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_ms(context, event):
     """
     To:     MSAuthority
     When:   New question for your country
     """
-    _temp = PageTemplateFile('question_to_ms.pt')
+    _temp = ViewPageTemplateFile('question_to_ms.pt')
 
     if event.action in ['phase1-approve-question', 'phase2-approve-question']:
         observation = aq_parent(context)
         make_sure_observation_is_pending(observation)
-        subject = u'New question for your country'
+        subject = 'New question for your country'
         notify(
             observation,
             _temp,
@@ -53,17 +50,16 @@ def notification_ms(context, event):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_rev_ph1(context, event):
     """
     To:     ReviewerPhase1
     When:   Your question was sent to MS
     """
-    _temp = PageTemplateFile('question_to_ms_rev_msg.pt')
+    _temp = ViewPageTemplateFile('question_to_ms_rev_msg.pt')
 
     if event.action in ['phase1-approve-question']:
         observation = aq_parent(context)
-        subject = u'Your observation was sent to MS'
+        subject = 'Your observation was sent to MS'
         notify(
             observation,
             _temp,
@@ -73,17 +69,16 @@ def notification_rev_ph1(context, event):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_rev_ph2(context, event):
     """
     To:     ReviewerPhase2
     When:   Your question was sent to MS
     """
-    _temp = PageTemplateFile('question_to_ms_rev_msg.pt')
+    _temp = ViewPageTemplateFile('question_to_ms_rev_msg.pt')
 
     if event.action in ['phase2-approve-question']:
         observation = aq_parent(context)
-        subject = u'Your observation was sent to MS'
+        subject = 'Your observation was sent to MS'
         notify(
             observation,
             _temp,

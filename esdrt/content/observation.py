@@ -1,7 +1,15 @@
+from enum import Enum
+from functools import partial
+from operator import methodcaller
+
+from Products.Five import BrowserView
+from plone.dexterity.content import Container
+from zope.interface import implementer
+
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 import datetime
 import re
 from itertools import chain
@@ -17,15 +25,19 @@ from Products.statusmessages.interfaces import IStatusMessage
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Pt
-from eea.cache import cache
-from five import grok
+from plone.memoize.ram import cache
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.app.discussion.behavior import IAllowDiscussion
 from plone.app.discussion.interfaces import IConversation
-from plone.directives import dexterity
-from plone.directives import form
-from plone.directives.form import default_value
+
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
+from plone.dexterity.browser.view import DefaultView
+
+from plone.supermodel import model
+from plone.autoform import directives
+
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.interfaces import IWrappedForm
 from z3c.form import button
@@ -40,11 +52,9 @@ from zope.component import getUtility
 from zope.i18n import translate
 from zope.interface import Invalid
 from zope.interface import alsoProvides
-from zope.lifecycleevent.interfaces import IObjectAddedEvent
-from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
 
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from esdrt.content.constants import ROLE_LR
 from esdrt.content.constants import ROLE_MSE
 from esdrt.content.constants import ROLE_QE
@@ -56,7 +66,7 @@ from esdrt.content.roles.localrolesubscriber import grant_local_roles
 from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
 from esdrt.content.utilities.interfaces import IFollowUpPermission
-from esdrt.content.utils import exclude_phase2_actions
+from esdrt.content.utils import exclude_phase2_actions, get_vocabulary_value
 from .comment import IComment
 from .commentanswer import ICommentAnswer
 from .conclusion import IConclusion
@@ -67,6 +77,12 @@ HIDDEN_ACTIONS = [
     "/content_status_history",
     "/placeful_workflow_configuration",
 ]
+
+
+class StatusIcon(Enum):
+    OBSERVATION = "bi-file-earmark-text"
+    CONCLUSION = "bi-check"
+    QUESTION = "bi-wechat"
 
 
 def hidden(menuitem):
@@ -81,138 +97,22 @@ def _user_name(fun, self, userid):
     return (userid, time() // 86400)
 
 
-# Interface class; used to define content-type schema.
-class IObservation(form.Schema, IImageScaleTraversable):
-    """
-    New review observation
-    """
-
-    text = schema.Text(
-        title=u"Observation title by expert",
-        required=True,
-        description=u"Provide a title for the issue identified. "
-                    u"Keep it short, you cannot change this title once you have sent it "
-                    u"to the QE. MS can only see the question once it has been approved "
-                    u"and sent by the QE. The question to the MS should be asked in the "
-                    u"Q&A tab, not here.",
-    )
-
-    country = schema.Choice(
-        title=u"Country",
-        vocabulary="esdrt.content.eea_member_states",
-        required=True,
-    )
-
-    crf_code = schema.Choice(
-        title=u"CRF category codes",
-        vocabulary="esdrt.content.crf_code",
-        required=True,
-    )
-
-    year = schema.TextLine(
-        title=u"Inventory year",
-        description=u"Inventory year is the year, a range or a list "
-                    u"of years or a (e.g. '2012', '2009-2012', "
-                    u"'2009, 2012, 2013') when the emissions had "
-                    u"occured for which an issue was observed in the review.",
-        required=True,
-    )
-
-    form.widget(gas=CheckBoxFieldWidget)
-    gas = schema.List(
-        title=u"Gas",
-        value_type=schema.Choice(vocabulary="esdrt.content.gas", ),
-        required=True,
-    )
-
-    review_year = schema.Int(
-        title=u"Review year",
-        description=u"Review year is the year in which the inventory was "
-                    u"submitted and the review was carried out",
-        required=True,
-    )
-
-    fuel = schema.Choice(
-        title=u"Fuel", vocabulary="esdrt.content.fuel", required=False,
-    )
-
-    # ghg_source_category = schema.Choice(
-    #     title=_(u"CRF category group"),
-    #     vocabulary='esdrt.content.ghg_source_category',
-    #     required=True,
-    # )
-
-    # ghg_source_sectors = schema.Choice(
-    #     title=_(u"CRF Sector"),
-    #     vocabulary='esdrt.content.ghg_source_sectors',
-    #     required=True,
-    # )
-
-    ms_key_catagory = schema.Bool(
-        title=u"MS key category",
-        required=False,
-        default=False,
-    )
-
-    eu_key_catagory = schema.Bool(
-        title=u"EU key category",
-        required=False,
-        default=False,
-    )
-
-    form.widget(parameter=CheckBoxFieldWidget)
-    parameter = schema.List(
-        title=u"Parameter",
-        value_type=schema.Choice(
-            vocabulary="esdrt.content.parameter", required=True,
-        ),
-        required=True,
-    )
-
-    form.widget(highlight=CheckBoxFieldWidget)
-    highlight = schema.List(
-        title=u"Description flags",
-        description=u"Description flags highlight important information that "
-                    u"is closely related to the main purpose of 'initial checks'",
-        value_type=schema.Choice(vocabulary="esdrt.content.highlight", ),
-        required=False,
-        default=[],
-    )
-
-    form.write_permission(closing_comments="cmf.ManagePortal")
-    closing_comments = schema.Text(
-        title=u"Finish request comments", required=False,
-    )
-
-    form.write_permission(closing_deny_comments="cmf.ManagePortal")
-    closing_deny_comments = schema.Text(
-        title=u"Finish deny comments", required=False,
-    )
-
-    form.write_permission(closing_comments_phase2="cmf.ManagePortal")
-    closing_comments_phase2 = schema.Text(
-        title=u"Finish request comments for phase 2", required=False,
-    )
-
-    form.write_permission(closing_deny_comments_phase2="cmf.ManagePortal")
-    closing_deny_comments_phase2 = schema.Text(
-        title=u"Finish deny comments for phase 2", required=False,
-    )
+def default_year():
+    return datetime.datetime.now().year
 
 
-@form.validator(field=IObservation["parameter"])
 def check_parameter(value):
     if len(value) == 0:
-        raise Invalid(u"You need to select at least one parameter")
+        raise Invalid("You need to select at least one parameter")
+    return True
 
 
-@form.validator(field=IObservation["gas"])
 def check_gas(value):
     if len(value) == 0:
-        raise Invalid(u"You need to select at least one gas")
+        raise Invalid("You need to select at least one gas")
+    return True
 
 
-@form.validator(field=IObservation["crf_code"])
 def check_crf_code(value):
     """ Check if the user is in one of the group of users
         allowed to add this category CRF Code observations
@@ -229,11 +129,12 @@ def check_crf_code(value):
 
     if not valid:
         raise Invalid(
-            u"You are not allowed to add observations for this sector category"
+            "You are not allowed to add observations for this sector category"
         )
 
+    return valid
 
-@form.validator(field=IObservation["country"])
+
 def check_country(value):
     user = api.user.get_current()
     groups = user.getGroups()
@@ -250,11 +151,12 @@ def check_country(value):
 
     if not valid:
         raise Invalid(
-            u"You are not allowed to add observations for this country"
+            "You are not allowed to add observations for this country"
         )
 
+    return valid
 
-@form.validator(field=IObservation["year"])
+
 def inventory_year(value):
     """
     Inventory year can be a given year (2014), a range of years (2012-2014)
@@ -285,26 +187,145 @@ def inventory_year(value):
             valid = string_analyzer(value, ";")
 
     if not valid:
-        raise Invalid(u"Inventory year format is not correct. ")
+        raise Invalid("Inventory year format is not correct. ")
+
+    return True
 
 
-@default_value(field=IObservation["review_year"])
-def default_year(data):
-    return datetime.datetime.now().year
+# Interface class; used to define content-type schema.
+class IObservation(model.Schema, IImageScaleTraversable):
+    """
+    New review observation
+    """
+
+    text = schema.Text(
+        title="Observation title by expert",
+        required=True,
+        description="Provide a title for the issue identified. "
+                    "Keep it short, you cannot change this title once you have sent it "
+                    "to the QE. MS can only see the question once it has been approved "
+                    "and sent by the QE. The question to the MS should be asked in the "
+                    "Q&A tab, not here.",
+    )
+
+    country = schema.Choice(
+        title="Country",
+        vocabulary="esdrt.content.eea_member_states",
+        constraint=check_country,
+        required=True,
+    )
+
+    crf_code = schema.Choice(
+        title="CRF category codes",
+        vocabulary="esdrt.content.crf_code",
+        constraint=check_crf_code,
+        required=True,
+    )
+
+    year = schema.TextLine(
+        title="Inventory year",
+        description="Inventory year is the year, a range or a list "
+                    "of years or a (e.g. '2012', '2009-2012', "
+                    "'2009, 2012, 2013') when the emissions had "
+                    "occured for which an issue was observed in the review.",
+        constraint=inventory_year,
+        required=True,
+    )
+
+    directives.widget("gas", CheckBoxFieldWidget)
+    gas = schema.List(
+        title="Gas",
+        value_type=schema.Choice(vocabulary="esdrt.content.gas", ),
+        constraint=check_gas,
+        required=True,
+    )
+
+    review_year = schema.Int(
+        title="Review year",
+        description="Review year is the year in which the inventory was "
+                    "submitted and the review was carried out",
+        defaultFactory=default_year,
+        required=True,
+    )
+
+    fuel = schema.Choice(
+        title="Fuel", vocabulary="esdrt.content.fuel", required=False,
+    )
+
+    # ghg_source_category = schema.Choice(
+    #     title=_(u"CRF category group"),
+    #     vocabulary='esdrt.content.ghg_source_category',
+    #     required=True,
+    # )
+
+    # ghg_source_sectors = schema.Choice(
+    #     title=_(u"CRF Sector"),
+    #     vocabulary='esdrt.content.ghg_source_sectors',
+    #     required=True,
+    # )
+
+    ms_key_catagory = schema.Bool(
+        title="MS key category",
+        required=False,
+        default=False,
+    )
+
+    eu_key_catagory = schema.Bool(
+        title="EU key category",
+        required=False,
+        default=False,
+    )
+
+    directives.widget("parameter", CheckBoxFieldWidget)
+    parameter = schema.List(
+        title="Parameter",
+        value_type=schema.Choice(
+            vocabulary="esdrt.content.parameter", required=True,
+        ),
+        constraint=check_parameter,
+        required=True,
+    )
+
+    directives.widget("highlight", CheckBoxFieldWidget)
+    highlight = schema.List(
+        title="Description flags",
+        description="Description flags highlight important information that "
+                    "is closely related to the main purpose of 'initial checks'",
+        value_type=schema.Choice(vocabulary="esdrt.content.highlight", ),
+        required=False,
+        default=[],
+    )
+
+    directives.write_permission(closing_comments="cmf.ManagePortal")
+    closing_comments = schema.Text(
+        title="Finish request comments", required=False,
+    )
+
+    directives.write_permission(closing_deny_comments="cmf.ManagePortal")
+    closing_deny_comments = schema.Text(
+        title="Finish deny comments", required=False,
+    )
+
+    directives.write_permission(closing_comments_phase2="cmf.ManagePortal")
+    closing_comments_phase2 = schema.Text(
+        title="Finish request comments for phase 2", required=False,
+    )
+
+    directives.write_permission(closing_deny_comments_phase2="cmf.ManagePortal")
+    closing_deny_comments_phase2 = schema.Text(
+        title="Finish deny comments for phase 2", required=False,
+    )
 
 
-@grok.subscribe(IObservation, IObjectAddedEvent)
-@grok.subscribe(IObservation, IObjectModifiedEvent)
 def set_title_to_observation(object, event):
     sector = safe_unicode(object.ghg_source_category_value())
     gas = safe_unicode(object.gas_value())
     inventory_year = safe_unicode(str(object.year))
     parameter = safe_unicode(object.parameter_value())
-    object.title = u" ".join([sector, gas, inventory_year, parameter])
+    object.title = " ".join([sector, gas, inventory_year, parameter])
     grant_local_roles(object)
 
 
-@grok.subscribe(IObservation, IObjectAddedEvent)
 def add_observation(context, event):
     """ When adding an observation, go directly to
         'open' status on the observation
@@ -319,8 +340,28 @@ def add_observation(context, event):
             api.content.transition(obj=observation, transition="phase1-approve")
 
 
-class Observation(dexterity.Container):
-    grok.implements(IObservation)
+def get_join_from_vocab(context, vocab, values):
+    result = ""
+
+    if values:
+        get_value = partial(get_vocabulary_value, context, vocab)
+        result = ", ".join([get_value(v) for v in values if v])
+
+    return result
+
+
+def get_list_from_vocab(context, vocab, values):
+    result = []
+
+    if values:
+        get_value = partial(get_vocabulary_value, context, vocab)
+        result = [get_value(v) for v in values]
+
+    return result
+
+
+@implementer(IObservation)
+class Observation(Container):
 
     # Add your class methods and properties here
 
@@ -328,7 +369,7 @@ class Observation(dexterity.Container):
         """
         Memoized version of values, to speed-up
         """
-        return self.values()
+        return list(self.values())
 
     def get_values_cat(self, portal_type=None):
         if portal_type is not None:
@@ -354,12 +395,12 @@ class Observation(dexterity.Container):
         return self.highlight
 
     def country_value(self):
-        return self._vocabulary_value(
+        return get_vocabulary_value(self,
             "esdrt.content.eea_member_states", self.country
         )
 
     def crf_code_value(self):
-        return self._vocabulary_value("esdrt.content.crf_code", self.crf_code)
+        return get_vocabulary_value(self,"esdrt.content.crf_code", self.crf_code)
 
     def ghg_source_category_value(self):
         # Get the value of the sector to be used on the LDAP mapping
@@ -371,47 +412,27 @@ class Observation(dexterity.Container):
         return get_category_value_from_crf_code(self.crf_code)
 
     def parameter_value(self):
-        parameters = [
-            self._vocabulary_value("esdrt.content.parameter", p)
-            for p in self.parameter
-        ]
-        return u", ".join(parameters)
+        return get_join_from_vocab(self.aq_parent, "esdrt.content.parameter", self.parameter)
 
     def gas_value(self):
-        gases = [
-            self._vocabulary_value("esdrt.content.gas", g) for g in self.gas
-        ]
-
-        return u", ".join(gases)
+        return get_join_from_vocab(self.aq_parent, "esdrt.content.gas", self.gas)
 
     def highlight_value(self):
-        if self.highlight:
-            highlight = [
-                self._vocabulary_value("esdrt.content.highlight", h)
-                for h in self.highlight
-            ]
-            return u", ".join([x for x in highlight if x])
-        return u""
+        return get_join_from_vocab(self.aq_parent, "esdrt.content.highlight", self.highlight)
 
     def finish_reason_value(self):
-        return self._vocabulary_value(
-            "esdrt.content.finishobservationreasons", self.closing_reason
+        return get_vocabulary_value(
+            self.aq_parent,
+            "esdrt.content.finishobservationreasons",
+            self.closing_reason,
         )
 
     def finish_deny_reason_value(self):
-        return self._vocabulary_value(
+        return get_vocabulary_value(
+            self.aq_parent,
             "esdrt.content.finishobservationdenyreasons",
             self.closing_deny_reason,
         )
-
-    def _vocabulary_value(self, vocabulary, term):
-        vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
-        vocabulary = vocab_factory(self)
-        try:
-            value = vocabulary.getTerm(term)
-            return value.title
-        except LookupError:
-            return u""
 
     def get_status(self):
         return api.content.get_state(self)
@@ -517,35 +538,35 @@ class Observation(dexterity.Container):
 
     def wf_status(self):
         if self.get_status() in ["phase1-draft", "phase2-draft"]:
-            return ["Observation created", "observationIcon"]
+            return ["Observation created", StatusIcon.OBSERVATION.value]
         elif self.get_status() in ["phase1-closed", "phase2-closed"]:
-            return ["Observation finished", "observationIcon"]
+            return ["Observation finished", StatusIcon.OBSERVATION.value]
         elif self.get_status() in [
             "phase1-close-requested",
             "phase2-close-requested",
         ]:
-            return ["Observation finish requested", "observationIcon"]
+            return ["Observation finish requested", StatusIcon.OBSERVATION.value]
         elif self.get_status() in ["phase1-conclusions", "phase2-conclusions"]:
-            return ["Conclusion ongoing", "conclusionIcon"]
+            return ["Conclusion ongoing", StatusIcon.CONCLUSION.value]
         elif self.get_status() in [
             "phase1-conclusion-discussion",
             "phase2-conclusion-discussion",
         ]:
-            return ["Counterparts comments requested", "conclusionIcon"]
+            return ["Counterparts comments requested", StatusIcon.CONCLUSION.value]
         else:
             questions = self.get_values_cat("Question")
             if questions:
                 question = questions[-1]
                 state = question.get_state_api()
                 if state in ["phase1-draft", "phase2-draft"]:
-                    return ["Question drafted", "questionIcon"]
+                    return ["Question drafted", StatusIcon.QUESTION.value]
                 elif state in [
                     "phase1-counterpart-comments",
                     "phase2-counterpart-comments",
                 ]:
-                    return ["Counterpart's comments requested", "questionIcon"]
+                    return ["Counterpart's comments requested", StatusIcon.QUESTION.value]
                 elif state in ["phase1-answered", "phase2-answered"]:
-                    return ["Pending question", "questionIcon"]
+                    return ["Pending question", StatusIcon.QUESTION.value]
                 elif state in [
                     "phase1-pending",
                     "phase1-carried-over",
@@ -556,25 +577,25 @@ class Observation(dexterity.Container):
                     "phase2-pending-answer-drafting",
                     "phase2-recalled-msa",
                 ]:
-                    return ["Open question", "questionIcon"]
+                    return ["Open question", StatusIcon.QUESTION.value]
                 elif state in [
                     "phase1-drafted",
                     "phase1-recalled-lr",
                     "phase2-drafted",
                     "phase2-recalled-lr",
                 ]:
-                    return ["Draft question", "questionIcon"]
+                    return ["Draft question", StatusIcon.QUESTION.value]
                 elif state in [
                     "phase1-expert-comments",
                     "phase2-expert-comments",
                 ]:
-                    return ["MS expert comments requested", "questionIcon"]
+                    return ["MS expert comments requested", StatusIcon.QUESTION.value]
                 elif state in ["phase1-closed", "phase2-closed"]:
-                    return ["Closed question", "questionIcon"]
+                    return ["Closed question", StatusIcon.QUESTION.value]
             else:
-                return ["Observation created", "observationIcon"]
+                return ["Observation created", StatusIcon.OBSERVATION.value]
 
-        return ["Unknown", "observationIcon"]
+        return ["Unknown", StatusIcon.OBSERVATION.value]
 
     def observation_status(self):
         status = self.observation_question_status()
@@ -690,7 +711,7 @@ class Observation(dexterity.Container):
         question_wf = []
         for item in observation_history:
             item["role"] = item["actor"]
-            item["object"] = "observationIcon"
+            item["object"] = StatusIcon.OBSERVATION.value
             item["author"] = self.get_author_name(item["actor"])
             if item["review_state"] == "phase1-draft":
                 item["state"] = "Draft observation"
@@ -732,7 +753,7 @@ class Observation(dexterity.Container):
             elif item["review_state"] == "phase1-conclusion-discussion":
                 item["state"] = "Conclusion comments requested"
                 item["role"] = "Sector expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif (
                 item["review_state"] == "phase1-conclusions"
@@ -740,7 +761,7 @@ class Observation(dexterity.Container):
             ):
                 item["state"] = "Conclusion comments closed"
                 item["role"] = "Sector expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif (
                 item["review_state"] == "phase1-conclusions"
@@ -748,7 +769,7 @@ class Observation(dexterity.Container):
             ):
                 item["state"] = "Conclusion drafting"
                 item["role"] = "Sector expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif item["action"] == "phase1-send-to-team-2":
                 item["state"] = "Handed to phase 2"
@@ -792,7 +813,7 @@ class Observation(dexterity.Container):
             elif item["review_state"] == "phase2-conclusion-discussion":
                 item["state"] = "Conclusion comments requested"
                 item["role"] = "Review expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif (
                 item["review_state"] == "phase2-conclusions"
@@ -800,7 +821,7 @@ class Observation(dexterity.Container):
             ):
                 item["state"] = "Conclusion comments closed"
                 item["role"] = "Review expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif (
                 item["review_state"] == "phase2-conclusions"
@@ -808,7 +829,7 @@ class Observation(dexterity.Container):
             ):
                 item["state"] = "Conclusion drafting"
                 item["role"] = "Review expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             else:
                 item["state"] = "*" + item["review_state"] + "*"
@@ -824,7 +845,7 @@ class Observation(dexterity.Container):
             )
             for item in question_history:
                 item["role"] = item["actor"]
-                item["object"] = "questionIcon"
+                item["object"] = StatusIcon.QUESTION.value
                 item["author"] = self.get_author_name(item["actor"])
                 if (
                     item["review_state"] == "phase1-draft"
@@ -1049,7 +1070,7 @@ class Observation(dexterity.Container):
         # there is always only one question.
         question = questions[0]
 
-        items = question.values()
+        items = list(question.values())
 
         comments = [i for i in items if i.portal_type == "Comment"]
         answers = [i for i in items if i.portal_type == "CommentAnswer"]
@@ -1110,7 +1131,7 @@ class Observation(dexterity.Container):
         replynum = 0
         if questions:
             comments = [
-                c for c in questions[-1].values() if c.portal_type == "Comment"
+                c for c in list(questions[-1].values()) if c.portal_type == "Comment"
             ]
             if comments:
                 last = comments[-1]
@@ -1125,7 +1146,7 @@ class Observation(dexterity.Container):
         if questions:
             comments = [
                 c
-                for c in questions[-1].values()
+                for c in list(questions[-1].values())
                 if c.portal_type == "CommentAnswer"
             ]
             if comments:
@@ -1144,7 +1165,7 @@ class Observation(dexterity.Container):
                     chain.from_iterable(
                         [
                             IConversation(c).commentators
-                            for c in question.values()
+                            for c in list(question.values())
                         ]
                     )
                 )
@@ -1185,18 +1206,6 @@ class Observation(dexterity.Container):
         return status in ["phase1-conclusions", "phase2-conclusions"]
 
 
-# View class
-# The view will automatically use a similarly named template in
-# templates called observationview.pt .
-# Template filenames should be all lower case.
-# The view will render when you request a content object with this
-# interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
-# This will make this view the default view for your content-type
-
-grok.templatedir("templates")
-
-
 def exclude_terms_from_widget_vocabulary(widget, to_exclude):
     if not to_exclude:
         return
@@ -1214,22 +1223,47 @@ def exclude_terms_from_widget_vocabulary(widget, to_exclude):
     widget.update()
 
 
-class AddForm(dexterity.AddForm):
-    grok.name("esdrt.content.observation")
-    grok.context(IObservation)
-    grok.require("esdrt.content.AddObservation")
+def set_form_widgets(form_instance, context=None):
+    fields = form_instance.fields
+    widgets = form_instance.widgets
+
+    if context is None:
+        context = form_instance.context
+
+    if "IDublinCore.title" in list(fields.keys()):
+        fields["IDublinCore.title"].field.required = False
+        widgets["IDublinCore.title"].mode = interfaces.HIDDEN_MODE
+        widgets["IDublinCore.description"].mode = interfaces.HIDDEN_MODE
+
+    if "review_year" in widgets and not Observation.is_secretariat():
+        widgets["review_year"].readonly = "readonly"
+
+    # [refs #159091]
+    if not context.enable_key_category:
+        del widgets["eu_key_catagory"]
+        del widgets["ms_key_catagory"]
+
+    # [refs #159096]
+    if not context.enable_steps:
+        wids = [
+            "closing_comments_phase2",
+            "closing_deny_comments_phase2",
+        ]
+        for wid in wids:
+            widget = widgets.get(wid)
+            if widget:
+                widget.mode = interfaces.HIDDEN_MODE
+
+
+class AddForm(add.DefaultAddForm):
 
     label = "Observation"
     description = " "
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
-        self.fields["IDublinCore.title"].field.required = False
-        self.widgets["IDublinCore.title"].mode = interfaces.HIDDEN_MODE
-        self.widgets["IDublinCore.description"].mode = interfaces.HIDDEN_MODE
+        set_form_widgets(self)
         self.widgets["text"].rows = 15
-        if not Observation.is_secretariat():
-            self.widgets["review_year"].readonly = "readonly"
         self.groups = [
             g for g in self.groups if g.label == "label_schema_default"
         ]
@@ -1241,34 +1275,25 @@ class AddForm(dexterity.AddForm):
             getattr(self.context, "internal_highlights") or [],
         )
 
-        # [refs #159091]
-        if not self.context.enable_key_category:
-            del self.widgets["eu_key_catagory"]
-            del self.widgets["ms_key_catagory"]
-
-        # [refs #159096]
-        if not self.context.enable_steps:
-            wids = [
-                "closing_comments_phase2",
-                "closing_deny_comments_phase2",
-            ]
-            for wid in wids:
-                widget = self.widgets.get(wid)
-                if widget:
-                    widget.mode = interfaces.HIDDEN_MODE
-
     def updateActions(self):
         super(AddForm, self).updateActions()
-        self.actions["save"].title = u"Save Observation"
+        self.actions["save"].title = "Save Observation"
         self.actions["save"].addClass("defaultWFButton")
-        self.actions["cancel"].title = u"Delete Observation"
+        self.actions["cancel"].title = "Delete Observation"
 
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
+    def create(self, data):
+        data["IDublinCore.title"] = str(int(time()))
+        return super().create(data)
 
-class ObservationMixin(grok.View):
-    grok.baseclass()
+class AddView(add.DefaultAddView):
+    form_instance: AddForm
+    form = AddForm
+
+
+class ObservationMixin(DefaultView):
 
     def is_key_category_enabled(self):
         return aq_parent(self.context).enable_key_category
@@ -1452,10 +1477,10 @@ class ObservationMixin(grok.View):
         question = self.question()
         if question:
             values = [
-                v for v in question.values() if sm.checkPermission("View", v)
+                v for v in list(question.values()) if sm.checkPermission("View", v)
             ]
             # return question.values()
-            return values
+            return sorted(values, key=methodcaller("created"))
 
     def is_old_qa(self, comment):
         return comment.creation_date.year() < datetime.datetime.now().year
@@ -1503,10 +1528,10 @@ class ObservationMixin(grok.View):
                 "esdrt.content: Add CommentAnswer", question
             )
             questions = [
-                q for q in question.values() if q.portal_type == "Comment"
+                q for q in list(question.values()) if q.portal_type == "Comment"
             ]
             answers = [
-                q for q in question.values() if q.portal_type == "CommentAnswer"
+                q for q in list(question.values()) if q.portal_type == "CommentAnswer"
             ]
             return permission and len(questions) > len(answers)
         else:
@@ -1590,7 +1615,7 @@ class ObservationMixin(grok.View):
                     getId = history_metadata.getVersionId
                     history = self.history = []
                     # Count backwards from most recent to least recent
-                    for i in xrange(
+                    for i in range(
                         history_metadata.getLength(countPurged=False) - 1,
                         -1,
                         -1,
@@ -1661,7 +1686,7 @@ class ObservationMixin(grok.View):
         version_name = self.versionName(version)
 
         return translate(
-            _CMFE(u"version ${version}", mapping=dict(version=version_name)),
+            _CMFE("version ${version}", mapping=dict(version=version_name)),
             context=self.request,
         )
 
@@ -1681,9 +1706,6 @@ class ObservationMixin(grok.View):
 
 
 class ObservationView(ObservationMixin):
-    grok.context(IObservation)
-    grok.require("zope2.View")
-    grok.name("view")
 
     def get_current_counterparters(self):
         """ Return list of current counterparters,
@@ -1705,21 +1727,12 @@ class ObservationView(ObservationMixin):
         )
 
 
-class DiffedView(ObservationView):
-    grok.name("diffedview")
-    grok.context(IObservation)
-    grok.require("zope2.View")
-
-
 class ExportAsDocView(ObservationMixin):
-    grok.name("export_as_docx")
-    grok.context(IObservation)
-    grok.require("esdrt.content.ExportAnObservation")
 
     def strip_special_chars(self, s):
         """ return s without special chars
         """
-        return re.sub("\s+", " ", s)
+        return re.sub(r"\s+", " ", s)
 
     def build_file(self):
         document = Document()
@@ -1948,12 +1961,12 @@ class AddQuestionForm(Form):
     ignoreContext = True
     fields = field.Fields(IComment).select("text")
 
-    @button.buttonAndHandler(u"Save question")
+    @button.buttonAndHandler("Save question")
     def create_question(self, action):
         context = aq_inner(self.context)
         text = self.request.form.get("form.widgets.text", "")
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Question text is empty"))
+            raise ActionExecutionError(Invalid("Question text is empty"))
 
         qs = self.context.get_values_cat("Question")
         if qs:
@@ -1977,18 +1990,15 @@ class AddQuestionForm(Form):
 
     def updateActions(self):
         super(AddQuestionForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
             self.actions[k].addClass("defaultWFButton")
 
 
-class ModificationForm(dexterity.EditForm):
-    grok.name("modifications")
-    grok.context(IObservation)
-    grok.require("cmf.ModifyPortalContent")
+class EditForm(edit.DefaultEditForm):
 
     def updateFields(self):
-        super(ModificationForm, self).updateFields()
+        super(EditForm, self).updateFields()
 
         user = api.user.get_current()
         roles = api.user.get_roles(username=user.getId(), obj=self.context)
@@ -2028,57 +2038,37 @@ class ModificationForm(dexterity.EditForm):
             self.fields["gas"].widgetFactory = CheckBoxFieldWidget
 
     def updateWidgets(self):
-        super(ModificationForm, self).updateWidgets()
-        if "review_year" in self.widgets and not Observation.is_secretariat():
-            self.widgets["review_year"].readonly = "readonly"
+        super(EditForm, self).updateWidgets()
+        set_form_widgets(self, aq_parent(self.context))
 
-        # [refs #159091]
-        if not aq_parent(self.context).enable_key_category:
-            del self.widgets["eu_key_catagory"]
-            del self.widgets["ms_key_catagory"]
-
-        # [refs #159096]
-        if not aq_parent(self.context).enable_steps:
-            wids = [
-                "closing_comments_phase2",
-                "closing_deny_comments_phase2",
-            ]
-            for wid in wids:
-                widget = self.widgets.get(wid)
-                if widget:
-                    widget.mode = interfaces.HIDDEN_MODE
 
     def updateActions(self):
-        super(ModificationForm, self).updateActions()
-        for k in self.actions.keys():
+        super(EditForm, self).updateActions()
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
-
-
-class EditForm(ModificationForm):
-    grok.name("edit")
 
 
 class AddAnswerForm(Form):
     ignoreContext = True
     fields = field.Fields(ICommentAnswer).select("text")
 
-    @button.buttonAndHandler(u"Save answer")
+    @button.buttonAndHandler("Save answer")
     def add_answer(self, action):
         text = self.request.form.get("form.widgets.text", "")
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Answer text is empty"))
+            raise ActionExecutionError(Invalid("Answer text is empty"))
         observation = aq_inner(self.context)
         questions = [
-            q for q in observation.values() if q.portal_type == "Question"
+            q for q in list(observation.values()) if q.portal_type == "Question"
         ]
         if questions:
             context = questions[0]
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         if context.has_answers():
             raise ActionExecutionError(
-                Invalid(u"Question is already answered!")
+                Invalid("Question is already answered!")
             )
 
         id = str(int(time()))
@@ -2090,7 +2080,7 @@ class AddAnswerForm(Form):
         elif context.get_state_api().startswith("phase2-"):
             action = "phase2-add-answer"
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         api.content.transition(obj=context, transition=action)
 
@@ -2102,39 +2092,36 @@ class AddAnswerForm(Form):
 
     def updateActions(self):
         super(AddAnswerForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
 
-class AddAnswerAndRequestComments(grok.View):
-    grok.context(IObservation)
-    grok.name("add-answer-and-request-comments")
-    grok.require("zope2.View")
+class AddAnswerAndRequestComments(BrowserView):
 
     def render(self):
         observation = aq_inner(self.context)
         questions = [
-            q for q in observation.values() if q.portal_type == "Question"
+            q for q in list(observation.values()) if q.portal_type == "Question"
         ]
         if questions:
             context = questions[0]
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
-        comments = [q for q in context.values() if q.portal_type == "Comment"]
+        comments = [q for q in list(context.values()) if q.portal_type == "Comment"]
         answers = [
-            q for q in context.values() if q.portal_type == "CommentAnswer"
+            q for q in list(context.values()) if q.portal_type == "CommentAnswer"
         ]
 
         if len(comments) == len(answers):
             status = IStatusMessage(self.request)
-            msg = _(u"There is a draft answer created for the question.")
+            msg = _("There is a draft answer created for the question.")
             status.addStatusMessage(msg, "error")
             return self.request.response.redirect(observation.absolute_url())
 
         context = questions[0]
 
-        text = u"For MS coordinator: please draft, edit and finalise your consolidated reply here."
+        text = "For MS coordinator: please draft, edit and finalise your consolidated reply here."
 
         id = str(int(time()))
         item_id = context.invokeFactory(type_name="CommentAnswer", id=id, )
@@ -2145,7 +2132,7 @@ class AddAnswerAndRequestComments(grok.View):
         elif api.content.get_state(context).startswith("phase2-"):
             action = "phase2-assign-answerer"
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
         url = "%s/assign_answerer_form?workflow_action=%s&comment=%s" % (
             context.absolute_url(),
             action,
@@ -2158,11 +2145,11 @@ class AddCommentForm(Form):
     ignoreContext = True
     fields = field.Fields(IComment).select("text")
 
-    @button.buttonAndHandler(u"Add question")
+    @button.buttonAndHandler("Add question")
     def create_question(self, action):
         observation = aq_inner(self.context)
         questions = [
-            q for q in observation.values() if q.portal_type == "Question"
+            q for q in list(observation.values()) if q.portal_type == "Question"
         ]
         if questions:
             context = questions[0]
@@ -2180,7 +2167,7 @@ class AddCommentForm(Form):
 
     def updateActions(self):
         super(AddCommentForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
 
@@ -2188,7 +2175,7 @@ class AddConclusionForm(Form):
     ignoreContext = True
     fields = field.Fields(IConclusion).select("text", "closing_reason")
 
-    @button.buttonAndHandler(u"Add conclusion")
+    @button.buttonAndHandler("Add conclusion")
     def create_conclusion(self, action):
         context = aq_inner(self.context)
         id = str(int(time()))
@@ -2209,21 +2196,18 @@ class AddConclusionForm(Form):
 
     def updateActions(self):
         super(AddConclusionForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass("standardButton")
 
 
-class EditConclusionAndCloseComments(grok.View):
-    grok.name("edit-conclusions-and-close-comments")
-    grok.context(IObservation)
-    grok.require("zope2.View")
+class EditConclusionAndCloseComments(BrowserView):
 
     def update(self):
         # Some checks:
         waction = self.request.get("workflow_action")
         if waction != "phase1-finish-comments":
             status = IStatusMessage(self.request)
-            msg = u"There was an error, try again please"
+            msg = "There was an error, try again please"
             status.addStatusMessage(msg, "error")
 
     def render(self):
@@ -2237,17 +2221,14 @@ class EditConclusionAndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditConclusionP2AndCloseComments(grok.View):
-    grok.name("edit-conclusions-and-close-comments-phase2")
-    grok.context(IObservation)
-    grok.require("zope2.View")
+class EditConclusionP2AndCloseComments(BrowserView):
 
     def update(self):
         # Some checks:
         waction = self.request.get("workflow_action")
         if waction != "phase2-finish-comments":
             status = IStatusMessage(self.request)
-            msg = u"There was an error, try again please"
+            msg = "There was an error, try again please"
             status.addStatusMessage(msg, "error")
 
     def render(self):
@@ -2261,10 +2242,7 @@ class EditConclusionP2AndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditHighlightsForm(dexterity.EditForm):
-    grok.name("edit-highlights")
-    grok.context(IObservation)
-    grok.require("cmf.ModifyPortalContent")
+class EditHighlightsForm(edit.DefaultEditForm):
 
     def updateFields(self):
         super(EditHighlightsForm, self).updateFields()
@@ -2275,10 +2253,7 @@ class EditHighlightsForm(dexterity.EditForm):
         ]
 
 
-class AddConclusions(grok.View):
-    grok.context(IObservation)
-    grok.name("add-conclusions")
-    grok.require("zope2.View")
+class AddConclusions(BrowserView):
 
     def render(self):
         context = aq_inner(self.context)
@@ -2300,7 +2275,7 @@ class AddConclusions(grok.View):
                 else:
                     # with api.env.adopt_roles(['ReviewerPhase1']):
                     id = context.invokeFactory(
-                        id=str(int(time())), type_name="Conclusion", text=u""
+                        id=str(int(time())), type_name="Conclusion", text=""
                     )
                     cs = self.context.get_values_cat("Conclusion")
                     conclusion = cs[0]
@@ -2314,7 +2289,7 @@ class AddConclusions(grok.View):
                 else:
                     # with api.env.adopt_roles(['ReviewerPhase1']):
                     id = context.invokeFactory(
-                        id=str(int(time())), type_name="Conclusion", text=u""
+                        id=str(int(time())), type_name="Conclusion", text=""
                     )
                     cs = self.context.get_values_cat("Conclusion")
                     conclusion = cs[0]
@@ -2340,7 +2315,7 @@ class AddConclusions(grok.View):
                     id = context.invokeFactory(
                         id=str(int(time())),
                         type_name="ConclusionsPhase2",
-                        text=u"",
+                        text="",
                     )
                     cs = self.context.get_values_cat("ConclusionsPhase2")
                     conclusion = cs[0]
@@ -2358,7 +2333,7 @@ class AddConclusions(grok.View):
                     id = context.invokeFactory(
                         id=str(int(time())),
                         type_name="ConclusionsPhase2",
-                        text=u"",
+                        text="",
                     )
                     cs = self.context.get_values_cat("ConclusionsPhase2")
                     conclusion = cs[0]
@@ -2369,7 +2344,7 @@ class AddConclusions(grok.View):
                     obj=context, transition="phase2-draft-conclusions"
                 )
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
         self.context.reindexObject()
         return self.request.response.redirect(url)

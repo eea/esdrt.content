@@ -1,99 +1,86 @@
-from Products.CMFCore.utils import getToolByName
-from Products.ATVocabularyManager.config import SORT_METHOD_FOLDER_ORDER
+# -*- coding: utf-8 -*-
+import logging
+
+from Products.CMFPlone.interfaces import INonInstallable
+from zope.interface import implementer
+
+from plone import api
 
 
-VOCABULARIES = [
-    {'id': 'eea_member_states',
-     'title': 'EEA Member States',
-     'filename': 'eea_member_states.csv',
-    },
-    {'id': 'ghg_source_category',
-     'title': 'CRF category group',
-     'filename': 'ghg_source_category.csv',
-    },
-    {'id': 'ghg_source_sectors',
-     'title': 'CRF Sector',
-     'filename': 'ghg_source_sectors.csv',
-    },
-    {'id': 'fuel',
-     'title': 'Fuel',
-     'filename': 'fuel.csv',
-    },
-    {'id': 'gas',
-     'title': 'Gas',
-     'filename': 'gas.csv',
-    },
-    {'id': 'highlight',
-     'title': 'Highligt',
-     'filename': 'highlight.csv',
-    },
-    {'id': 'parameter',
-     'title': 'Parameter',
-     'filename': 'parameter.csv',
-    },
-    {'id': 'conclusion_reasons',
-     'title': 'Conclusion Reasons',
-     'filename': 'conclusion_reasons.csv',
-    },
-    {'id': 'conclusion_phase2_reasons',
-     'title': 'Conclusion Phase2 Reasons',
-     'filename': 'conclusion_phase2_reasons.csv',
-    },
-]
+LOGGER = logging.getLogger("esdrt.content.setuphandlers")
+
+LDAP_PLUGIN_ID = "pasldap"
 
 
-def create_vocabulary(context, vocabname, vocabtitle, importfilename=None,
-    profile=None):
-    _ = context.invokeFactory(id=vocabname,
-            title=vocabtitle,
-            type_name='SimpleVocabulary',
+@implementer(INonInstallable)
+class HiddenProfiles(object):
 
-        )
-    vocabulary = context.getVocabularyByName(vocabname)
-    vocabulary.setSortMethod(SORT_METHOD_FOLDER_ORDER)
-    wtool = getToolByName(context, 'portal_workflow')
-    wtool.doActionFor(vocabulary, 'publish')
-    from logging import getLogger
-    log = getLogger('create_vocabulary')
-    log.info('Created %s vocabulary' % vocabname)
-    if importfilename is not None:
-        data = profile.readDataFile(importfilename, subdir='esdrtvocabularies')
-        vocabulary.importCSV(data)
+    def getNonInstallableProfiles(self):
+        """Hide uninstall profile from site-creation and quickinstaller."""
+        return [
+            "esdrt.content:uninstall",
+        ]
 
-    for term in vocabulary.values():
-        wtool.doActionFor(term, 'publish')
-
-    log.info('done')
+    def getNonInstallableProducts(self):
+        """Hide the upgrades package from site-creation and quickinstaller."""
+        return ["esdrt.content.upgrades"]
 
 
-def prepareVocabularies(context, profile):
-    """ initial population of vocabularies """
-
-    atvm = getToolByName(context, 'portal_vocabularies')
-
-    for vocabulary in VOCABULARIES:
-        vocab = atvm.getVocabularyByName(vocabulary.get('id'))
-        if vocab is None:
-            create_vocabulary(atvm,
-                vocabulary.get('id'),
-                vocabulary.get('title'),
-                vocabulary.get('filename', None),
-                profile
-            )
+def get_portal_acl(portal):
+    return portal["acl_users"]
 
 
-def enable_atd_spellchecker(portal):
-    tinymce = getToolByName(portal, 'portal_tinymce')
-    tinymce.libraries_spellchecker_choice = u'AtD'
-    tinymce.libraries_atd_service_url = u'service.afterthedeadline.com'
+def get_ldap_plugin(acl, ldap_id):
+    return acl[ldap_id]
 
 
-def setupVarious(context):
-    """ various import steps for esdrt.content """
-    portal = context.getSite()
-
-    if context.readDataFile('esdrt.content_various.txt') is None:
+def setup_ldap(portal, ldap_id):
+    acl = get_portal_acl(portal)
+    try:
+        ldap_plugin = get_ldap_plugin(acl, ldap_id)
+    except KeyError:
+        LOGGER.warn("LDAP Plugin not found. LDAP setup skipped.")
         return
 
-    prepareVocabularies(portal, context)
-    enable_atd_spellchecker(portal)
+    # disable unnecessary PAS LDAP plugins
+    enabled_interfaces = (
+        "IUserEnumerationPlugin",
+        "IGroupsPlugin",
+        "IGroupEnumerationPlugin",
+        "IAuthenticationPlugin",
+        "IPropertiesPlugin",
+        "IRolesPlugin",
+        "IGroupIntrospection",
+        # Commenting out disabled plugins for reference.
+        # 'ICredentialsResetPlugin',
+        # 'IGroupManagement',
+        # 'IUserAdderPlugin',
+        # 'IUserManagement',
+    )
+
+    # activate selected plugins
+    ldap_plugin.manage_activateInterfaces(enabled_interfaces)
+
+    # move LDAP Properties plugin to top
+    plugins = acl["plugins"]
+    active_plugins = plugins.getAllPlugins("IPropertiesPlugin")["active"]
+    interface = plugins._getInterfaceFromName("IPropertiesPlugin")
+
+    for _ in range(len(active_plugins) - 1):
+        # need to move it one position at a time
+        plugins.movePluginsUp(interface, [ldap_id])
+
+def disable_recursive_groups(portal):
+    acl = get_portal_acl(portal)
+    acl["recursive_groups"].manage_activateInterfaces([])
+
+def post_install(context):
+    """Post install script"""
+    portal = api.portal.get()
+    setup_ldap(portal, LDAP_PLUGIN_ID)
+    disable_recursive_groups(portal)
+
+
+def uninstall(context):
+    """Uninstall script"""
+    # Do something at the end of the uninstallation of this package.

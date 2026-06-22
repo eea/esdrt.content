@@ -1,9 +1,13 @@
 from AccessControl import getSecurityManager
 from Acquisition import aq_parent
-from esdrt.content import MessageFactory as _
-from five import grok
-from plone.directives import dexterity
-from plone.directives import form
+from Products.Five import BrowserView
+from plone.dexterity.browser import add
+from plone.dexterity.content import Item
+from zope.interface import implementer
+
+from esdrt.content import _
+from plone.supermodel.directives import primary
+from plone.supermodel import model
 from plone.namedfile.field import NamedBlobFile
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.statusmessages.interfaces import IStatusMessage
@@ -12,18 +16,18 @@ from zope import schema
 
 
 # Interface class; used to define content-type schema.
-class IESDRTFile(form.Schema, IImageScaleTraversable):
+class IESDRTFile(model.Schema, IImageScaleTraversable):
     """
     Files with special needs
     """
     title = schema.TextLine(
-        title=_(u'Title'),
+        title=_('Title'),
         required=False,
     )
 
-    form.primary('file')
+    primary('file')
     file = NamedBlobFile(
-        title=_(u'File'),
+        title=_('File'),
         required=True,
     )
 
@@ -34,13 +38,8 @@ class IESDRTFile(form.Schema, IImageScaleTraversable):
     # )
 
 
-# Custom content-type class; objects created for this content type will
-# be instances of this class. Use this class to add content-type specific
-# methods and properties. Put methods that are mainly useful for rendering
-# in separate view classes.
-class ESDRTFile(dexterity.Item):
-    grok.implements(IESDRTFile)
-    # Add your class methods and properties here
+@implementer(IESDRTFile)
+class ESDRTFile(Item):
 
     def can_edit(self):
         sm = getSecurityManager()
@@ -55,10 +54,7 @@ class ESDRTFile(dexterity.Item):
         return edit
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('esdrt.content.esdrtfile')
-    grok.context(IESDRTFile)
-    grok.require('esdrt.content.AddESDRTFile')
+class AddForm(add.DefaultAddForm):
 
     label = 'file'
     description = ''
@@ -67,10 +63,10 @@ class AddForm(dexterity.AddForm):
         super(AddForm, self).update()
         status = IStatusMessage(self.request)
 
-        msg = _(u'Handling of confidential files: '
-                u'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
-                u'and send the password per email to the ESD Secretariat mailbox. '
-                u'Your password will only be shared with the lead reviewer and review expert. '
+        msg = _('Handling of confidential files: '
+                'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
+                'and send the password per email to the ESD Secretariat mailbox. '
+                'Your password will only be shared with the lead reviewer and review expert. '
         )
 
         status.add(msg, type='info')
@@ -81,14 +77,12 @@ class AddForm(dexterity.AddForm):
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
 
 
-grok.templatedir('templates')
+class AddView(add.DefaultAddView):
+    form = AddForm
 
 
-class ESDRTFileView(grok.View):
-    grok.context(IESDRTFile)
-    grok.require('zope2.View')
-    grok.name('view')
+class ESDRTFileView(BrowserView):
 
     def render(self):
         url = aq_parent(self.context).absolute_url()
-        return self.response.redirect(url)
+        return self.request.RESPONSE.redirect(url)

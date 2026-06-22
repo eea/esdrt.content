@@ -1,12 +1,11 @@
 from functools import partial
 from itertools import chain
 from itertools import product
-from itertools import ifilter as filter
+
 
 from zope.component.hooks import getSite
-from zope.component import getUtility
 
-from esdrt.content.utilities.interfaces import ILDAPQuery
+from esdrt.content.setuphandlers import LDAP_PLUGIN_ID
 
 from esdrt.content.utilities import ldap_utils
 
@@ -35,7 +34,7 @@ QUERY_LDAP_ROLES = ldap_utils.format_or(
 )
 
 
-def f_start(pat, s):
+def f_start(pat: str, s: str):
     return s.startswith(pat)
 
 
@@ -48,19 +47,19 @@ f_start_msa = partial(f_start, LDAP_MSA)
 
 def setup_reviewfolder_roles(folder):
     site = getSite()
-    acl = site['acl_users']['ldap-plugin']['acl_users']
+    acl = site["acl_users"][LDAP_PLUGIN_ID]
 
-    with getUtility(ILDAPQuery)(acl, paged=True) as q_ldap:
+    with ldap_utils.get_query_utility()(acl, paged=True) as q_ldap:
         q_groups = q_ldap.query_groups(QUERY_LDAP_ROLES, ('cn',))
 
-    groups = [r[1]['cn'][0] for r in q_groups]
+    groups = [r[1]['cn'][0].decode() for r in q_groups]
 
     grant = chain(
-        product([ROLE_RP1], filter(f_start_sr, groups)),
-        product([ROLE_QE], filter(f_start_qe, groups)),
-        product([ROLE_RP2], filter(f_start_re, groups)),
-        product([ROLE_LR], filter(f_start_lr, groups)),
-        product([ROLE_MSA], filter(f_start_msa, groups)),
+        product([ROLE_RP1], list(filter(f_start_sr, groups))),
+        product([ROLE_QE], list(filter(f_start_qe, groups))),
+        product([ROLE_RP2], list(filter(f_start_re, groups))),
+        product([ROLE_LR], list(filter(f_start_lr, groups))),
+        product([ROLE_MSA], list(filter(f_start_msa, groups))),
     )
 
     for role, g_name in grant:

@@ -6,7 +6,7 @@
 
 </div>
 
-<div id="observations" tal:condition="view/batch">
+<div id="observations" class="px-2" tal:condition="view/batch">
   <table tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; steps_enabled python:view.request.PUBLISHED.context.enable_steps"
          class="observationList listing"
          id="observations-table"
@@ -46,15 +46,11 @@
     </thead>
     <tbody>
       <tal:item tal:repeat="obs view/batch">
-        <tr tal:define="observation obs/brain"
-            tal:attributes="data-href observation/getURL;
-            class string:clickableRow ${observation/observation_css_class};">
+        <tr tal:define="observation obs/brain" data-href="${observation/getURL}" class="clickableRow ${observation/observation_css_class}">
           <td class="observationRefCell">
-              <a tal:attributes="href observation/getURL;"/>
-              <span class="ref-num"
-                tal:content="observation/getId">
-                UK-WAS-13-001
-              </span>
+              <a onclick="return false" href="${observation/getURL}">
+                <span class="ref-num">${observation/getId}</span>
+              </a>
               <br/>
               <div class="potentialSignificantIssue"
                    tal:condition="observation/observation_is_potential_significant_issue">

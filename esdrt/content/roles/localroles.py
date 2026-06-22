@@ -1,20 +1,21 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from borg.localrole.interfaces import ILocalRoleProvider
+from zope.component import adapter
+from zope.interface import implementer
+
 from esdrt.content.comment import IComment
 from esdrt.content.commentanswer import ICommentAnswer
 from esdrt.content.observation import IObservation
 from esdrt.content.question import IQuestion
 from esdrt.content.conclusion import IConclusion
 from esdrt.content.conclusionsphase2 import IConclusionsPhase2
-from zope.component import adapts
-from zope.interface import implements
 from plone import api
 
 
+@implementer(ILocalRoleProvider)
+@adapter(IObservation)
 class ObservationRoleAdapter(object):
-    implements(ILocalRoleProvider)
-    adapts(IObservation)
 
     def __init__(self, context):
         self.context = context
@@ -58,9 +59,9 @@ class ObservationRoleAdapter(object):
         return []
 
 
+@implementer(ILocalRoleProvider)
+@adapter(IQuestion)
 class QuestionRoleAdapter(object):
-    implements(ILocalRoleProvider)
-    adapts(IQuestion)
 
     def __init__(self, context):
         self.context = context
@@ -105,9 +106,9 @@ class QuestionRoleAdapter(object):
         return []
 
 
+@implementer(ILocalRoleProvider)
+@adapter(IComment)
 class CommentRoleAdapter(object):
-    implements(ILocalRoleProvider)
-    adapts(IComment)
 
     def __init__(self, context):
         self.context = context
@@ -156,9 +157,9 @@ class CommentRoleAdapter(object):
         return []
 
 
+@implementer(ILocalRoleProvider)
+@adapter(ICommentAnswer)
 class CommentAnswerRoleAdapter(object):
-    implements(ILocalRoleProvider)
-    adapts(ICommentAnswer)
 
     def __init__(self, context):
         self.context = context
@@ -206,9 +207,9 @@ class CommentAnswerRoleAdapter(object):
         return []
 
 
+@implementer(ILocalRoleProvider)
+@adapter(IConclusion)
 class ConclusionRoleAdapter(object):
-    implements(ILocalRoleProvider)
-    adapts(IConclusion)
 
     def __init__(self, context):
         self.context = context
@@ -253,9 +254,9 @@ class ConclusionRoleAdapter(object):
         return []
 
 
+@implementer(ILocalRoleProvider)
+@adapter(IConclusionsPhase2)
 class ConclusionPhase2RoleAdapter(object):
-    implements(ILocalRoleProvider)
-    adapts(IConclusionsPhase2)
 
     def __init__(self, context):
         self.context = context

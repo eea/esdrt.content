@@ -1,21 +1,17 @@
-from esdrt.content.observation import IObservation
-from five import grok
-from Products.CMFCore.interfaces import IActionSucceededEvent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from .utils import notify
 
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def notification_lr(context, event):
     """
     To:     LeadReviewer
     When:   Observation handed over to phase 2
     """
-    _temp = PageTemplateFile('observation_to_phase2.pt')
+    _temp = ViewPageTemplateFile('observation_to_phase2.pt')
 
     if event.action in ['phase1-send-to-team-2']:
         observation = context
-        subject = u'Observation handed over to phase 2'
+        subject = 'Observation handed over to phase 2'
         notify(
             observation,
             _temp,
@@ -25,17 +21,16 @@ def notification_lr(context, event):
         )
 
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def notification_rev_ph2(context, event):
     """
     To:     ReviewerPhase2
     When:   Observation handed over to phase 2
     """
-    _temp = PageTemplateFile('observation_to_phase2_rev_msg.pt')
+    _temp = ViewPageTemplateFile('observation_to_phase2_rev_msg.pt')
 
     if event.action in ['phase1-send-to-team-2']:
         observation = context
-        subject = u'Observation handed over to phase 2'
+        subject = 'Observation handed over to phase 2'
         notify(
             observation,
             _temp,

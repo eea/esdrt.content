@@ -2,7 +2,7 @@ from zope.interface import Interface
 from zope import schema
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
-from esdrt.content import MessageFactory as _
+from esdrt.content import _
 from logging import getLogger
 from collections import OrderedDict
 logger = getLogger('esdrt.content.crf_codes')
@@ -12,12 +12,12 @@ class IEsdrtSettings(Interface):
     """
 
     crfcodeMapping = schema.Dict(
-        title=_(u"CRF Codes"),
-        description=_(u"Maps ldap sectors"),
-        key_type=schema.TextLine(title=_(u"Code")),
+        title=_("CRF Codes"),
+        description=_("Maps ldap sectors"),
+        key_type=schema.TextLine(title=_("Code")),
         value_type=schema.TextLine(
-            title=_(u"Sector Item"),
-            description=_(u"Descripe a sector in the form: ldap|code|name|title")
+            title=_("Sector Item"),
+            description=_("Descripe a sector in the form: ldap|code|name|title")
         ),
     )
 
@@ -40,7 +40,7 @@ def crf_codes():
 
     crf_codes = {}
 
-    for key, codes in crfcodeMapping.items():
+    for key, codes in list(crfcodeMapping.items()):
         try:
             ldap, code, name, title = codes.split('|')
             crf_codes[key] = {

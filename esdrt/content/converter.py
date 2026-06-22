@@ -1,4 +1,6 @@
-from esdrt.content import MessageFactory as _
+from zope.component import adapter
+
+from esdrt.content import _
 from z3c.form.converter import NumberDataConverter
 from z3c.form.interfaces import IWidget
 
@@ -7,18 +9,18 @@ import zope
 
 
 symbols = {
-            u'decimal': u',',
-            u'group': u'',
-            u'list':  u';',
-            u'percentSign': u'%',
-            u'nativeZeroDigit': u'0',
-            u'patternDigit': u'#',
-            u'plusSign': u'+',
-            u'minusSign': u'-',
-            u'exponential': u'E',
-            u'perMille': u'\xe2\x88\x9e',
-            u'infinity': u'\xef\xbf\xbd',
-            u'nan': ''
+            'decimal': ',',
+            'group': '',
+            'list':  ';',
+            'percentSign': '%',
+            'nativeZeroDigit': '0',
+            'patternDigit': '#',
+            'plusSign': '+',
+            'minusSign': '-',
+            'exponential': 'E',
+            'perMille': '\xe2\x88\x9e',
+            'infinity': '\xef\xbf\xbd',
+            'nan': ''
 }
 
 
@@ -32,9 +34,8 @@ class ESDRTNumberDataConverter(NumberDataConverter):
     #     super(ESDRTIntegerDataConverter, self).format(obj, pattern)
 
 
+@adapter(zope.schema.interfaces.IInt, IWidget)
 class ESDRTIntegerDataConverter(ESDRTNumberDataConverter):
     """A data converter for integers."""
-    zope.component.adapts(
-        zope.schema.interfaces.IInt, IWidget)
     type = int
     errorMessage = _('The entered value is not a valid integer literal.')

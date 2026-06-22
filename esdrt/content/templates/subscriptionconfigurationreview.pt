@@ -22,7 +22,7 @@
       <a href=""
         tal:attributes="href here/absolute_url"
         class="standardButton">
-          <span class="eea-icon"><!-- --></span>
+            <i class="bi bi-chevron-left"></i>
             Back to list
       </a>
     </div>

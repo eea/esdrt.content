@@ -6,26 +6,26 @@
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from Acquisition import Implicit
-from esdrt.content import MessageFactory as _
+from plone.app.discussion.interfaces import IComment
+from zope.component import adapter
+from zope.interface import implementer
+
+from esdrt.content import _
 from persistent import Persistent
 from plone.app.discussion.browser.comments import CommentForm
-from plone.app.discussion.comment import Comment
 from plone.namedfile.field import NamedBlobFile
 from plone.z3cform.fieldsets import extensible
 from Products.CMFCore import permissions
 from z3c.form.field import Fields
-from zope import interface
-from zope import schema
 from zope.annotation import factory
-from zope.component import adapts
 from zope.interface import Interface
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
 
 class ICommentExtenderFields(Interface):
     attachment = NamedBlobFile(
-        title=_(u"Attachment"),
-        description=_(u""),
+        title=_("Attachment"),
+        description=_(""),
         required=False,
     )
 
@@ -36,13 +36,13 @@ class ICommentExtenderFields(Interface):
     # )
 
 
+@implementer(ICommentExtenderFields)
+@adapter(IComment)
 class CommentExtenderFields(Implicit, Persistent):
-    interface.implements(ICommentExtenderFields)
-    adapts(Comment)
     security = ClassSecurityInfo()
 
     security.declareProtected(permissions.View, 'attachment')
-    attachment = u""
+    attachment = ""
     #confidential = False
 
 InitializeClass(CommentExtenderFields)
@@ -50,8 +50,8 @@ InitializeClass(CommentExtenderFields)
 CommentExtenderFactory = factory(CommentExtenderFields)
 
 
+@adapter(Interface, IDefaultBrowserLayer, CommentForm)
 class CommentExtender(extensible.FormExtender):
-    adapts(Interface, IDefaultBrowserLayer, CommentForm)
 
     fields = Fields(ICommentExtenderFields)
 
@@ -63,8 +63,8 @@ class CommentExtender(extensible.FormExtender):
     def update(self):
         self.add(ICommentExtenderFields, prefix="")
         self.move('attachment', after='text', prefix="")
-        self.form.description = _(u'Handling of confidential files: '
-                u'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
-                u'and send the password per email to the ESD Secretariat mailbox. '
-                u'Your password will only be shared with the lead reviewer and review expert. '
+        self.form.description = _('Handling of confidential files: '
+                'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
+                'and send the password per email to the ESD Secretariat mailbox. '
+                'Your password will only be shared with the lead reviewer and review expert. '
         )

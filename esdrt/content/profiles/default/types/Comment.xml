@@ -21,13 +21,11 @@
   <property name="klass">esdrt.content.comment.Comment</property>
 
   <property name="behaviors">
-    <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
-    <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
+    <element value="plone.dublincore"/>
+    <element value="plone.allowdiscussion"/>
     <element
-       value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
-    <element value="plone.app.relationfield.behavior.IRelatedItems"/>
-    <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
-    <element value="plone.app.dexterity.behaviors.nextprevious.INextPreviousToggle"/>
+       value="plone.excludefromnavigation"/>
+    <element value="plone.relateditems"/>
    </property>
 
   <!-- View information -->

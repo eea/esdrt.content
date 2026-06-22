@@ -891,7 +891,7 @@
   <action url="%(content_url)s/request-finish-observation?workflow_action=phase1-request-close" category="workflow" icon="">Request finalisation of the observation</action>
   <guard>
    <guard-role>ReviewerPhase1</guard-role>
-   <guard-expression>here/@@view/get_conclusion</guard-expression>
+   <guard-expression>here/get_conclusion</guard-expression>
   </guard>
  </transition>
  <transition transition_id="phase1-request-comments" title="Request Comments" new_state="phase1-conclusion-discussion" trigger="USER" before_script="" after_script="">
@@ -899,7 +899,7 @@
   <guard>
    <guard-role>ReviewerPhase1</guard-role>
    <guard-role>ReviewerPhase1</guard-role>
-   <guard-expression>here/@@view/get_conclusion</guard-expression>
+   <guard-expression>here/get_conclusion</guard-expression>
   </guard>
  </transition>
  <transition transition_id="phase1-send-to-team-2" title="Hand over to Team 2" new_state="phase2-draft" trigger="USER" before_script="" after_script="">

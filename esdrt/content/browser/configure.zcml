@@ -2,7 +2,6 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:grok="http://namespaces.zope.org/grok"
     i18n_domain="esdrt.content">
 
   <!-- -*- extra stuff goes here -*- -->
@@ -23,10 +22,17 @@
   />
 
   <browser:page
-    name="reindex_context"
-    for="*"
-    class=".management.ReindexContext"
-    permission="cmf.ManagePortal"
+      name="reindex_context"
+      for="*"
+      class=".management.ReindexContext"
+      permission="cmf.ManagePortal"
+    />
+
+  <browser:page
+      name="fix_carryover_2026"
+      for="*"
+      class=".management.FixCarryover"
+      permission="cmf.ManagePortal"
     />
 
   <browser:page

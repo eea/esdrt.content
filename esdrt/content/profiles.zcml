@@ -1,28 +1,30 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    xmlns:grok="http://namespaces.zope.org/grok"
-    xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="esdrt.content">
 
-  <!-- Register an extension profile to make the product installable
-       in Plone -->
   <genericsetup:registerProfile
       name="default"
-      title="esdrt.content: Content-types"
+      title="esdrt.content"
       directory="profiles/default"
-      description="Content-types for esdrt.content. Content-types for ESD Review Tool"
+      description="Installs the esdrt.content add-on."
       provides="Products.GenericSetup.interfaces.EXTENSION"
+      post_handler=".setuphandlers.post_install"
       />
 
-  <!-- Register the import step -->
-  <genericsetup:importStep
-      name="esdrt.content: setupVarious"
-      title="esdrt.content: varios import steps"
-      description="Initial population of vocabularies"
-      handler="esdrt.content.setuphandlers.setupVarious"
-    />
+  <genericsetup:registerProfile
+      name="uninstall"
+      title="esdrt.content (uninstall)"
+      directory="profiles/uninstall"
+      description="Uninstalls the esdrt.content add-on."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      post_handler=".setuphandlers.uninstall"
+      />
+
+  <utility
+      factory=".setuphandlers.HiddenProfiles"
+      name="esdrt.content-hiddenprofiles"
+      />
+
 
 </configure>

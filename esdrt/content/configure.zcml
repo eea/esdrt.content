@@ -4,17 +4,16 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="esdrt.content">
-
-  <!-- Include configuration for dependencies listed in setup.py -->
-  <includeDependencies package="." />
 
   <include file="permissions.zcml" />
   <include file="profiles.zcml" />
   <include file="patches.zcml" />
-  <include file="vocabularies.zcml" />
+  <include file="views.zcml" />
+  <include file="forms.zcml" />
+  <include file="subscribers.zcml" />
+  <include package=".vocabularies" />
   <include package=".upgrades" />
   <include package=".adapters" />
   <include package=".utilities" />
@@ -22,23 +21,6 @@
   <include package=".roles" />
   <include package=".subscriptions" />
   <include package=".notifications" />
-
-  <browser:page
-    name="esd_export_discussion"
-    for="zope.interface.Interface"
-    class=".export_other.ExportDiscussion"
-    permission="cmf.ManagePortal"
-  />
-
-  <browser:page
-    name="esd_export_localroles"
-    for="zope.interface.Interface"
-    class=".export_other.ExportLocalRoles"
-    permission="cmf.ManagePortal"
-  />
-
-  <!-- Grok the package to initialise schema interfaces and content classes -->
-  <grok:grok package="." />
 
   <i18n:registerTranslations directory="locales" />
 
@@ -106,13 +88,5 @@
         interface="zope.publisher.interfaces.browser.IBrowserPage"
     />
   </class>
-
-  <!-- Crons view -->
-  <browser:page
-      name="cron_update_vocabularies"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class=".crons.UpdateLDAPUsersVocabulariesCron"
-      permission="zope.Public"
-  />
 
 </configure>
