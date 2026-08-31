@@ -18,7 +18,6 @@
   <include package=".adapters" />
   <include package=".utilities" />
   <include package=".browser" />
-  <include package=".roles" />
   <include package=".subscriptions" />
   <include package=".notifications" />
 

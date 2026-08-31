@@ -280,6 +280,7 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
             "highlights_access_roles",
             "enable_key_category",
             "enable_steps",
+            "enable_qe_lr_split",
         ]
     )
     # [refs #159094]
@@ -320,6 +321,14 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
         description="Show the observation steps and Step filter.",
         required=False,
         default=True,
+    )
+
+    # [refs #303932]
+    enable_qe_lr_split = Bool(
+        title="Enable QE and LR sector country split.",
+        description="QE/LR roles split similar to SE/RE.",
+        required=False,
+        default=False,
     )
 
 

@@ -22,16 +22,25 @@ from esdrt.content.constants import ROLE_LR
 from esdrt.content.constants import ROLE_MSA
 
 
-QUERY_LDAP_ROLES = ldap_utils.format_or(
-    'cn', (
+def get_query_ldap_roles(folder):
+    result = [
         LDAP_SR + '-sector*-*',
-        LDAP_QE + '-sector*',
         LDAP_RE + '-sector*-*',
-        LDAP_LR + '-*',
         LDAP_MSA + '-*',
+    ]
 
-    )
-)
+    if folder.enable_qe_lr_split:
+        result.extend([
+            LDAP_QE + '-sector*-*',
+            LDAP_LR + '-sector*-*',
+        ])
+    else:
+        result.extend([
+            LDAP_QE + '-*',
+            LDAP_LR + '-*',
+        ])
+
+    return ldap_utils.format_or('cn', result)
 
 
 def f_start(pat: str, s: str):
@@ -50,7 +59,8 @@ def setup_reviewfolder_roles(folder):
     acl = site["acl_users"][LDAP_PLUGIN_ID]
 
     with ldap_utils.get_query_utility()(acl, paged=True) as q_ldap:
-        q_groups = q_ldap.query_groups(QUERY_LDAP_ROLES, ('cn',))
+        query_ldap_roles = get_query_ldap_roles(folder)
+        q_groups = q_ldap.query_groups(query_ldap_roles, ('cn',))
 
     groups = [r[1]['cn'][0].decode() for r in q_groups]
 

@@ -1,10 +1,13 @@
 import logging
 from collections import Counter
 from copy import deepcopy
+from time import perf_counter
+from datetime import datetime
 
 import transaction
 
 from zope.interface import alsoProvides
+from zope.component import getUtility
 
 from Products.Five.browser import BrowserView
 
@@ -13,6 +16,8 @@ from plone.protect.interfaces import IDisableCSRFProtection
 
 from esdrt.content.browser.carryover import add_to_wh
 from esdrt.content.browser.carryover import catalog_with_children
+
+from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
 
 logger = logging.getLogger(__name__)
 
@@ -95,3 +100,12 @@ class FixCarryover(BrowserView):
         logger.info("Done!")
 
         return (count, state_count)
+
+
+class SetupRoles(BrowserView):
+    def __call__(self):
+        alsoProvides(self.request, IDisableCSRFProtection)
+        t0 = perf_counter()
+        getUtility(ISetupReviewFolderRoles)(self.context)
+        return "[%s] Done in %.2f seconds!" % (datetime.now().isoformat(), perf_counter() - t0)
+
