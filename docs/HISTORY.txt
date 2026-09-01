@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.0.4 (2026-09-01)
+-------------------
+- Feature: #303932 - Split LR/QE by country and sector.
+- Feature: Move vocabularies and CFR codes from registry into review folder.
+  Allows for more value flexibility for each review.
+  [batradav]
+
 2.0.3 (2026-06-22)
 -------------------
 - Task: #260929 - Migrate EMRT-ESD platform from Plone 4 to Plone 6.
