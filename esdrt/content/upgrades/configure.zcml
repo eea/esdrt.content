@@ -56,4 +56,17 @@
 
     </genericsetup:upgradeSteps>
 
+    <genericsetup:upgradeSteps
+      source="2003"
+      destination="2004"
+      profile="esdrt.content:default">
+
+      <genericsetup:upgradeStep
+        title="Move CRF codes to ReviewFolder"
+          description="Allow per-ReviewFolder CRF code configuration."
+          handler=".evolve_2004.upgrade"
+          />
+
+    </genericsetup:upgradeSteps>
+
 </configure>
