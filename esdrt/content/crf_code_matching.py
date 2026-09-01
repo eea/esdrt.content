@@ -22,7 +22,7 @@ class IEsdrtSettings(Interface):
     )
 
 
-def crf_codes():
+def crf_codes_from_registry():
     """ get the CRF code mapping from portal_registry
         @retrun a dictionary
         {
@@ -55,17 +55,39 @@ def crf_codes():
     return OrderedDict(sorted(crf_codes.items()))
 
 
-def get_category_ldap_from_crf_code(value):
+def crf_codes_from_context(context):
+    result = None
+
+    data = context.crf_code_mapping
+
+    if data:
+        result = OrderedDict({x["code"]: x for x in data})
+
+    return result
+
+
+def crf_codes(context=None):
+    result = None
+
+    if context:
+        result = crf_codes_from_context(context)
+
+    if not result:
+        result = crf_codes_from_registry()
+
+    return result
+
+
+def get_category_ldap_from_crf_code(value, context=None):
     """ get the CRF category this CRF Code matches
         According to the rules previously set
         for LDAP Matching
     """
-    crfcodes = crf_codes()
+    crfcodes = crf_codes(context)
     return crfcodes.get(value, {}).get('ldap', '')
 
 
-def get_category_value_from_crf_code(value):
+def get_category_value_from_crf_code(value, context=None):
     """ get the CRF category value to show it in the observation metadata """
-    crfcodes = crf_codes()
-    # return crf_codes.get(value, {}).get('sectorname', '')
+    crfcodes = crf_codes(context)
     return crfcodes.get(value, {}).get('title', '')

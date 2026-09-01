@@ -27,6 +27,7 @@ from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from plone.schema import JSONField
 
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -91,6 +92,34 @@ LDAP_QUERY_GROUPS = (
     "(cn=extranet-esd-esdreview-reviewexp-*)"
     ")"
 )
+
+SCHEMA_CRF_CODE_MAPPING = json.dumps({
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "ldap": {
+        "type": "string"
+      },
+      "code": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "ldap",
+      "code",
+      "name",
+      "title"
+    ],
+    "additionalProperties": False
+  }
+})
 
 def get_vocabulary(context: "ReviewFolder", name: str) -> SimpleVocabulary:
     factory = getUtility(IVocabularyFactory, name=name)
@@ -320,6 +349,14 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
         description="Show the observation steps and Step filter.",
         required=False,
         default=True,
+    )
+
+    crf_code_mapping = JSONField(
+        title="CRF Codes",
+        description="Maps ldap sectors",
+        schema=SCHEMA_CRF_CODE_MAPPING,
+        required=True,
+        default=None,
     )
 
 
@@ -771,7 +808,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         """ Given an observation brain and a LDAP group template,
             returns the 'fullname' of the group members.
         """
-        sector = get_category_ldap_from_crf_code(brain_obs.get_crf_code)
+        sector = get_category_ldap_from_crf_code(brain_obs.get_crf_code, self.context)
         country = brain_obs.country
         group_name = tpl_group.format(sector=sector, country=country)
         return self._ldap_group_members.get(group_name, [])

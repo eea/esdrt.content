@@ -67,6 +67,7 @@ from esdrt.content.subscriptions.interfaces import INotificationUnsubscriptions
 from esdrt.content.utilities.ms_user import IUserIsMS
 from esdrt.content.utilities.interfaces import IFollowUpPermission
 from esdrt.content.utils import exclude_phase2_actions, get_vocabulary_value
+from esdrt.content.utils import request_context
 from .comment import IComment
 from .commentanswer import ICommentAnswer
 from .conclusion import IConclusion
@@ -117,7 +118,7 @@ def check_crf_code(value):
     """ Check if the user is in one of the group of users
         allowed to add this category CRF Code observations
     """
-    category = get_category_ldap_from_crf_code(value)
+    category = get_category_ldap_from_crf_code(value, request_context())
     user = api.user.get_current()
     groups = user.getGroups()
     valid = False
@@ -404,12 +405,12 @@ class Observation(Container):
 
     def ghg_source_category_value(self):
         # Get the value of the sector to be used on the LDAP mapping
-        return get_category_ldap_from_crf_code(self.crf_code)
+        return get_category_ldap_from_crf_code(self.crf_code, self.aq_parent)
 
     def ghg_source_sectors_value(self):
         # Get the value of the sector to be used
         # on the Observation Metadata screen
-        return get_category_value_from_crf_code(self.crf_code)
+        return get_category_value_from_crf_code(self.crf_code, self.aq_parent)
 
     def parameter_value(self):
         return get_join_from_vocab(self.aq_parent, "esdrt.content.parameter", self.parameter)

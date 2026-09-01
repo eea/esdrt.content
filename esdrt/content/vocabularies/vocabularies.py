@@ -197,7 +197,7 @@ class CRFCode(object):
 
     def __call__(self, context):
         terms = []
-        crfcodes = crf_codes()
+        crfcodes = crf_codes(context)
         for key, value in list(crfcodes.items()):
             # create a term - the arguments are the value, the token, and
             # the title (optional)

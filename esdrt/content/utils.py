@@ -62,7 +62,7 @@ def format_date(date, fmt='%d %b %Y, %H:%M CET'):
     return date.strftime(fmt)
 
 
-def request_context(context):
+def request_context(context=None):
     if context and IContentish.providedBy(context):
         return context
 
