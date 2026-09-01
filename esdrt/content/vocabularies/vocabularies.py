@@ -44,6 +44,17 @@ def get_registry_interface_field_data(interface, field):
     return registry_data.__getattr__(field)
 
 
+def get_vocabulary_values(context, name):
+    """ Try to read vocabulary from context. Fallback to registry. """
+
+    result = getattr(context, f"vocab_{name}", None)
+
+    if not result:
+        result = get_registry_interface_field_data(IESDRTVocabularies, name)
+
+    return result
+
+
 def permissions_to_dict(text):
     result = {}
 
@@ -63,9 +74,7 @@ def permissions_to_dict(text):
 class MSVocabulary(object):
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "eea_member_states"
-        )
+        csv_data = get_vocabulary_values(context, "eea_member_states")
         return vocabulary_from_csv_string(csv_data)
 
 
@@ -73,9 +82,7 @@ class MSVocabulary(object):
 class GHGSourceCategory(object):
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "ghg_source_category"
-        )
+        csv_data = get_vocabulary_values(context, "ghg_source_category")
         return vocabulary_from_csv_string(csv_data)
 
 
@@ -83,9 +90,7 @@ class GHGSourceCategory(object):
 class GHGSourceSectors(object):
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "ghg_source_sectors"
-        )
+        csv_data = get_vocabulary_values(context, "ghg_source_sectors")
         return vocabulary_from_csv_string(csv_data)
 
 
@@ -93,9 +98,7 @@ class GHGSourceSectors(object):
 class Gas(object):
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "gas"
-        )
+        csv_data = get_vocabulary_values(context, "gas")
         return vocabulary_from_csv_string(csv_data)
 
 
@@ -103,9 +106,7 @@ class Gas(object):
 class Fuel(object):
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "fuel"
-        )
+        csv_data = get_vocabulary_values(context, "fuel")
         return vocabulary_from_csv_string(csv_data)
 
 @implementer(IVocabularyFactory)
@@ -114,9 +115,7 @@ class Highlight(object):
     def __call__(self, context):
         from esdrt.content.reviewfolder import ReviewFolderMixin
 
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "highlight"
-        )
+        csv_data = get_vocabulary_values(context, "highlight")
         entries = csv_entries(csv_data)
 
         # In some cases (such as a form group) the context can be a dict or
@@ -164,9 +163,7 @@ class HighlightSelect(object):
     used to filter the actual highlight vocabulary """
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "highlight"
-        )
+        csv_data = get_vocabulary_values(context, "highlight")
         return vocabulary_from_csv_string(csv_data)
 
 
@@ -174,19 +171,7 @@ class HighlightSelect(object):
 class Parameter(object):
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "parameter"
-        )
-        return vocabulary_from_csv_string(csv_data)
-
-
-@implementer(IVocabularyFactory)
-class StatusFlag(object):
-
-    def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "status_flag"
-        )
+        csv_data = get_vocabulary_values(context, "parameter")
         return vocabulary_from_csv_string(csv_data)
 
 
@@ -209,9 +194,7 @@ class CRFCode(object):
 class Conclusions(object):
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "conclusion_reasons"
-        )
+        csv_data = get_vocabulary_values(context, "conclusion_reasons")
         return vocabulary_from_csv_string(csv_data)
 
 
@@ -219,9 +202,7 @@ class Conclusions(object):
 class ConclusionsPhase2(object):
 
     def __call__(self, context):
-        csv_data = get_registry_interface_field_data(
-            IESDRTVocabularies, "conclusion_phase2_reasons"
-        )
+        csv_data = get_vocabulary_values(context, "conclusion_phase2_reasons")
         return vocabulary_from_csv_string(csv_data)
 
 

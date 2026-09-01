@@ -63,6 +63,7 @@ from esdrt.content.timeit import timeit
 from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
 from esdrt.content.utilities.ms_user import IUserIsMS
 from esdrt.content.utils import get_userid_name
+from esdrt.content.vocabularies.interfaces import read_profile_vocabulary
 
 
 LOG = logging.getLogger(__name__)
@@ -351,6 +352,14 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
         default=True,
     )
 
+    fieldset(
+        "crf_codes",
+        label="CRF codes",
+        fields=[
+            "crf_code_mapping",
+        ]
+    )
+
     crf_code_mapping = JSONField(
         title="CRF Codes",
         description="Maps ldap sectors",
@@ -358,6 +367,77 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
         required=True,
         default=None,
     )
+
+    fieldset(
+        "vocabularies",
+        label="Vocabularies",
+        fields=[
+            "vocab_eea_member_states",
+            "vocab_ghg_source_category",
+            "vocab_ghg_source_sectors",
+            "vocab_gas",
+            "vocab_fuel",
+            "vocab_highlight",
+            "vocab_parameter",
+            "vocab_conclusion_reasons",
+            "vocab_conclusion_phase2_reasons",
+        ]
+    )
+
+    vocab_eea_member_states = Text(
+        title="EEA Member states",
+        required=True,
+        default=read_profile_vocabulary("eea_member_states.csv"),
+    )
+
+    vocab_ghg_source_category = Text(
+        title="GHG source category",
+        required=True,
+        default=read_profile_vocabulary("ghg_source_category.csv"),
+    )
+
+    vocab_ghg_source_sectors = Text(
+        title="GHG source sectors",
+        required=True,
+        default=read_profile_vocabulary("ghg_source_sectors.csv"),
+    )
+
+    vocab_gas = Text(
+        title="Gas",
+        required=True,
+        default=read_profile_vocabulary("gas.csv"),
+    )
+
+    vocab_fuel = Text(
+        title="Fuel",
+        required=True,
+        default=read_profile_vocabulary("fuel.csv"),
+    )
+
+    vocab_highlight = Text(
+        title="Highlight",
+        required=True,
+        default=read_profile_vocabulary("highlight.csv"),
+    )
+
+    vocab_parameter = Text(
+        title="Parameter",
+        required=True,
+        default=read_profile_vocabulary("parameter.csv"),
+    )
+
+    vocab_conclusion_reasons = Text(
+        title="Conclusions reasons",
+        required=True,
+        default=read_profile_vocabulary("conclusion_reasons.csv"),
+    )
+
+    vocab_conclusion_phase2_reasons = Text(
+        title="Conclusions phase 2 reasons",
+        required=True,
+        default=read_profile_vocabulary("conclusion_phase2_reasons.csv"),
+    )
+
 
 
 @implementer(IReviewFolder)

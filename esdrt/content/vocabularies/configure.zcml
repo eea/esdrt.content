@@ -43,11 +43,6 @@
     />
 
   <utility
-    name="esdrt.content.status_flag"
-    factory=".vocabularies.StatusFlag"
-    />
-
-  <utility
     name="esdrt.content.crf_code"
     factory=".vocabularies.CRFCode"
     />
