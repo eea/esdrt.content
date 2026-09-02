@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.5 (2026-09-02)
+-------------------
+- Feature: Cleanup registry, migrate all existing folders to use default values.
+- Bug: Allow Manager edit access for ReviewFolder during all states.
+  [batradav]
+
 2.0.4 (2026-09-01)
 -------------------
 - Feature: #303932 - Split LR/QE by country and sector.
