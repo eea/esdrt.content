@@ -59,11 +59,12 @@ from esdrt.content.browser.inbox_sections import SECTIONS
 from esdrt.content.constants import ROLE_LR
 from esdrt.content.constants import ROLE_SE
 from esdrt.content.crf_code_matching import get_category_ldap_from_crf_code
+from esdrt.content.crf_code_matching import DEFAULT_CRF_CODE_MAPPING
 from esdrt.content.timeit import timeit
 from esdrt.content.utilities.interfaces import ISetupReviewFolderRoles
 from esdrt.content.utilities.ms_user import IUserIsMS
 from esdrt.content.utils import get_userid_name
-from esdrt.content.vocabularies.interfaces import read_profile_vocabulary
+from esdrt.content.vocabularies import read_profile_vocabulary
 
 
 LOG = logging.getLogger(__name__)
@@ -121,6 +122,7 @@ SCHEMA_CRF_CODE_MAPPING = json.dumps({
     "additionalProperties": False
   }
 })
+
 
 def get_vocabulary(context: "ReviewFolder", name: str) -> SimpleVocabulary:
     factory = getUtility(IVocabularyFactory, name=name)
@@ -374,7 +376,7 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
         description="Maps ldap sectors",
         schema=SCHEMA_CRF_CODE_MAPPING,
         required=True,
-        default=None,
+        default=DEFAULT_CRF_CODE_MAPPING,
     )
 
     fieldset(
@@ -394,19 +396,19 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
     )
 
     vocab_eea_member_states = Text(
-        title="EEA Member states",
+        title="EEA Member States",
         required=True,
         default=read_profile_vocabulary("eea_member_states.csv"),
     )
 
     vocab_ghg_source_category = Text(
-        title="GHG source category",
+        title="NFR category group",
         required=True,
         default=read_profile_vocabulary("ghg_source_category.csv"),
     )
 
     vocab_ghg_source_sectors = Text(
-        title="GHG source sectors",
+        title="NFR Sector",
         required=True,
         default=read_profile_vocabulary("ghg_source_sectors.csv"),
     )
@@ -436,13 +438,13 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
     )
 
     vocab_conclusion_reasons = Text(
-        title="Conclusions reasons",
+        title="Conclusion reasons",
         required=True,
         default=read_profile_vocabulary("conclusion_reasons.csv"),
     )
 
     vocab_conclusion_phase2_reasons = Text(
-        title="Conclusions phase 2 reasons",
+        title="Conclusion phase 2 reasons",
         required=True,
         default=read_profile_vocabulary("conclusion_phase2_reasons.csv"),
     )

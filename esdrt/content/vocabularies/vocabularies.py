@@ -11,9 +11,9 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
 import esdrt.content.constants as c
+
 from esdrt.content.utils import request_context
 
-from .interfaces import IESDRTVocabularies
 
 def mk_term(key, value):
     return SimpleVocabulary.createTerm(key, key, value)
@@ -37,22 +37,10 @@ def vocabulary_from_csv_string(data: str):
     return SimpleVocabulary(csv_to_terms(data))
 
 
-def get_registry_interface_field_data(interface, field):
-    registry = getUtility(IRegistry)
-    registry_data = registry.forInterface(interface)
-
-    return registry_data.__getattr__(field)
-
-
 def get_vocabulary_values(context, name):
-    """ Try to read vocabulary from context. Fallback to registry. """
+    """ Read vocabulary from context. """
 
-    result = getattr(context, f"vocab_{name}", None)
-
-    if not result:
-        result = get_registry_interface_field_data(IESDRTVocabularies, name)
-
-    return result
+    return getattr(context, f"vocab_{name}", None)
 
 
 def permissions_to_dict(text):

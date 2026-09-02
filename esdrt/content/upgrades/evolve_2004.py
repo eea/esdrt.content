@@ -1,8 +1,9 @@
+from copy import deepcopy
 from logging import getLogger
 
 import plone.api as api
 
-from esdrt.content.crf_code_matching import crf_codes_from_registry
+from esdrt.content.crf_code_matching import DEFAULT_CRF_CODE_MAPPING
 
 
 def upgrade(_, logger=None):
@@ -21,5 +22,5 @@ def upgrade(_, logger=None):
         folder = brain.getObject()
         if folder.crf_code_mapping is None:
             logger.info("Setting crf_code_mapping for %s", folder.absolute_url(1))
-            folder.crf_code_mapping = list(crf_codes_from_registry().values())
+            folder.crf_code_mapping = deepcopy(DEFAULT_CRF_CODE_MAPPING)
 

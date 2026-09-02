@@ -736,16 +736,6 @@ body.portaltype-conclusion #form-buttons-cancel {
 }
 
 
-form[action$="esdrt.content.crf_code_matching.IEsdrtSettings.crfcodeMapping"] input[type=text]{
-	width: 98%;
-}
-form[action$="esdrt.content.crf_code_matching.IEsdrtSettings.crfcodeMapping"] div.multi-widget .inner{
-	height: 480px;
-    overflow: hidden;
-    width: 100%;
-    overflow-y: visible;
-}
-
 /*observation import form*/
 .import-info {
     border: 1px solid;
