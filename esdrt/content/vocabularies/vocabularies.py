@@ -11,6 +11,7 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
 import esdrt.content.constants as c
+from esdrt.content.vocabularies import read_profile_vocabulary
 
 from esdrt.content.utils import request_context
 
@@ -38,9 +39,14 @@ def vocabulary_from_csv_string(data: str):
 
 
 def get_vocabulary_values(context, name):
-    """ Read vocabulary from context. """
+    """ Read vocabulary from context. Falls back to the default CSV
+    when the context has no value (e.g. the ReviewFolder add form,
+    where the context is the parent container). """
 
-    return getattr(context, f"vocab_{name}", None)
+    value = getattr(context, f"vocab_{name}", None)
+    if value is None:
+        value = read_profile_vocabulary(f"{name}.csv")
+    return value
 
 
 def permissions_to_dict(text):
