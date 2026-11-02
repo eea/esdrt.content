@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.0.7 (2026-11-02)
+-------------------
+- Bug: Fix LDAP paged query failing on the second page.
+  [batradav]
+
 2.0.6 (2026-11-02)
 -------------------
 - Bug: Fix ReviewFolder add form crashing on vocabularies, fall back to default CSV values.

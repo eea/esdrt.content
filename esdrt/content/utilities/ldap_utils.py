@@ -82,8 +82,8 @@ def paged_query(ou, connection, lc: SimplePagedResultsControl, query, attrs):
         rtype, rdata, rmsgid, serverctrls = connection.result3(msgid)
 
         # output results
-        for dn, attrs in rdata:
-            yield dn, attrs
+        for dn, entry_attrs in rdata:
+            yield dn, entry_attrs
 
         # retrieve paging controls
         pctrl = next(
